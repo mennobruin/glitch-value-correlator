@@ -14,4 +14,5 @@ class ConfigurationManager:
             with open(self.path, 'r') as f:
                 return yaml.safe_load(f)
         except IOError as e:
-            LOG.error(f"No configuration found at location {self.path} \n {e}")
+            LOG.error(f"No configuration found at location {self.path}")
+            raise e
