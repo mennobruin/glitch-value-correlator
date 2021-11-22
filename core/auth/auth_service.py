@@ -15,7 +15,7 @@ class AuthenticationService:
 
     def __init__(self):
         self._path = str(pathlib.Path(__file__).parents[1].resolve()) + "/resources/"
-        self.config = ConfigurationManager(self._path + "config.yaml").load()
+        self.config = ConfigurationManager(self._path + "config.yaml").load_config()
         self._user = self.config[self.KERBEROS_CONFIG.format(self.USERNAME)]
 
     def authenticate(self):
