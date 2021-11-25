@@ -31,3 +31,7 @@ class ConfigurationManager:
         except IOError as e:
             self.LOG.error(f"No configuration found at location {self.path}")
             raise e
+
+    @classmethod
+    def getLogger(cls, __name__):
+        pass
