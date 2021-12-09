@@ -26,15 +26,6 @@ class AuthenticationService:
         except Exception as e:
             LOG.error("Exception caught while running kinit:\n", e)
 
-    @staticmethod
-    def authenticate_cascina():
-        try:
-            connection = datafind.FflConnection()
-            LOG.info("Succesfully established FFL connection.")
-            return connection
-        except (ValueError, RuntimeError) as e:
-            LOG.warning(f"Exception caught while trying to connect to Cascina \n {e}")
-
     def authenticate_nds2(self, channels: [Channel], start_time):
         for host, port in self._get_hosts(channels, start_time):
             try:

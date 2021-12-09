@@ -5,20 +5,20 @@ import matplotlib.pyplot as plt
 from gwpy.timeseries import TimeSeries
 from gwpy.detector.channel import ChannelList, Channel
 
-from application1.handler.data.reader import DataReader
+from handler.data.reader import DataReader
 from core.auth.auth_service import AuthenticationService
 from core.config.configuration_manager import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
 
 
-def get_data(channel, t_start, t_stop, connection=None):
+def get_data(channel, t_start, t_stop, connection=None, verbose=False, frametype='raw'):
     LOG.info(f"Fetching data from {channel}...")
     t0 = time.time()
     if connection:
-        data = TimeSeries.fetch(channel, t_start, t_stop, connection=connection)
+        data = TimeSeries.fetch(channel, t_start, t_stop, connection=connection, verbose=verbose)
     else:
-        data = TimeSeries.get(channel, t_start, t_stop, verbose=True)
+        data = TimeSeries.get(channel, t_start, t_stop, allow_tape=True, verbose=verbose, frametype=frametype)
     LOG.info(f"Fetched data from {channel}, time elapsed: {time.time() - t0:.1f}s")
     return data
 
@@ -32,10 +32,7 @@ def main(t_start, t_stop, channel=None):
     duration = df["duration"].values[0]
     print(gps_time)
 
-    auth = AuthenticationService()
-    connection = auth.authenticate_cascina()
-
-    data = get_data(channel, t_start=gps_time-duration/2, t_stop=gps_time+duration/2, connection=connection)
+    data = get_data(channel, t_start=gps_time-duration/2, t_stop=gps_time+duration/2, frametype='trend')
     plt.plot(range(len(data)), data, 'b-')
     plt.show()
 
