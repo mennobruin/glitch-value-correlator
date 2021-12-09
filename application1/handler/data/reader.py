@@ -16,7 +16,7 @@ class DataReader:
         if not os.path.isfile(csv_file):
             csv_file = self.default_path + 'csv\\' + csv_file
         else:
-            LOG.error(f"Unable to load csv_file: {csv_file} \n Check if the file exists.")
+            LOG.error(f"Unable to load csv_file: {csv_file}. Check if the file exists.")
             raise FileNotFoundError
 
         with open(csv_file, 'r') as f:
