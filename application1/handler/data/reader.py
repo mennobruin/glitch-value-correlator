@@ -1,6 +1,10 @@
 import pandas as pd
 import pathlib
 import os
+import time
+
+from gwpy.timeseries import TimeSeries
+from virgotools.frame_lib import getChannel
 
 from core.config.configuration_manager import ConfigurationManager
 
@@ -10,6 +14,17 @@ LOG = ConfigurationManager.get_logger(__name__)
 class DataReader:
     def __init__(self):
         self.default_path = str(pathlib.Path(__file__).parents[2].resolve()) + "\\resources\\"
+
+    @staticmethod
+    def get(channel, t_start, t_stop, connection=None, verbose=False):
+        LOG.info(f"Fetching data from {channel}...")
+        t0 = time.time()
+        if connection:
+            data = TimeSeries.fetch(channel, t_start, t_stop, connection=connection, verbose=verbose)
+        else:
+            data = getChannel(channel, t_start, t_stop).data
+        LOG.info(f"Fetched data from {channel}, time elapsed: {time.time() - t0:.1f}s")
+        return data
 
     def load_csv(self, csv_file) -> pd.DataFrame:
         LOG.info(f"Loading {csv_file}")
