@@ -30,14 +30,14 @@ class Filter:
     def _init_states(self, x):
         self.states = [x[0] * lfilter_zi(*self.filter_coefficients[ratio]) for ratio in self.ratios]
 
-    def filter(self, input_data, double_filter=False):
-        if not self.states and not double_filter:
+    def filter(self, input_data, offline=False):
+        if self.states is None and not offline:
             self._init_states(x=input_data)
 
         output_data = input_data
         for i, ratio in enumerate(self.ratios):
             b, a = self.filter_coefficients[ratio]
-            if double_filter:
+            if offline:
                 output_data, self.states[i] = filtfilt(b, a, output_data)
             else:
                 output_data, self.states[i] = lfilter(b, a, output_data, zi=self.states[i])

@@ -7,6 +7,7 @@ from gwpy.timeseries import TimeSeries
 from virgotools.frame_lib import getChannel
 
 from core.config.configuration_manager import ConfigurationManager
+from model.channel import Channel
 
 LOG = ConfigurationManager.get_logger(__name__)
 
@@ -22,7 +23,9 @@ class DataReader:
         if connection:
             data = TimeSeries.fetch(channel, t_start, t_stop, connection=connection, verbose=verbose)
         else:
-            data = getChannel(channel, t_start, t_stop).data
+            c = getChannel(channel, t_start, t_stop)
+            channel = Channel(x=c.data, dx=c.dx, gps_time=c.GTime)
+            data = channel.data
         LOG.info(f"Fetched data from {channel}, time elapsed: {time.time() - t0:.1f}s")
         return data
 
