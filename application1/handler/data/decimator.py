@@ -11,15 +11,14 @@ class Decimator:
     def __init__(self):
         pass
 
-    def decimate(self, input_data: np.array, target_frequency=50, method='mean'):
-        input_size = len(input_data)
-        LOG.info(f"Decimating {input_size} data points with target frequency {target_frequency}Hz...")
+    def decimate(self, input_data: np.array, input_frequency, target_frequency=50, method='mean'):
+        LOG.info(f"Decimating {len(input_data)} data points with target frequency {target_frequency}Hz...")
         t0 = time.time()
 
-        ds_ratio = input_size / target_frequency
+        ds_ratio = input_frequency / target_frequency
 
         if not ds_ratio.is_integer():
-            LOG.warning(f"Size of input data {input_size} is not integer divisible by target frequency {target_frequency}.")
+            LOG.warning(f"Size of input data {len(input_data)} is not integer divisible by target frequency {target_frequency}.")
         ds_ratio = int(ds_ratio)
 
         output_data = None
