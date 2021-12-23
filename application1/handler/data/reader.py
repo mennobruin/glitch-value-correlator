@@ -4,7 +4,7 @@ import os
 import time
 
 from gwpy.timeseries import TimeSeries
-from virgotools.frame_lib import getChannel
+from virgotools.frame_lib import getChannel, FrameFile
 
 from core.config.configuration_manager import ConfigurationManager
 from model.channel import Channel
@@ -21,13 +21,14 @@ class DataReader:
         LOG.info(f"Fetching data from {channel}...")
         t0 = time.time()
         if connection:
-            data = TimeSeries.fetch(channel, t_start, t_stop, connection=connection, verbose=verbose)
+            x = TimeSeries.fetch(channel, t_start, t_stop, connection=connection, verbose=verbose)
         else:
-            c = getChannel(source, channel, t_start, t_stop)
+            with FrameFile(source) as ffl:
+                c = ffl.getChannel(channel, t_start, t_stop)
             channel = Channel(x=c.data, dx=c.dx, gps_time=c.GTime)
-            data = channel.data
+            x = channel.data
         LOG.info(f"Fetched data from {channel}, time elapsed: {time.time() - t0:.1f}s")
-        return data
+        return x
 
     def load_csv(self, csv_file) -> pd.DataFrame:
         LOG.info(f"Loading {csv_file}")
