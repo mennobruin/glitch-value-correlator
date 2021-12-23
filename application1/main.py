@@ -8,7 +8,7 @@ def main(t_start, t_stop, channel=None):
     reader = DataReader()
     decimator = Decimator()
 
-    data = reader.get(channel, t_start, t_stop)
+    data = reader.get(channel, t_start, t_stop, source='raw_O3b_arch')
     data_50hz = decimator.decimate(data, target_frequency=50)
 
 
