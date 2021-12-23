@@ -8,9 +8,11 @@ def main(t_start, t_stop, channel=None):
     reader = DataReader()
     decimator = Decimator()
 
+    duration = t_start - t_stop
     data = reader.get(channel, t_start, t_stop, source='raw_O3b_arch')
-    # data_50hz = decimator.decimate(data, target_frequency=50)
+    data_50hz = decimator.decimate(data, target_frequency=50)
     print(data.shape)
+    print(data_50hz.shape)
 
 
 if __name__ == '__main__':
