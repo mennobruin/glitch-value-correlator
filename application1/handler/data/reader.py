@@ -25,8 +25,7 @@ class DataReader:
         else:
             with FrameFile(source) as ffl:
                 c = ffl.getChannel(channel, t_start, t_stop)
-            channel = Channel(x=c.data, dx=c.dx, gps_time=c.GTime)
-            x = channel.data
+            x = c.data
         LOG.info(f"Fetched data from {channel}, time elapsed: {time.time() - t0:.1f}s")
         return x
 
