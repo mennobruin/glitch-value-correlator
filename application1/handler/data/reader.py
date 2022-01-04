@@ -17,18 +17,26 @@ class DataReader:
         self.default_path = str(pathlib.Path(__file__).parents[2].resolve()) + "\\resources\\"
 
     @staticmethod
-    def get(channel, t_start, t_stop, source='raw', connection=None, verbose=False) -> Channel:
-        LOG.info(f"Fetching data from {channel}...")
+    def get(source, t_start, t_stop, source='raw', connection=None, verbose=False) -> Channel:
+        LOG.info(f"Fetching data from {source}...")
         t0 = time.time()
         if connection:
-            x = TimeSeries.fetch(channel, t_start, t_stop, connection=connection, verbose=verbose)
+            x = TimeSeries.fetch(source, t_start, t_stop, connection=connection, verbose=verbose)
             c = Channel(x=x, dx=None, gps_time=None, unit=None)
         else:
             with FrameFile(source) as ffl:
-                frame = ffl.getChannel(channel, t_start, t_stop)
+                frame = ffl.getChannel(source, t_start, t_stop)
             c = Channel(x=frame.data, dx=frame.fsample, gps_time=frame.gps, unit=frame.unit)
-        LOG.info(f"Fetched data from {channel}, time elapsed: {time.time() - t0:.1f}s")
+        LOG.info(f"Fetched data from {source}, time elapsed: {time.time() - t0:.1f}s")
         return c
+
+    @staticmethod
+    def get_available_channels(source, t0):
+        LOG.info(f"Fetching available channels from {source}")
+        with FrameFile(source) as ffl:
+            with ffl.get_frame(t0) as f:
+                return [adc.contents.name for adc in f.iter_adc()]
+
 
     def load_csv(self, csv_file) -> pd.DataFrame:
         LOG.info(f"Loading {csv_file}")
