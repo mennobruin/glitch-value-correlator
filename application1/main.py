@@ -1,5 +1,3 @@
-from opencv import
-
 from core.config import ConfigurationManager
 from handler.data import Decimator, DataReader
 from model.channel import Channel
