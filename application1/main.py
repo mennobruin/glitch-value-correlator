@@ -1,6 +1,6 @@
 from fnmatch import fnmatch
 
-from application1.model.channel import Channel
+from application1.model.segment import Segment
 from application1.handler.data import Decimator, DataReader
 from core.config import ConfigurationManager
 
@@ -13,8 +13,8 @@ def main(source, channel_name, t_start, t_stop):
 
     # available_channels = reader.get_available_channels(source, t_start)
 
-    channel1: Channel = reader.get(channel_name, t_start, t_stop, source=source)
-    data1_50hz = decimator.decimate(channel1.x, input_frequency=channel1.dx, target_frequency=50)
+    segment: Segment = reader.get(channel_name, t_start, t_stop, source=source)
+    data1_50hz = decimator.decimate(segment.x, input_frequency=segment.f_sample, target_frequency=50)
 
 
 if __name__ == '__main__':
