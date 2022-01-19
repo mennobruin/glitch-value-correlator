@@ -7,7 +7,7 @@ from gwpy.timeseries import TimeSeries
 from virgotools.frame_lib import getChannel, FrameFile
 
 from core.config.configuration_manager import ConfigurationManager
-from application1.model.channel import Channel
+from application1.model.segment import Segment
 
 LOG = ConfigurationManager.get_logger(__name__)
 
@@ -17,18 +17,18 @@ class DataReader:
         self.default_path = str(pathlib.Path(__file__).parents[2].resolve()) + "\\resources\\"
 
     @staticmethod
-    def get(channel_name, t_start, t_stop, source='raw', connection=None, verbose=False) -> Channel:
+    def get(channel_name, t_start, t_stop, source='raw', connection=None, verbose=False) -> Segment:
         LOG.info(f"Fetching data from {channel_name}...")
         t0 = time.time()
         if connection:
             x = TimeSeries.fetch(channel_name, t_start, t_stop, connection=connection, verbose=verbose)
-            c = Channel(x=x, dx=None, gps_time=None, unit=None)
+            s = Segment(channel=channel_name, x=x, f_sample=None, gps_time=None, unit=None)
         else:
             with FrameFile(source) as ffl:
                 frame = ffl.getChannel(channel_name, t_start, t_stop)
-            c = Channel(x=frame.data, dx=frame.fsample, gps_time=frame.gps, unit=frame.unit)
+            s = Segment(channel=channel_name, x=frame.data, f_sample=frame.f_sample, gps_time=frame.gps, unit=frame.unit)
         LOG.info(f"Fetched data from {source}, time elapsed: {time.time() - t0:.1f}s")
-        return c
+        return s
 
     @staticmethod
     def get_available_channels(source, t0):
@@ -36,7 +36,6 @@ class DataReader:
         with FrameFile(source) as ffl:
             with ffl.get_frame(t0) as f:
                 return [str(adc.contents.name) for adc in f.iter_adc()]
-
 
     def load_csv(self, csv_file) -> pd.DataFrame:
         LOG.info(f"Loading {csv_file}")
