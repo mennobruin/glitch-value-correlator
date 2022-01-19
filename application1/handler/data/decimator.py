@@ -13,13 +13,13 @@ class Decimator:
         pass
 
     def decimate(self, segment: Segment, target_frequency=50, method='mean'):
-        LOG.info(f"Decimating {segment.x_size} data points with target frequency {target_frequency}Hz...")
+        LOG.info(f"Decimating {segment.x.size} data points with target frequency {target_frequency}Hz...")
         t0 = time.time()
 
         ds_ratio = segment.f_sample / target_frequency
 
         if not ds_ratio.is_integer():
-            LOG.warning(f"Size of input data {segment.x_size} is not integer divisible by target frequency {target_frequency}.")
+            LOG.warning(f"Size of input data {segment.x.size} is not integer divisible by target frequency {target_frequency}.")
         ds_ratio = int(ds_ratio)
 
         if method == 'mean':
