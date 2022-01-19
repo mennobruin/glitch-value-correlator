@@ -34,7 +34,7 @@ class DataReader:
             s = Segment(channel=channel_name,
                         x=frame.data,
                         dt=frame.dt,
-                        f_sample=frame.f_sample,
+                        f_sample=frame.fsample,
                         gps_time=frame.gps,
                         unit=frame.unit)
         LOG.info(f"Fetched data from {source}, time elapsed: {time.time() - t0:.1f}s")
