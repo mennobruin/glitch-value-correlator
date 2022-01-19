@@ -1,6 +1,6 @@
-from core.config import ConfigurationManager
-from handler.data import Decimator, DataReader
 from model.channel import Channel
+from handler.data import Decimator, DataReader
+from .core.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
 
