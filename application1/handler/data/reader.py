@@ -3,6 +3,7 @@ import pathlib
 import os
 import time
 
+from fnmatch import fnmatch
 from gwpy.timeseries import TimeSeries
 from virgotools.frame_lib import getChannel, FrameFile
 
@@ -37,15 +38,20 @@ class DataReader:
                         f_sample=frame.fsample,
                         gps_time=frame.gps,
                         unit=frame.unit)
-        LOG.info(f"Fetched data from {source}, time elapsed: {time.time() - t0:.1f}s")
+        if verbose:
+            LOG.info(f"Fetched data from {source}, time elapsed: {time.time() - t0:.1f}s")
         return s
 
     @staticmethod
-    def get_available_channels(source, t0):
+    def get_available_channels(source, t0, patterns: list = None):
         LOG.info(f"Fetching available channels from {source}")
         with FrameFile(source) as ffl:
             with ffl.get_frame(t0) as f:
-                return [str(adc.contents.name) for adc in f.iter_adc()]
+                channels = [str(adc.contents.name) for adc in f.iter_adc()]
+                if patterns:
+                    return [c for c in channels if not any(fnmatch(c, p) for p in patterns)]
+                else:
+                    return channels
 
     def load_csv(self, csv_file) -> pd.DataFrame:
         LOG.info(f"Loading {csv_file}")

@@ -12,8 +12,9 @@ class Decimator:
     def __init__(self):
         pass
 
-    def decimate(self, segment: Segment, target_frequency=50, method='mean'):
-        LOG.info(f"Decimating {segment.x.size} data points with target frequency {target_frequency}Hz...")
+    def decimate(self, segment: Segment, target_frequency=50, method='mean', verbose=False):
+        if verbose:
+            LOG.info(f"Decimating {segment.x.size} data points with target frequency {target_frequency}Hz...")
         t0 = time.time()
 
         ds_ratio = segment.f_sample / target_frequency
@@ -27,7 +28,8 @@ class Decimator:
         segment.f_sample = target_frequency
         segment.decimated = True
 
-        LOG.info(f"Decimating complete. Time elapsed: {time.time() - t0:.1f}s")
+        if verbose:
+            LOG.info(f"Decimating complete. Time elapsed: {time.time() - t0:.1f}s")
         return segment
 
     @staticmethod
