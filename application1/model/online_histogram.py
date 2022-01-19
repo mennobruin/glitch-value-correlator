@@ -14,19 +14,27 @@ class Bin:
         return self.p < other.p
 
 
-class Histogram:
+class OnlineHistogram:
 
     def __init__(self, x: np.ndarray, n_bins: int):
         self.x = x
-        self.bins: [Bin] = []
+        self.bins = {}
         self.n_bins = n_bins
+        self.empty_bins = n_bins
 
         self._init_hist()
 
     def _init_hist(self):
-        counts = np.bincount(self.x, minlength=self.n_bins)
-        self.bins = [Bin(p, m) for p, m in counts]
+        """
+        Creates a histogram of B bins with each bin having m points centered around a point p.
+        """
+        for p in self.x:
+            if p in self.bins.keys():
+                self.bins[p] += 1
 
+            else:
+                self.bins[p] = 1
+                
     def __add__(self, other):
         assert other.bins.size == self.n_bins
 
@@ -43,7 +51,7 @@ if __name__ == '__main__':
     b = np.arange(5, 15, 0.01)
 
     n = 100
-    h1 = Histogram(x=a, n_bins=n)
-    h2 = Histogram(x=b, n_bins=n)
+    h1 = OnlineHistogram(x=a, n_bins=n)
+    h2 = OnlineHistogram(x=b, n_bins=n)
 
     h1 += h2

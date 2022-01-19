@@ -3,35 +3,34 @@ implementation of Hist class, a histogram with a fixed number of bins that
 can be merged efficiently
 """
 
-#Copyright (C) Bas Swinkels, 2013
+# Copyright (C) Bas Swinkels, 2013
 #
-#This program is free software: you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation, either version 3 of the License, or
-#(at your option) any later version.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-#This program is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-#You should have received a copy of the GNU General Public License
-#along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import division
 import numpy as np
 
-from .core.config import ConfigurationManager
+from core.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
 
-flintmax = 2**53  # largest consecutive integer in float64
+flintmax = 2 ** 53  # largest consecutive integer in float64
 
 
 def myfloor(x, lg2):
     """floor(x * 2**lg2), as integer"""
-    return np.floor(x * 2.0**lg2).astype(np.int64)  # int32 will overflow
+    return np.floor(x * 2.0 ** lg2).astype(np.int64)  # int32 will overflow
 
 
 def myroll(x, shift):
@@ -58,15 +57,15 @@ class Hist(object):
     """
 
     def __init__(self, x, l2nbin=14, spanlike=None):
-        """calculates histogram of vector x with 2**l2nbin number of bins. If another histogram spanlike is given, its span will be used to avoid
-        useless resizing when merging or comparing later.
+        """calculates histogram of vector x with 2**l2nbin number of bins. If another histogram spanlike is given,
+        its span will be used to avoid useless resizing when merging or comparing later.
         """
 
         self.l2nbin = l2nbin
-        self.nbin = 2**l2nbin
+        self.nbin = 2 ** l2nbin
 
         x = np.asarray(x)
-        assert x.size < 2**32  # counts are uint32, enough for 1 year at 50Hz
+        assert x.size < 2 ** 32  # counts are uint32, enough for 1 year at 50Hz
         assert x.ndim < 2
         self.ntot = x.size
 
@@ -128,7 +127,7 @@ class Hist(object):
 
         self.check()
 
-    #derived properties are always calculated
+    # derived properties are always calculated
     @property
     def isempty(self):
         return self.ntot == 0
@@ -143,17 +142,17 @@ class Hist(object):
 
     @property
     def span(self):
-        return 2.0**self.l2span
+        return 2.0 ** self.l2span
 
     @property
     def offset(self):
-        return self.ioffset * 2.0**(self.l2span - self.l2nbin)
+        return self.ioffset * 2.0 ** (self.l2span - self.l2nbin)
 
     @property
     def xgrid(self):
         """returns grid for plotting"""
         xg = np.arange(self.nbin, dtype=float)
-        xg *= 2.0**(self.l2span - self.l2nbin)
+        xg *= 2.0 ** (self.l2span - self.l2nbin)
         xg += self.offset
         return xg
 
@@ -270,7 +269,7 @@ class Hist(object):
         be either self or other.
         """
 
-        #special case empty histos
+        # special case empty histos
         if other.isempty:
             return self
         if self.isempty:
@@ -342,8 +341,8 @@ class Hist(object):
 
 def plot_hist(h, **kwargs):
     import matplotlib.pyplot as plt
-    plt.bar(h.xgrid, h.counts, width=h.span/h.nbin, **kwargs)
-    plt.xlim([h.offset, h.offset+h.span])
+    plt.bar(h.xgrid, h.counts, width=h.span / h.nbin, **kwargs)
+    plt.xlim([h.offset, h.offset + h.span])
     plt.show()
 
 
@@ -352,7 +351,7 @@ def testme(nrep, size):
     for i in range(nrep):
         n = np.random.randint(1, size)
         m = np.random.randint(n)
-        x = 10**(20*np.random.rand(1) - 10) * np.random.randn(n)
+        x = 10 ** (20 * np.random.rand(1) - 10) * np.random.randn(n)
         h1 = Hist(x[:m], l2nbin=10)
         h2 = Hist(x[m:], l2nbin=10, spanlike=h1)
         plot_hist(h1)

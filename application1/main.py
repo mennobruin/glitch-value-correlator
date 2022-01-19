@@ -15,10 +15,6 @@ def main(source, channel_name, t_start, t_stop):
 
     channel1: Channel = reader.get(channel_name, t_start, t_stop, source=source)
     data1_50hz = decimator.decimate(channel1.x, input_frequency=channel1.dx, target_frequency=50)
-    
-    print(channel1.gps_time)
-    print(channel1.dx)
-    print(len(channel1.x))
 
 
 if __name__ == '__main__':
