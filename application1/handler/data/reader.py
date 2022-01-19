@@ -22,11 +22,21 @@ class DataReader:
         t0 = time.time()
         if connection:
             x = TimeSeries.fetch(channel_name, t_start, t_stop, connection=connection, verbose=verbose)
-            s = Segment(channel=channel_name, x=x, f_sample=None, gps_time=None, unit=None)
+            s = Segment(channel=channel_name,
+                        x=x,
+                        dt=None,
+                        f_sample=None,
+                        gps_time=None,
+                        unit=None)
         else:
             with FrameFile(source) as ffl:
                 frame = ffl.getChannel(channel_name, t_start, t_stop)
-            s = Segment(channel=channel_name, x=frame.data, f_sample=frame.f_sample, gps_time=frame.gps, unit=frame.unit)
+            s = Segment(channel=channel_name,
+                        x=frame.data,
+                        dt=frame.dt,
+                        f_sample=frame.f_sample,
+                        gps_time=frame.gps,
+                        unit=frame.unit)
         LOG.info(f"Fetched data from {source}, time elapsed: {time.time() - t0:.1f}s")
         return s
 

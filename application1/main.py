@@ -14,7 +14,7 @@ def main(source, channel_name, t_start, t_stop):
     # available_channels = reader.get_available_channels(source, t_start)
 
     segment: Segment = reader.get(channel_name, t_start, t_stop, source=source)
-    data1_50hz = decimator.decimate(segment.x, input_frequency=segment.f_sample, target_frequency=50)
+    data1_50hz = decimator.decimate(segment, target_frequency=50)
 
 
 if __name__ == '__main__':
