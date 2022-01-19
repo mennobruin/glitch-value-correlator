@@ -1,7 +1,6 @@
-from fnmatch import fnmatch
+import matplotlib.pyplot as plt
 
 from application1.model import Segment, Hist
-
 from application1.handler.data import Decimator, DataReader
 from core.config import ConfigurationManager
 
@@ -19,7 +18,10 @@ def main(source, channel_name, t_start, t_stop):
     segment: Segment = reader.get(channel_name, t_start, t_stop, source=source)
     segment_50hz: Segment = decimator.decimate(segment, target_frequency=50)
 
-    h = Hist([])
+    h = Hist(segment_50hz)
+    plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
+    plt.xlim([h.offset, h.offset + h.span])
+    plt.show()
 
 
 if __name__ == '__main__':
