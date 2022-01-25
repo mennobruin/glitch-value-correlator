@@ -48,6 +48,7 @@ def construct_histograms(channels, segments, aux_data):
             # for transform in transformations do ...
 
             h_aux = Hist(x_aux, spanlike=h_aux_cum[channel])
+            print(np.nonzero(h_aux.counts).size)
             h_aux_cum += h_aux
 
     return h_aux_cum, h_trig_cum
