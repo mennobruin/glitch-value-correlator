@@ -23,7 +23,7 @@ def main(source, channel_name, t_start, t_stop):
     aux_data = FFLCache(ffl_file=source, f_target=None, gps_start=t_start, gps_end=t_stop)
     h_aux, h_trig = construct_histograms(available_channels, segments=aux_data.segments, aux_data=aux_data)
 
-    h = Hist(segment_50hz)
+    h = Hist(segment_50hz.x)
     plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
     plt.xlim([h.offset, h.offset + h.span])
     plt.show()
