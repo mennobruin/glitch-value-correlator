@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import tqdm
+from tqdm import tqdm
 
 from application1.utils import *
 from application1.model import Segment, Hist, FFLCache
@@ -14,7 +14,7 @@ def main(source, channel_name, t_start, t_stop):
     decimator = Decimator()
 
     bl_patterns = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
-    available_channels = reader.get_available_channels(source, t_start, patterns=bl_patterns)
+    available_channels = reader.get_available_channels(source, t_start, patterns=bl_patterns)[0:20]
     print(len(available_channels))
 
     segment: Segment = reader.get(channel_name, t_start, t_stop, source=source)
