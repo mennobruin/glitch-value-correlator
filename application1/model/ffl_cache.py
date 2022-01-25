@@ -2,11 +2,7 @@ import sys
 import numpy as np
 
 from ligo import segments
-try:
-    from pylal import Fr
-except ImportError:
-    print('Cannot import pylal. Run "source /virgoApp/lalsuite/v6r48p1/Linux-x86_64-CL7/etc/lal-user-env.sh" first.')
-    sys.exit()
+from framel import frgetvect1d
 
 
 class FFLCache:
@@ -42,6 +38,6 @@ class FFLCache:
             i_segment = self.segments.find(seg)
             segment = self.segments[i_segment]
             gwf_file = self.gwf_files[i_segment]
-            block = Fr.frgetvect1d(gwf_file, channel, segment[0], abs(segment))[0].astype(float)
+            block = frgetvect1d(gwf_file, channel, segment[0], abs(segment))[0].astype(float)
             blocks.append(block)
         return np.concatenate(blocks)
