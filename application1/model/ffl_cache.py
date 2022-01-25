@@ -25,7 +25,7 @@ class FFLCache:
         self.lookup = dict(zip(self.segments, self.gwf_files))
 
     def _get_frames(self):
-        frames = np.loadtxt(self.ffl_file, dtype=self.FFL_FORMAT, usecols=self.FFL_COLS)
+        frames = np.loadtxt(self.ffl_file + '.ffl', dtype=self.FFL_FORMAT, usecols=self.FFL_COLS)
         frames = frames.view(dtype=(np.record, frames.dtype), type=np.recarray)
         end_times = frames.gps_start + frames.duration
         return frames[(end_times > self.gps_start) & (frames.gps_start < self.gps_end)]
