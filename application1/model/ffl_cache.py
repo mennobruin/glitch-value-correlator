@@ -1,7 +1,12 @@
+import sys
 import numpy as np
 
 from ligo import segments
-from pylal import Fr
+try:
+    from pylal import Fr
+except ImportError:
+    print('Cannot import pylal. Run "source /virgoApp/lalsuite/v6r48p1/Linux-x86_64-CL7/etc/lal-user-env.sh" first.')
+    sys.exit()
 
 
 class FFLCache:
