@@ -42,4 +42,4 @@ class FFLCache:
                                     t_start=segment[0],
                                     t_stop=segment[1])
             blocks.append(block)
-        return np.concatenate(blocks)
+        return blocks
