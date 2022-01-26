@@ -1,6 +1,7 @@
 import numpy as np
 
 from ligo import segments
+from framel import frgetvect1d
 
 from application1.handler.data.reader import DataReader
 
@@ -36,10 +37,15 @@ class FFLCache:
 
         blocks = []
         for seg in request_segment:
-            segment = self.segments[self.segments.find(seg)]
-            block = self.reader.get(source=self.ffl_file,
-                                    channel_name=channel,
-                                    t_start=segment[0],
-                                    t_stop=segment[1])
+            # segment = self.segments[self.segments.find(seg)]
+            i_segment = self.segments.find(seg)
+            segment = self.segments[i_segment]
+            gwf_file = self.gwf_files[i_segment]
+            block = frgetvect1d(gwf_file, channel, segment[0], abs(segment))[0].astype(float)
+
+            # block = self.reader.get(source=self.ffl_file,
+            #                         channel_name=channel,
+            #                         t_start=segment[0],
+            #                         t_stop=segment[1])
             blocks.append(block)
         return blocks
