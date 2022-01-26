@@ -19,8 +19,9 @@ class DataReader:
 
     @staticmethod
     def get(channel_name, t_start, t_stop, source='raw', connection=None, verbose=False) -> Segment:
-        LOG.info(f"Fetching data from {channel_name}...")
-        t0 = time.time()
+        if verbose:
+            LOG.info(f"Fetching data from {channel_name}...")
+            t0 = time.time()
         if connection:
             x = TimeSeries.fetch(channel_name, t_start, t_stop, connection=connection, verbose=verbose)
             s = Segment(channel=channel_name,
