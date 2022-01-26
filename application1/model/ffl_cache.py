@@ -31,7 +31,7 @@ class FFLCache:
         end_times = frames.gps_start + frames.duration
         return frames[(end_times > self.gps_start) & (frames.gps_start < self.gps_end)]
 
-    def get_data_from_segment(self, request_segment, channel):
+    def get_segment(self, request_segment, channel):
         request_segment = segments.segmentlist([request_segment]) & self.segments
 
         blocks = []
