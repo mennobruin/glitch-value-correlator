@@ -41,9 +41,7 @@ def construct_histograms(channels, segments, aux_data):
 
         LOG.info('Constructing histograms...')
         for channel in tqdm(channels, position=0, leave=True):
-            aux_segments = aux_data.get_segment(request_segment=seg, channel=channel)
-            # x_aux = np.concatenate([s.x for s in aux_segments])
-            x_aux = np.concatenate(aux_segments)
+            x_aux = aux_data.get_data_from_segment(request_segment=seg, channel=channel)
             # todo: handle non-finite values. Either discard channel or replace values.
 
             # todo: apply transformations to the data
