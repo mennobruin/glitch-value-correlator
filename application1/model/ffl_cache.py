@@ -1,8 +1,8 @@
-import sys
 import numpy as np
 
 from ligo import segments
-from framel import frgetvect1d
+
+from application1.handler.data.reader import DataReader
 
 
 class FFLCache:
@@ -16,6 +16,7 @@ class FFLCache:
         self.gps_start = gps_start
         self.gps_end = gps_end
         self.frames = self._get_frames()
+        self.reader = DataReader()
 
         self.gwf_files = [str(f) for f in self.frames.gwf]
         self.segments = segments.segmentlist(
@@ -35,9 +36,10 @@ class FFLCache:
 
         blocks = []
         for seg in request_segment:
-            i_segment = self.segments.find(seg)
-            segment = self.segments[i_segment]
-            gwf_file = self.gwf_files[i_segment]
-            block = frgetvect1d(gwf_file, channel, segment[0], abs(segment))[0].astype(float)
+            segment = self.segments[self.segments.find(seg)]
+            block = self.reader.get(source=self.ffl_file,
+                                    channel_name=channel,
+                                    t_start=segment[0],
+                                    t_stop=segment[1])
             blocks.append(block)
         return np.concatenate(blocks)
