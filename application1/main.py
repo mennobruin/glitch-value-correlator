@@ -4,6 +4,7 @@ from tqdm import tqdm
 from application1.utils import *
 from application1.model import Segment, Hist, FFLCache
 from application1.handler.data import Decimator, DataReader
+from application1.handler.triggers import Omicron
 from core.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
@@ -17,16 +18,19 @@ def main(source, channel_name, t_start, t_stop):
     available_channels = reader.get_available_channels(source, t_start, patterns=bl_patterns)[0:20]
     print(len(available_channels))
 
-    segment: Segment = reader.get(channel_name, t_start, t_stop, source=source)
-    segment_50hz: Segment = decimator.decimate(segment, target_frequency=50)
+    trigger_pipeline = Omicron(channel=available_channels[0])
+    trigger_pipeline.get_segment(gps_start=t_start, gps_end=t_stop)
 
-    aux_data = FFLCache(ffl_file=source, f_target=None, gps_start=t_start, gps_end=t_stop)
-    h_aux, h_trig = construct_histograms(available_channels, segments=aux_data.segments, aux_data=aux_data)
-
-    h = Hist(segment_50hz.x)
-    plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
-    plt.xlim([h.offset, h.offset + h.span])
-    plt.show()
+    # segment: Segment = reader.get(channel_name, t_start, t_stop, source=source)
+    # segment_50hz: Segment = decimator.decimate(segment, target_frequency=50)
+    #
+    # aux_data = FFLCache(ffl_file=source, f_target=None, gps_start=t_start, gps_end=t_stop)
+    # h_aux, h_trig = construct_histograms(available_channels, segments=aux_data.segments, aux_data=aux_data)
+    #
+    # h = Hist(segment_50hz.x)
+    # plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
+    # plt.xlim([h.offset, h.offset + h.span])
+    # plt.show()
 
 
 def construct_histograms(channels, segments, aux_data):
