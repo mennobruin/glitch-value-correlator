@@ -18,7 +18,7 @@ class DataReader:
         self.default_path = str(pathlib.Path(__file__).parents[2].resolve()) + "\\resources\\"
 
     @staticmethod
-    def get(channel_name, t_start, t_stop, source='raw', connection=None, verbose=False) -> Segment:
+    def get_channel(channel_name, t_start, t_stop, source='raw', connection=None, verbose=False) -> Segment:
         if verbose:
             LOG.info(f"Fetching data from {channel_name}...")
             t0 = time.time()
@@ -44,17 +44,22 @@ class DataReader:
         return s
 
     @staticmethod
-    def get_available_channels(source, t0, patterns: list = None):
+    def get_available_channels(source, t0, exclude_patterns: list = None):
         LOG.info(f"Fetching available channels from {source}")
         with FrameFile(source) as ffl:
             with ffl.get_frame(t0) as f:
                 channels = [str(adc.contents.name) for adc in f.iter_adc()]
-                if patterns:
-                    return [c for c in channels if not any(fnmatch(c, p) for p in patterns)]
+                if exclude_patterns:
+                    return [c for c in channels if not any(fnmatch(c, p) for p in exclude_patterns)]
                 else:
                     return channels
 
-    def load_csv(self, csv_file) -> pd.DataFrame:
+    def load_csv(self, csv_file, usecols=None) -> pd.DataFrame:
+        root, ext = os.path.splitext(csv_file)
+        if not ext:
+            ext = '.csv'
+        csv_file = root + ext
+
         LOG.info(f"Loading {csv_file}")
         if not os.path.isfile(csv_file):
             csv_file = self.default_path + 'csv\\' + csv_file
@@ -63,4 +68,4 @@ class DataReader:
                 raise FileNotFoundError
 
         with open(csv_file, 'r') as f:
-            return pd.read_csv(f)
+            return pd.read_csv(f, usecols)

@@ -4,7 +4,7 @@ from tqdm import tqdm
 from application1.utils import *
 from application1.model import Segment, Hist, FFLCache
 from application1.handler.data import Decimator, DataReader
-from application1.handler.triggers import Omicron
+from application1.handler.triggers import Omicron, DefaultPipeline
 from core.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
@@ -14,11 +14,12 @@ def main(source, channel_name, t_start, t_stop):
     reader = DataReader()
     decimator = Decimator()
 
-    bl_patterns = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
-    available_channels = reader.get_available_channels(source, t_start, patterns=bl_patterns)[0:20]
+    exclude_patterns = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
+    available_channels = reader.get_available_channels(source, t_start, exclude_patterns=exclude_patterns)[0:20]
     print(len(available_channels))
 
-    trigger_pipeline = Omicron(channel=available_channels[0])
+    # trigger_pipeline = Omicron(channel=available_channels[0])
+    trigger_pipeline = DefaultPipeline(trigger_file='gspy_O3b_c090_blip')
     trigger_pipeline.get_segment(gps_start=t_start, gps_end=t_stop)
 
     # segment: Segment = reader.get(channel_name, t_start, t_stop, source=source)
