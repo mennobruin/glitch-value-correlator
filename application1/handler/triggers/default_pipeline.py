@@ -18,6 +18,6 @@ class DefaultPipeline:
         sorted_triggers = DataReader().load_csv(path_to_csv, usecols=[self.GPS_TIME]).sort_values(self.GPS_TIME)
         return sorted_triggers.values.flatten()
 
-    def get_segment(self, gps_start, gps_end):
+    def get_segment(self, gps_start, gps_end) -> np.ndarray:
         i_start, i_end = np.searchsorted(self.triggers, (gps_start, gps_end))
         return self.triggers[i_start:i_end]
