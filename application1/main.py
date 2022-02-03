@@ -5,6 +5,7 @@ import sys
 
 from application1.utils import *
 from application1.model import Segment, Hist, FFLCache
+from application1.model.fom import KolgomorovSmirnov
 from application1.handler.data import Decimator, DataReader
 from application1.handler.triggers import Omicron, DefaultPipeline
 from core.config import ConfigurationManager
@@ -43,13 +44,23 @@ class Excavator:
         # segment_50hz: Segment = decimator.decimate(segment, target_frequency=50)
         #
         aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=self.t_stop)
-        h_aux, h_trig = self.construct_histograms(channels=self.available_channels,
+        h_aux_cum, h_trig_cum = self.construct_histograms(channels=self.available_channels,
                                                   aux_data=aux_data,
                                                   segments=aux_data.segments,
                                                   triggers=triggers)
 
-        print(h_aux)
-        print(h_trig)
+        print(h_aux_cum)
+        print(h_trig_cum)
+
+        fom_ks = KolgomorovSmirnov()
+        for channel in self.available_channels:
+            h_aux = h_aux_cum[channel]
+            h_trig = h_trig_cum[channel]
+            h_aux.align(h_trig)
+
+            fom_ks.calculate(channel, h_aux=h_aux, h_trig=h_trig)
+
+        print(sorted(fom_ks.scores, key=fom_ks.scores.get, reverse=True))
 
         # h = Hist(segment_50hz.x)
         # plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
