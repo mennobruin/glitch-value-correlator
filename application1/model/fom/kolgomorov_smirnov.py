@@ -10,4 +10,7 @@ class KolgomorovSmirnov(BaseFOM):
         self.scores = {}
 
     def calculate(self, channel, h_aux, h_trig):
-        self.scores[channel] = np.amax(np.abs(h_aux.cdf - h_trig.cdf))
+        try:
+            self.scores[channel] = np.amax(np.abs(h_aux.cdf - h_trig.cdf))
+        except AssertionError:
+            self.scores[channel] = 0
