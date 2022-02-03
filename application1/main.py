@@ -10,57 +10,82 @@ from core.config import ConfigurationManager
 LOG = ConfigurationManager.get_logger(__name__)
 
 
-def main(source, channel_name, t_start, t_stop):
-    reader = DataReader()
-    decimator = Decimator()
+class Excavator:
+    EXCLUDE_PATTERNS = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
 
-    exclude_patterns = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
-    available_channels = reader.get_available_channels(source, t_start, exclude_patterns=exclude_patterns)[0:20]
-    print(len(available_channels))
+    def __init__(self, source, channel_name, t_start, t_stop, f_target=50, channel_bl_patterns=None):
+        self.source = source
+        self.channel_name = channel_name
+        self.t_start = t_start
+        self.t_stop = t_stop
+        self.f_target = f_target
 
-    # trigger_pipeline = Omicron(channel=available_channels[0])
-    trigger_pipeline = DefaultPipeline(trigger_file='gspy_O3b_c090_blip')
-    trigger_pipeline.get_segment(gps_start=t_start, gps_end=t_stop)
+        self.reader = DataReader()
+        self.decimator = Decimator()
 
-    # segment: Segment = reader.get(channel_name, t_start, t_stop, source=source)
-    # segment_50hz: Segment = decimator.decimate(segment, target_frequency=50)
-    #
-    # aux_data = FFLCache(ffl_file=source, f_target=None, gps_start=t_start, gps_end=t_stop)
-    # h_aux, h_trig = construct_histograms(available_channels, segments=aux_data.segments, aux_data=aux_data)
-    #
-    # h = Hist(segment_50hz.x)
-    # plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
-    # plt.xlim([h.offset, h.offset + h.span])
-    # plt.show()
+        bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
+        self.available_channels = self.reader.get_available_channels(source, t_start, exclude_patterns=bl_patterns)[0:20]
 
+    def run(self, n_iter):
 
-def construct_histograms(channels, segments, aux_data):
-    h_aux_cum = dict((c, Hist([])) for c in channels)
-    h_trig_cum = dict((c, Hist([])) for c in channels)
+        print(len(self.available_channels))
 
-    for i, seg, gap in iter_segments(segments):
-        if gap:
-            pass  # todo: when transformations are implemented -> reset
+        # trigger_pipeline = Omicron(channel=available_channels[0])
+        trigger_pipeline = DefaultPipeline(trigger_file='gspy_O3b_c090_blip')
+        triggers = trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
 
-        # todo: access Omicron pipeline for triggers
+        # segment: Segment = reader.get(channel_name, t_start, t_stop, source=source)
+        # segment_50hz: Segment = decimator.decimate(segment, target_frequency=50)
+        #
+        aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=t_stop)
+        h_aux, h_trig = self.construct_histograms(channels=self.available_channels,
+                                                  aux_data=aux_data,
+                                                  segments=aux_data.segments,
+                                                  triggers=triggers)
+        #
+        # h = Hist(segment_50hz.x)
+        # plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
+        # plt.xlim([h.offset, h.offset + h.span])
+        # plt.show()
 
-        LOG.info('Constructing histograms...')
-        for channel in tqdm(channels, position=0, leave=True):
-            x_aux = aux_data.get_data_from_segment(request_segment=seg, channel=channel)
-            # todo: handle non-finite values. Either discard channel or replace values.
+    def construct_histograms(self, channels, aux_data, segments, triggers):
+        h_aux_cum = dict((c, Hist([])) for c in channels)
+        h_trig_cum = dict((c, Hist([])) for c in channels)
 
-            # todo: apply transformations to the data
-            # for transform in transformations do ...
+        cum_aux_veto = [np.zeros(int(round(abs(segment) * self.f_target)), dtype=bool) for segment in segments]
+        cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in segments]
 
-            h_aux = Hist(x_aux, spanlike=h_aux_cum[channel])
-            print(np.nonzero(h_aux.counts).size)
-            h_aux_cum += h_aux
+        for i, seg, gap in iter_segments(segments):
+            gps_start, gps_end = seg
+            if gap:
+                pass  # todo: when transformations are implemented -> reset
 
-    return h_aux_cum, h_trig_cum
+            seg_triggers = triggers[count_triggers_in_segment(triggers, gps_start, gps_end)]
+            i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
+
+            LOG.info('Constructing histograms...')
+            for channel in tqdm(channels, position=0, leave=True):
+                x_aux = aux_data.get_data_from_segment(request_segment=seg, channel=channel)
+                x_trig = x_aux[i_trigger]
+                # todo: handle non-finite values. Either discard channel or replace values.
+
+                # todo: apply transformations to the data
+                # for transform in transformations do ...
+                x_aux_veto = x_aux[~cum_aux_veto[i]]
+                x_trig_veto = x_trig[~cum_trig_veto[i]]
+
+                h_aux = Hist(x_aux_veto, spanlike=h_aux_cum[channel])
+                h_trig = Hist(x_trig_veto, spanlike=h_aux)
+                print(np.nonzero(h_aux.counts).size)
+                h_aux_cum += h_aux
+                h_trig_cum += h_trig
+
+        return h_aux_cum, h_trig_cum
 
 
 if __name__ == '__main__':
-    main(source='/virgoData/ffl/raw_O3b_arch',
-         channel_name='V1:Hrec_hoft_2_200Hz',
-         t_start=1262228600,
-         t_stop=1262228700)
+    excavator = Excavator(source='/virgoData/ffl/raw_O3b_arch',
+                          channel_name='V1:Hrec_hoft_2_200Hz',
+                          t_start=1262228600,
+                          t_stop=1262228700)
+    excavator.run()
