@@ -64,7 +64,7 @@ class DataReader:
         if not os.path.isfile(csv_file):
             csv_file = self.default_path + 'csv/' + csv_file
             if not os.path.isfile(csv_file):
-                LOG.error(f"Unable to load csv_file: {csv_file}. Check if the file exists.")
+                LOG.error(f"Unable to load csv_file: {csv_file}, check if the file exists.")
                 raise FileNotFoundError
 
-        return pd.read_csv(csv_file, usecols)
+        return pd.read_csv(csv_file, usecols=usecols)
