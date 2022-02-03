@@ -56,7 +56,7 @@ class Excavator:
         # plt.xlim([h.offset, h.offset + h.span])
         # plt.show()
 
-    def construct_histograms(self, channels, aux_data, segments, triggers) -> Hist:
+    def construct_histograms(self, channels, aux_data, segments, triggers) -> ({[str, Hist]}):
         h_aux_cum = dict((c, Hist([])) for c in channels)
         h_trig_cum = dict((c, Hist([])) for c in channels)
 
@@ -96,6 +96,6 @@ class Excavator:
 if __name__ == '__main__':
     excavator = Excavator(source='/virgoData/ffl/raw_O3b_arch',
                           channel_name='V1:Hrec_hoft_2_200Hz',
-                          t_start=1262220000,
-                          t_stop=1262230000)
+                          t_start=1262230000,
+                          t_stop=1262240000)
     excavator.run(n_iter=1)
