@@ -48,8 +48,9 @@ class Excavator:
                                                   segments=aux_data.segments,
                                                   triggers=triggers)
 
-        print(next(iter(h_aux.items())).counts)
-        print(next(iter(h_trig.items())).counts)
+        print("---------- DONE ---------")
+        print(next(iter(h_aux.items())))
+        print(next(iter(h_trig.items())))
 
         # h = Hist(segment_50hz.x)
         # plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
@@ -66,13 +67,13 @@ class Excavator:
 
         for i, seg, gap in iter_segments(segments):
             gps_start, gps_end = seg
-            print(gps_start, gps_end)
             if gap:
                 pass  # todo: when transformations are implemented -> reset
 
             print(count_triggers_in_segment(triggers, gps_start, gps_end))
             if count_triggers_in_segment(triggers, gps_start, gps_end) == 0:
                 continue
+            print(gps_start, gps_end)
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
             i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
             print("triggers in segment:", seg_triggers)
@@ -90,7 +91,8 @@ class Excavator:
 
                 h_aux = Hist(x_aux_veto, spanlike=h_aux_cum[channel])
                 h_trig = Hist(x_trig_veto, spanlike=h_aux)
-                print(np.nonzero(h_aux.counts).size)
+                print(h_aux)
+                print(h_trig)
                 h_aux_cum += h_aux
                 h_trig_cum += h_trig
 
