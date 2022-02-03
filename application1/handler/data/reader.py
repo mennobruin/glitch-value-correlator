@@ -67,5 +67,4 @@ class DataReader:
                 LOG.error(f"Unable to load csv_file: {csv_file}. Check if the file exists.")
                 raise FileNotFoundError
 
-        with open(csv_file, 'r') as f:
-            return pd.read_csv(f, usecols)
+        return pd.read_csv(csv_file, usecols)
