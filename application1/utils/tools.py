@@ -17,6 +17,10 @@ def iter_segments(subsegs):
         ge_prev = ge
 
 
+def slice_triggers_in_segment(triggers, gps_start, gps_end):
+    return slice(*np.searchsorted(triggers, (gps_start, gps_end)))
+
+
 def count_triggers_in_segment(triggers, gps_start, gps_end):
     i_start, i_end = np.searchsorted(triggers, (gps_start, gps_end))
     return i_end - i_start

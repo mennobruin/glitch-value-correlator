@@ -68,9 +68,9 @@ class Excavator:
             if gap:
                 pass  # todo: when transformations are implemented -> reset
 
-            print(triggers[0:10])
-            print(count_triggers_in_segment(triggers, gps_start, gps_end))
-            seg_triggers = triggers[count_triggers_in_segment(triggers, gps_start, gps_end)]
+            if count_triggers_in_segment(triggers, gps_start, gps_end) == 0:
+                continue
+            seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
             i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
 
             LOG.info('Constructing histograms...')
