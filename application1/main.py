@@ -38,7 +38,7 @@ class Excavator:
         # segment: Segment = reader.get(channel_name, t_start, t_stop, source=source)
         # segment_50hz: Segment = decimator.decimate(segment, target_frequency=50)
         #
-        aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=t_stop)
+        aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=self.t_stop)
         h_aux, h_trig = self.construct_histograms(channels=self.available_channels,
                                                   aux_data=aux_data,
                                                   segments=aux_data.segments,
@@ -92,4 +92,4 @@ if __name__ == '__main__':
                           channel_name='V1:Hrec_hoft_2_200Hz',
                           t_start=1262228600,
                           t_stop=1262228700)
-    excavator.run()
+    excavator.run(n_iter=1)
