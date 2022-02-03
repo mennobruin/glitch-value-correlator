@@ -60,7 +60,8 @@ class Excavator:
 
             fom_ks.calculate(channel, h_aux=h_aux, h_trig=h_trig)
 
-        print(sorted(fom_ks.scores, key=fom_ks.scores.get, reverse=True))
+        for k, v in sorted(fom_ks.scores, reverse=True):
+            print(k, v)
 
         # h = Hist(segment_50hz.x)
         # plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
