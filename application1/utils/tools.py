@@ -1,3 +1,5 @@
+import numpy as np
+
 from core.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
@@ -13,3 +15,8 @@ def iter_segments(subsegs):
             gap = True
         yield i, segment, gap
         ge_prev = ge
+
+
+def count_triggers_in_segment(triggers, gps_start, gps_end):
+    i_start, i_end = np.searchsorted(triggers, (gps_start, gps_end))
+    return i_end - i_start
