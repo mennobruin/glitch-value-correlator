@@ -56,7 +56,7 @@ class Excavator:
         # plt.xlim([h.offset, h.offset + h.span])
         # plt.show()
 
-    def construct_histograms(self, channels, aux_data, segments, triggers) -> ({[str, Hist]}):
+    def construct_histograms(self, channels, aux_data, segments, triggers) -> ({str, Hist}):
         h_aux_cum = dict((c, Hist([])) for c in channels)
         h_trig_cum = dict((c, Hist([])) for c in channels)
 
