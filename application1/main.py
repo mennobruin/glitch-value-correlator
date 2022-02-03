@@ -35,7 +35,7 @@ class Excavator:
         # trigger_pipeline = Omicron(channel=available_channels[0])
         trigger_pipeline = DefaultPipeline(trigger_file='gspy_O3b_c090_blip')
         triggers = trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
-        if not triggers:
+        if triggers.size == 0:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
 
