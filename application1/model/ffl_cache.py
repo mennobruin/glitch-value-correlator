@@ -42,4 +42,4 @@ class FFLCache:
             gwf_file = self.gwf_files[i_segment]
             block = frgetvect1d(gwf_file, channel, segment[0], abs(segment))[0].astype(float)
             blocks.append(block)
-        return blocks
+        return np.concatenate(blocks)
