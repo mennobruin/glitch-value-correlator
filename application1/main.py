@@ -93,8 +93,8 @@ class Excavator:
                 h_trig = Hist(x_trig_veto, spanlike=h_aux)
                 print(h_aux)
                 print(h_trig)
-                h_aux_cum += h_aux
-                h_trig_cum += h_trig
+                h_aux_cum[channel] += h_aux
+                h_trig_cum[channel] += h_trig
 
         return h_aux_cum, h_trig_cum
 
