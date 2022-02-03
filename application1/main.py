@@ -15,7 +15,7 @@ LOG = ConfigurationManager.get_logger(__name__)
 class Excavator:
     EXCLUDE_PATTERNS = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
 
-    def __init__(self, source, channel_name, t_start, t_stop, f_target=50, channel_bl_patterns=None):
+    def __init__(self, source, channel_name, t_start, t_stop, f_target=1, channel_bl_patterns=None):
         self.source = source
         self.channel_name = channel_name
         self.t_start = t_start
