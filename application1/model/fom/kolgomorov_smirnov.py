@@ -7,7 +7,7 @@ class KolgomorovSmirnov(BaseFOM):
 
     def __init__(self):
         super(KolgomorovSmirnov, self).__init__()
+        self.scores = {}
 
-    @staticmethod
-    def calculate(h_aux, h_trig):
-        return np.amax(np.abs(h_aux.cdf - h_trig.cdf))
+    def calculate(self, channel, h_aux, h_trig):
+        self.scores[channel] = np.amax(np.abs(h_aux.cdf - h_trig.cdf))
