@@ -42,13 +42,16 @@ class Excavator:
                                                   aux_data=aux_data,
                                                   segments=aux_data.segments,
                                                   triggers=triggers)
-        #
+
+        print(next(iter(h_aux.items())).counts)
+        print(next(iter(h_trig.items())).counts)
+
         # h = Hist(segment_50hz.x)
         # plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
         # plt.xlim([h.offset, h.offset + h.span])
         # plt.show()
 
-    def construct_histograms(self, channels, aux_data, segments, triggers):
+    def construct_histograms(self, channels, aux_data, segments, triggers) -> Hist:
         h_aux_cum = dict((c, Hist([])) for c in channels)
         h_trig_cum = dict((c, Hist([])) for c in channels)
 
