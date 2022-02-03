@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
+import sys
 
 from application1.utils import *
 from application1.model import Segment, Hist, FFLCache
@@ -34,6 +35,9 @@ class Excavator:
         # trigger_pipeline = Omicron(channel=available_channels[0])
         trigger_pipeline = DefaultPipeline(trigger_file='gspy_O3b_c090_blip')
         triggers = trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
+        if not triggers:
+            LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
+            sys.exit(1)
 
         # segment: Segment = reader.get(channel_name, t_start, t_stop, source=source)
         # segment_50hz: Segment = decimator.decimate(segment, target_frequency=50)
@@ -92,6 +96,6 @@ class Excavator:
 if __name__ == '__main__':
     excavator = Excavator(source='/virgoData/ffl/raw_O3b_arch',
                           channel_name='V1:Hrec_hoft_2_200Hz',
-                          t_start=1262228600,
-                          t_stop=1262228700)
+                          t_start=1260210000,
+                          t_stop=1260220000)
     excavator.run(n_iter=1)
