@@ -63,6 +63,7 @@ class Excavator:
         cum_aux_veto = [np.zeros(int(round(abs(segment) * self.f_target)), dtype=bool) for segment in segments]
         cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in segments]
 
+        LOG.info('Constructing histograms...')
         for i, seg, gap in iter_segments(segments):
             gps_start, gps_end = seg
             if gap:
@@ -73,7 +74,6 @@ class Excavator:
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
             i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
 
-            LOG.info('Constructing histograms...')
             for channel in tqdm(channels, position=0, leave=True):
                 x_aux = aux_data.get_data_from_segment(request_segment=seg, channel=channel)
                 x_trig = x_aux[i_trigger]
