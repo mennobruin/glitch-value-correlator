@@ -1,5 +1,4 @@
 import pandas as pd
-import pathlib
 import os
 import time
 
@@ -9,13 +8,15 @@ from virgotools.frame_lib import getChannel, FrameFile
 
 from core.config.configuration_manager import ConfigurationManager
 from application1.model.segment import Segment
+from application1.utils import get_resource_path
 
 LOG = ConfigurationManager.get_logger(__name__)
 
 
 class DataReader:
+
     def __init__(self):
-        self.default_path = str(pathlib.Path(__file__).parents[2].resolve()) + "/resources/"
+        self.default_path = get_resource_path(depth=2)
 
     @staticmethod
     def get_channel(channel_name, t_start, t_stop, source='raw', connection=None, verbose=False) -> Segment:

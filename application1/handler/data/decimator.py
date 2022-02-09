@@ -3,6 +3,7 @@ import numpy as np
 
 from core.config.configuration_manager import ConfigurationManager
 from application1.model.segment import Segment
+from application1.utils import get_resource_path
 
 LOG = ConfigurationManager.get_logger(__name__)
 
@@ -13,6 +14,7 @@ class Decimator:
         self.f_target = f_target
         self.method = method
         self.verbose = verbose
+        self.default_path = get_resource_path(depth=2)
 
     def decimate(self, segment: Segment):
         if self.verbose:
