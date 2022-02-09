@@ -10,16 +10,18 @@ LOG = ConfigurationManager.get_logger(__name__)
 
 class Decimator:
 
+    FILE_NAME = 'excavator_f{f_target}_gs{gps_start}_ge{gps_end}'
+
     def __init__(self, f_target=50, method='mean', verbose=False):
         self.f_target = f_target
         self.method = method
         self.verbose = verbose
         self.default_path = get_resource_path(depth=2)
 
-    def decimate(self, segment: Segment):
+    def decimate(self, segment: Segment, store=False):
         if self.verbose:
             LOG.info(f"Decimating {segment.x.size} data points with target frequency {self.f_target}Hz...")
-        t0 = time.time()
+            t0 = time.time()
 
         ds_ratio = segment.f_sample / self.f_target
 
@@ -34,7 +36,13 @@ class Decimator:
 
         if self.verbose:
             LOG.info(f"Decimating complete. Time elapsed: {time.time() - t0:.1f}s")
-        return segment
+
+        if store:
+            file_path = self.default_path + self.FILE_NAME.format(f_target=self.f_target, gps_start=segment.gps_time)
+            with open(file_path, 'wb') as f:
+                pass
+        else:
+            return segment
 
     @staticmethod
     def _n_sample_average(x: np.array, n):
