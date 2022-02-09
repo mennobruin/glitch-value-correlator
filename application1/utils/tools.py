@@ -1,4 +1,5 @@
 import numpy as np
+import pathlib
 
 from core.config import ConfigurationManager
 
@@ -24,3 +25,7 @@ def slice_triggers_in_segment(triggers, gps_start, gps_end):
 def count_triggers_in_segment(triggers, gps_start, gps_end):
     i_start, i_end = np.searchsorted(triggers, (gps_start, gps_end))
     return i_end - i_start
+
+
+def get_resource_path(depth: int):
+    return str(pathlib.Path(__file__).parents[depth].resolve()) + "/resources/"
