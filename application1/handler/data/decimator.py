@@ -9,26 +9,28 @@ LOG = ConfigurationManager.get_logger(__name__)
 
 class Decimator:
 
-    def __init__(self):
-        pass
+    def __init__(self, f_target=50, method='mean', verbose=False):
+        self.f_target = f_target
+        self.method = method
+        self.verbose = verbose
 
-    def decimate(self, segment: Segment, target_frequency=50, method='mean', verbose=False):
-        if verbose:
-            LOG.info(f"Decimating {segment.x.size} data points with target frequency {target_frequency}Hz...")
+    def decimate(self, segment: Segment):
+        if self.verbose:
+            LOG.info(f"Decimating {segment.x.size} data points with target frequency {self.f_target}Hz...")
         t0 = time.time()
 
-        ds_ratio = segment.f_sample / target_frequency
+        ds_ratio = segment.f_sample / self.f_target
 
         if not ds_ratio.is_integer():
-            LOG.warning(f"Size of input data {segment.x.size} is not integer divisible by target frequency {target_frequency}.")
+            LOG.warning(f"Size of input data {segment.x.size} is not integer divisible by target frequency {self.f_target}.")
         ds_ratio = int(ds_ratio)
 
-        if method == 'mean':
+        if self.method == 'mean':
             segment.x = self._n_sample_average(segment.x, ds_ratio)
-        segment.f_sample = target_frequency
+        segment.f_sample = self.f_target
         segment.decimated = True
 
-        if verbose:
+        if self.verbose:
             LOG.info(f"Decimating complete. Time elapsed: {time.time() - t0:.1f}s")
         return segment
 
