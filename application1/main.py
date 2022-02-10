@@ -15,7 +15,7 @@ LOG = ConfigurationManager.get_logger(__name__)
 
 class Excavator:
     EXCLUDE_PATTERNS = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
-    FILE_TEMPLATE = 'excavator_f{f_target}_gs{gps_start}_ge{gps_end}'
+    FILE_TEMPLATE = 'excavator_f{f_target}_gs{t_start}_ge{t_stop}'
 
     def __init__(self, source, channel_name, t_start, t_stop, f_target=1, channel_bl_patterns=None):
         self.source = source
@@ -79,12 +79,18 @@ class Excavator:
         segments = aux_data.segments
 
         for segment in tqdm(segments):
-            ds_data = np.zeros((self.n_channels, int(len(segments) * f_target)))
+            gps_start, gps_end = segment
+            ds_data = np.zeros((self.n_channels, int((gps_end - gps_start) * f_target)))
             for i, channel in enumerate(self.available_channels):
-                channel_segment = self.reader.get_channel(channel, *segment, source=self.source)
+                channel_segment = self.reader.get_channel(channel_name=channel,
+                                                          t_start=gps_start,
+                                                          t_stop=gps_end,
+                                                          source=self.source)
                 ds_segment = decimator.decimate(segment=channel_segment)
                 ds_data[i, :] = ds_segment.data
-            file_path = self.ds_data_path + self.FILE_TEMPLATE.format(self.f_target, *segment)
+            file_path = self.ds_data_path + self.FILE_TEMPLATE.format(f_target=self.f_target,
+                                                                      t_start=gps_start,
+                                                                      t_stop=gps_end)
             np.save(file_path, ds_data)
 
     def construct_histograms(self, channels, aux_data, segments, triggers) -> ({str, Hist}):
