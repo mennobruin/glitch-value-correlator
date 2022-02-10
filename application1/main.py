@@ -81,15 +81,10 @@ class Excavator:
         for segment in tqdm(segments):
             ds_data = np.zeros((self.n_channels, int(len(segments) * f_target)))
             for i, channel in enumerate(self.available_channels):
-                channel_segment = self.reader.get_channel(channel_name=channel,
-                                                          t_start=segment.gps_start,
-                                                          t_stop=segment.gps_end,
-                                                          source=self.source)
+                channel_segment = self.reader.get_channel(channel, *segment, source=self.source)
                 ds_segment = decimator.decimate(segment=channel_segment)
                 ds_data[i, :] = ds_segment
-            file_path = self.ds_data_path + self.FILE_TEMPLATE.format(f_target=self.f_target,
-                                                                      gps_start=segment.gps_start,
-                                                                      gps_end=segment.gps_end)
+            file_path = self.ds_data_path + self.FILE_TEMPLATE.format(self.f_target, *segment)
             np.save(file_path, ds_data)
 
     def construct_histograms(self, channels, aux_data, segments, triggers) -> ({str, Hist}):
