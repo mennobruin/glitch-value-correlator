@@ -25,14 +25,14 @@ class DataReader:
             t0 = time.time()
         if connection:
             x = TimeSeries.fetch(channel_name, t_start, t_stop, connection=connection, verbose=verbose)
+            s = ChannelSegment(channel=channel_name,
+                               data=x,
+                               f_sample=None,
+                               gps_time=None,
+                               duration=None,
+                               unit=None)
         else:
             with FrameFile(source) as ffl:
-                s = ChannelSegment(channel=channel_name,
-                                   data=x,
-                                   f_sample=None,
-                                   gps_time=None,
-                                   duration=None,
-                                   unit=None)
                 frame = ffl.getChannel(channel_name, t_start, t_stop)
             s = ChannelSegment(channel=channel_name,
                                data=frame.data,
