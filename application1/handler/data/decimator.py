@@ -9,7 +9,7 @@ LOG = ConfigurationManager.get_logger(__name__)
 
 class Decimator:
 
-    def __init__(self, f_target=50, method='mean', verbose=False):
+    def __init__(self, f_target, method='mean', verbose=False):
         self.f_target = f_target
         self.method = method
         self.verbose = verbose

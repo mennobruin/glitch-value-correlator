@@ -49,9 +49,9 @@ class Excavator:
         #
         aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=self.t_stop)
         h_aux_cum, h_trig_cum = self.construct_histograms(channels=self.available_channels,
-                                                  aux_data=aux_data,
-                                                  segments=aux_data.segments,
-                                                  triggers=triggers)
+                                                          aux_data=aux_data,
+                                                          segments=aux_data.segments,
+                                                          triggers=triggers)
 
         print(h_aux_cum)
         print(h_trig_cum)
@@ -72,7 +72,7 @@ class Excavator:
         # plt.xlim([h.offset, h.offset + h.span])
         # plt.show()
 
-    def decimate_data(self, f_target):
+    def decimate_data(self, f_target=50):
         decimator = Decimator(f_target=f_target)
 
         aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=self.t_stop)
@@ -133,4 +133,5 @@ if __name__ == '__main__':
                           channel_name='V1:Hrec_hoft_2_200Hz',
                           t_start=1262230000,
                           t_stop=1262240000)
-    excavator.run(n_iter=1)
+    # excavator.run(n_iter=1)
+    excavator.decimate_data()
