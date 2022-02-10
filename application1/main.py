@@ -4,7 +4,7 @@ from tqdm import tqdm
 import sys
 
 from application1.utils import *
-from application1.model import Segment, Hist, FFLCache
+from application1.model import ChannelSegment, Hist, FFLCache
 from application1.model.fom import KolgomorovSmirnov
 from application1.handler.data import Decimator, DataReader
 from application1.handler.triggers import Omicron, DefaultPipeline
@@ -24,7 +24,6 @@ class Excavator:
         self.f_target = f_target
 
         self.reader = DataReader()
-        self.decimator = Decimator()
 
         bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
         self.available_channels = self.reader.get_available_channels(source, t_start, exclude_patterns=bl_patterns)[0:20]
@@ -67,6 +66,10 @@ class Excavator:
         # plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
         # plt.xlim([h.offset, h.offset + h.span])
         # plt.show()
+
+    def decimate_data(self):
+        decimator = Decimator()
+
 
     def construct_histograms(self, channels, aux_data, segments, triggers) -> ({str, Hist}):
         h_aux_cum = dict((c, Hist([])) for c in channels)

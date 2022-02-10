@@ -2,7 +2,7 @@ import time
 import numpy as np
 
 from core.config.configuration_manager import ConfigurationManager
-from application1.model.segment import Segment
+from application1.model.channel_segment import ChannelSegment
 from application1.utils import get_resource_path
 
 LOG = ConfigurationManager.get_logger(__name__)
@@ -18,7 +18,7 @@ class Decimator:
         self.verbose = verbose
         self.default_path = get_resource_path(depth=2)
 
-    def decimate(self, segment: Segment, store=False):
+    def decimate(self, segment: ChannelSegment, store=False):
         if self.verbose:
             LOG.info(f"Decimating {segment.x.size} data points with target frequency {self.f_target}Hz...")
             t0 = time.time()
@@ -38,7 +38,9 @@ class Decimator:
             LOG.info(f"Decimating complete. Time elapsed: {time.time() - t0:.1f}s")
 
         if store:
-            file_path = self.default_path + self.FILE_NAME.format(f_target=self.f_target, gps_start=segment.gps_time)
+            file_path = self.default_path + self.FILE_NAME.format(f_target=self.f_target,
+                                                                  gps_start=segment.gps_start,
+                                                                  gps_end=segment.gps_end)
             with open(file_path, 'wb') as f:
                 pass
         else:

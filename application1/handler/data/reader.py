@@ -7,7 +7,7 @@ from gwpy.timeseries import TimeSeries
 from virgotools.frame_lib import getChannel, FrameFile
 
 from core.config.configuration_manager import ConfigurationManager
-from application1.model.segment import Segment
+from application1.model.channel_segment import ChannelSegment
 from application1.utils import get_resource_path
 
 LOG = ConfigurationManager.get_logger(__name__)
@@ -19,7 +19,7 @@ class DataReader:
         self.default_path = get_resource_path(depth=2)
 
     @staticmethod
-    def get_channel(channel_name, t_start, t_stop, source='raw', connection=None, verbose=False) -> Segment:
+    def get_channel(channel_name, t_start, t_stop, source='raw', connection=None, verbose=False) -> ChannelSegment:
         if verbose:
             LOG.info(f"Fetching data from {channel_name}...")
             t0 = time.time()
@@ -27,19 +27,19 @@ class DataReader:
             x = TimeSeries.fetch(channel_name, t_start, t_stop, connection=connection, verbose=verbose)
         else:
             with FrameFile(source) as ffl:
-                s = Segment(channel=channel_name,
-                            x=x,
-                            f_sample=None,
-                            gps_time=None,
-                            duration=None,
-                            unit=None)
+                s = ChannelSegment(channel=channel_name,
+                                   x=x,
+                                   f_sample=None,
+                                   gps_time=None,
+                                   duration=None,
+                                   unit=None)
                 frame = ffl.getChannel(channel_name, t_start, t_stop)
-            s = Segment(channel=channel_name,
-                        x=frame.data,
-                        f_sample=frame.fsample,
-                        gps_time=frame.gps,
-                        duration=frame.dt,
-                        unit=frame.unit)
+            s = ChannelSegment(channel=channel_name,
+                               x=frame.data,
+                               f_sample=frame.fsample,
+                               gps_time=frame.gps,
+                               duration=frame.dt,
+                               unit=frame.unit)
         if verbose:
             LOG.info(f"Fetched data from {source}, time elapsed: {time.time() - t0:.1f}s")
         return s
