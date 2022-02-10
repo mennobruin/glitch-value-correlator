@@ -3,48 +3,39 @@ import numpy as np
 
 from core.config.configuration_manager import ConfigurationManager
 from application1.model.channel_segment import ChannelSegment
-from application1.utils import get_resource_path
 
 LOG = ConfigurationManager.get_logger(__name__)
 
 
 class Decimator:
 
-    FILE_NAME = 'excavator_f{f_target}_gs{gps_start}_ge{gps_end}'
-
     def __init__(self, f_target=50, method='mean', verbose=False):
         self.f_target = f_target
         self.method = method
         self.verbose = verbose
-        self.default_path = get_resource_path(depth=2)
 
-    def decimate(self, segment: ChannelSegment, store=False):
+    def decimate(self, segment: ChannelSegment):
         if self.verbose:
-            LOG.info(f"Decimating {segment.x.size} data points with target frequency {self.f_target}Hz...")
+            LOG.info(f"Decimating {segment.data.size} data points with target frequency {self.f_target}Hz...")
             t0 = time.time()
+        if self.f_target > segment.f_sample:
+            return segment
 
         ds_ratio = segment.f_sample / self.f_target
 
         if not ds_ratio.is_integer():
-            LOG.warning(f"Size of input data {segment.x.size} is not integer divisible by target frequency {self.f_target}.")
+            LOG.warning(f"Size of input data {segment.data.size} is not integer divisible by target frequency {self.f_target}.")
         ds_ratio = int(ds_ratio)
 
         if self.method == 'mean':
-            segment.x = self._n_sample_average(segment.x, ds_ratio)
+            segment.data = self._n_sample_average(segment.data, ds_ratio)
         segment.f_sample = self.f_target
         segment.decimated = True
 
         if self.verbose:
             LOG.info(f"Decimating complete. Time elapsed: {time.time() - t0:.1f}s")
 
-        if store:
-            file_path = self.default_path + self.FILE_NAME.format(f_target=self.f_target,
-                                                                  gps_start=segment.gps_start,
-                                                                  gps_end=segment.gps_end)
-            with open(file_path, 'wb') as f:
-                pass
-        else:
-            return segment
+        return segment
 
     @staticmethod
     def _n_sample_average(x: np.array, n):

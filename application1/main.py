@@ -15,6 +15,7 @@ LOG = ConfigurationManager.get_logger(__name__)
 
 class Excavator:
     EXCLUDE_PATTERNS = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
+    FILE_TEMPLATE = 'excavator_f{f_target}_gs{gps_start}_ge{gps_end}'
 
     def __init__(self, source, channel_name, t_start, t_stop, f_target=1, channel_bl_patterns=None):
         self.source = source
@@ -22,11 +23,15 @@ class Excavator:
         self.t_start = t_start
         self.t_stop = t_stop
         self.f_target = f_target
+        self.resource_path = get_resource_path(depth=0)
+        self.ds_data_path = self.resource_path + 'ds_data/'
+        print(self.resource_path)
 
         self.reader = DataReader()
 
         bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
         self.available_channels = self.reader.get_available_channels(source, t_start, exclude_patterns=bl_patterns)[0:20]
+        self.n_channels = len(self.available_channels)
 
     def run(self, n_iter):
 
@@ -67,9 +72,25 @@ class Excavator:
         # plt.xlim([h.offset, h.offset + h.span])
         # plt.show()
 
-    def decimate_data(self):
-        decimator = Decimator()
+    def decimate_data(self, f_target):
+        decimator = Decimator(f_target=f_target)
 
+        aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=self.t_stop)
+        segments = aux_data.segments
+
+        for segment in tqdm(segments):
+            ds_data = np.zeros((self.n_channels, int(len(segments) * f_target)))
+            for i, channel in enumerate(self.available_channels):
+                channel_segment = self.reader.get_channel(channel_name=channel,
+                                                          t_start=segment.gps_start,
+                                                          t_stop=segment.gps_end,
+                                                          source=self.source)
+                ds_segment = decimator.decimate(segment=channel_segment)
+                ds_data[i, :] = ds_segment
+            file_path = self.ds_data_path + self.FILE_TEMPLATE.format(f_target=self.f_target,
+                                                                      gps_start=segment.gps_start,
+                                                                      gps_end=segment.gps_end)
+            np.save(file_path, ds_data)
 
     def construct_histograms(self, channels, aux_data, segments, triggers) -> ({str, Hist}):
         h_aux_cum = dict((c, Hist([])) for c in channels)
