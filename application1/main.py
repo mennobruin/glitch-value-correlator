@@ -83,7 +83,7 @@ class Excavator:
             for i, channel in enumerate(self.available_channels):
                 channel_segment = self.reader.get_channel(channel, *segment, source=self.source)
                 ds_segment = decimator.decimate(segment=channel_segment)
-                ds_data[i, :] = ds_segment
+                ds_data[i, :] = ds_segment.data
             file_path = self.ds_data_path + self.FILE_TEMPLATE.format(self.f_target, *segment)
             np.save(file_path, ds_data)
 
