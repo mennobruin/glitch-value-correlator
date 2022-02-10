@@ -28,14 +28,14 @@ class DataReader:
         else:
             with FrameFile(source) as ffl:
                 s = ChannelSegment(channel=channel_name,
-                                   x=x,
+                                   data=x,
                                    f_sample=None,
                                    gps_time=None,
                                    duration=None,
                                    unit=None)
                 frame = ffl.getChannel(channel_name, t_start, t_stop)
             s = ChannelSegment(channel=channel_name,
-                               x=frame.data,
+                               data=frame.data,
                                f_sample=frame.fsample,
                                gps_time=frame.gps,
                                duration=frame.dt,
