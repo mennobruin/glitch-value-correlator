@@ -8,5 +8,5 @@ class Channel:
         self.unit = unit
 
     def __iter__(self):
-        for _, value in vars(self):
+        for value in vars(self).values():
             yield value
