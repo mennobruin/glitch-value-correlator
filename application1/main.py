@@ -16,7 +16,7 @@ LOG = ConfigurationManager.get_logger(__name__)
 
 class Excavator:
     EXCLUDE_PATTERNS = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
-    FILE_TEMPLATE = 'data/excavator_f{f_target}_gs{t_start}_ge{t_stop}'
+    FILE_TEMPLATE = 'excavator_f{f_target}_gs{t_start}_ge{t_stop}'
 
     def __init__(self, source, channel_name, t_start, t_stop, f_target=1, channel_bl_patterns=None):
         self.source = source
@@ -25,8 +25,11 @@ class Excavator:
         self.t_stop = t_stop
         self.f_target = f_target
         self.resource_path = get_resource_path(depth=0)
-        self.ds_data_path = self.resource_path + 'ds_data/'
-        print(self.resource_path)
+        self.ds_path = self.resource_path + 'ds_data/'
+        self.ds_data_path = self.ds_path + 'data/'
+        if not os.path.exists(self.ds_data_path):
+            os.mkdir(self.ds_data_path)
+        print(self.ds_data_path)
 
         self.reader = DataReader()
 
@@ -79,7 +82,7 @@ class Excavator:
         aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=self.t_stop)
         segments = aux_data.segments
 
-        channel_path = self.ds_data_path + "channels.txt"
+        channel_path = self.ds_path + "channels.txt"
         if not os.path.isfile(channel_path):
             np.savetxt(channel_path, self.available_channels)
 
