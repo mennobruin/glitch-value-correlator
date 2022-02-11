@@ -1,4 +1,5 @@
 from fnmatch import fnmatch
+from functools import lru_cache
 
 import pandas as pd
 from gwpy.timeseries import TimeSeries
@@ -19,9 +20,8 @@ class DataReader:
         self.cache = {}
 
     def get_channel(self, channel_name, t_start, t_stop, source='raw', connection=None) -> ChannelSegment:
-        frame_file = self.FRAME_FILE.format(channel=channel_name, t_start=t_start, t_stop=t_stop)
         if connection:
-            x = TimeSeries.fetch(channel_name, t_start, t_stop, connection=connection, verbose=verbose)
+            x = TimeSeries.fetch(channel_name, t_start, t_stop, connection=connection)
             s = ChannelSegment(channel=channel_name,
                                data=x,
                                f_sample=None,
@@ -29,12 +29,7 @@ class DataReader:
                                duration=None,
                                unit=None)
         else:
-            if frame_file not in self.cache:
-                with FrameFile(source) as ffl:
-                    frame = ffl.getChannel(channel_name, t_start, t_stop)
-                self.cache[frame_file] = frame
-            else:
-                frame = self.cache[frame_file]
+            frame = self._get_frame(source, channel_name, t_start, t_stop)
             s = ChannelSegment(channel=channel_name,
                                data=frame.data,
                                f_sample=frame.fsample,
@@ -43,11 +38,16 @@ class DataReader:
                                unit=frame.unit)
         return s
 
+    @lru_cache
+    def _get_frame(self, source, channel_name, t_start, t_stop):
+        with FrameFile(source) as ffl:
+            return ffl.getChannel(channel_name, t_start, t_stop)
+
     @staticmethod
     def get_available_channels(source, t0, exclude_patterns: list = None):
         LOG.info(f"Fetching available channels from {source}")
         with FrameFile(source) as ffl:
-            with ffl.get_frame(t0) as f:
+            with ffl._get_frame(t0) as f:
                 channels = [str(adc.contents.name) for adc in f.iter_adc()]
                 if exclude_patterns:
                     return [c for c in channels if not any(fnmatch(c, p) for p in exclude_patterns)]
