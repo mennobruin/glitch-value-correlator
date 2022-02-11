@@ -1,4 +1,3 @@
-import time
 from fnmatch import fnmatch
 
 import pandas as pd
@@ -19,11 +18,8 @@ class DataReader:
         self.default_path = get_resource_path(depth=2)
         self.cache = {}
 
-    def get_channel(self, channel_name, t_start, t_stop, source='raw', connection=None, verbose=False) -> ChannelSegment:
+    def get_channel(self, channel_name, t_start, t_stop, source='raw', connection=None) -> ChannelSegment:
         frame_file = self.FRAME_FILE.format(channel=channel_name, t_start=t_start, t_stop=t_stop)
-        if verbose:
-            LOG.info(f"Fetching data from {channel_name}...")
-            t0 = time.time()
         if connection:
             x = TimeSeries.fetch(channel_name, t_start, t_stop, connection=connection, verbose=verbose)
             s = ChannelSegment(channel=channel_name,
@@ -45,8 +41,6 @@ class DataReader:
                                gps_time=frame.gps,
                                duration=frame.dt,
                                unit=frame.unit)
-        if verbose:
-            LOG.info(f"Fetched data from {source}, time elapsed: {time.time() - t0:.1f}s")
         return s
 
     @staticmethod
