@@ -13,11 +13,14 @@ LOG = ConfigurationManager.get_logger(__name__)
 
 class DataReader:
 
+    FRAME_FILE = '{channel}_{t_start}_{t_stop}'
+
     def __init__(self):
         self.default_path = get_resource_path(depth=2)
+        self.cache = {}
 
-    @staticmethod
-    def get_channel(channel_name, t_start, t_stop, source='raw', connection=None, verbose=False) -> ChannelSegment:
+    def get_channel(self, channel_name, t_start, t_stop, source='raw', connection=None, verbose=False) -> ChannelSegment:
+        frame_file = self.FRAME_FILE.format(channel=channel_name, t_start=t_start, t_stop=t_stop)
         if verbose:
             LOG.info(f"Fetching data from {channel_name}...")
             t0 = time.time()
@@ -30,8 +33,12 @@ class DataReader:
                                duration=None,
                                unit=None)
         else:
-            with FrameFile(source) as ffl:
-                frame = ffl.getChannel(channel_name, t_start, t_stop)
+            if frame_file not in self.cache:
+                with FrameFile(source) as ffl:
+                    frame = ffl.getChannel(channel_name, t_start, t_stop)
+                self.cache[frame_file] = frame
+            else:
+                frame = self.cache[frame_file]
             s = ChannelSegment(channel=channel_name,
                                data=frame.data,
                                f_sample=frame.fsample,
