@@ -15,20 +15,20 @@ class Decimator:
         self.verbose = verbose
 
     def decimate(self, segment: ChannelSegment):
+        channel = segment.channel
         if self.verbose:
             LOG.info(f"Decimating {segment.data.size} data points with target frequency {self.f_target}Hz...")
             t0 = time.time()
 
-        print(segment.f_sample, self.f_target)
-        ds_ratio = segment.f_sample / self.f_target
+        ds_ratio = channel.f_sample / self.f_target
 
         if not ds_ratio.is_integer():
-            LOG.warning(f"Size of input data {segment.data.size} is not integer divisible by target frequency {self.f_target}.")
+            LOG.warning(f"{channel.name}: sample frequency {channel.f_sample} is not integer divisible by target frequency {self.f_target}.")
         ds_ratio = int(ds_ratio)
 
         if self.method == 'mean':
             segment.data = self._n_sample_average(segment.data, ds_ratio)
-        segment.f_sample = self.f_target
+        channel.f_sample = self.f_target
         segment.decimated = True
 
         if self.verbose:

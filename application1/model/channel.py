@@ -7,5 +7,5 @@ class Channel:
         self.f_sample = f_sample
         self.unit = unit
 
-    def __str__(self):
+    def __repr__(self):
         return f'{self.name}, {self.f_sample}, {self.unit}'
