@@ -4,6 +4,7 @@ from ligo import segments
 from framel import frgetvect1d
 
 from application1.handler.data.reader import DataReader
+from application1.utils import *
 
 
 class FFLCache:
@@ -12,7 +13,7 @@ class FFLCache:
     FFL_COLS = [0, 1, 2]
 
     def __init__(self, ffl_file, f_target, gps_start, gps_end):
-        self.ffl_file = ffl_file
+        self.ffl_file = check_extension(ffl_file, extension='.ffl')
         self.f_target = f_target
         self.gps_start = gps_start
         self.gps_end = gps_end
@@ -27,7 +28,7 @@ class FFLCache:
         self.lookup = dict(zip(self.segments, self.gwf_files))
 
     def _get_frames(self):
-        frames = np.loadtxt(self.ffl_file + '.ffl', dtype=self.FFL_FORMAT, usecols=self.FFL_COLS)
+        frames = np.loadtxt(self.ffl_file, dtype=self.FFL_FORMAT, usecols=self.FFL_COLS)
         frames = frames.view(dtype=(np.record, frames.dtype), type=np.recarray)
         end_times = frames.gps_start + frames.duration
         return frames[(end_times > self.gps_start) & (frames.gps_start < self.gps_end)]
