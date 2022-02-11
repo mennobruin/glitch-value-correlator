@@ -84,14 +84,11 @@ class Excavator:
 
         self.writer.write_csv(data=self.available_channels, file_name="channels", file_path=self.ds_path)
 
-        n_ignore = 0
+        channels = [c for c in self.available_channels if c.f_sample > self.f_target]
         for segment in tqdm(segments):
             gps_start, gps_end = segment
             ds_data = np.zeros((self.n_channels, int((gps_end - gps_start) * self.f_target)))
-            for i, channel in enumerate(self.available_channels):
-                if self.f_target > channel.f_sample:
-                    n_ignore += 1
-                    continue
+            for i, channel in enumerate(channels):
                 channel_segment = self.reader.get_channel_segment(channel_name=channel.name,
                                                                   t_start=gps_start,
                                                                   t_stop=gps_end,
@@ -102,7 +99,7 @@ class Excavator:
                                                                       t_start=gps_start,
                                                                       t_stop=gps_end)
             np.save(file_path, ds_data)
-        LOG.info(f"Disregarded {n_ignore}/{self.n_channels} channels with sampling frequency below {self.f_target}Hz")
+        LOG.info(f"Disregarded {self.n_channels-len(channels)}/{self.n_channels} channels with sampling frequency below {self.f_target}Hz")
 
     def construct_histograms(self, aux_data, segments, triggers) -> ({str, Hist}):
         h_aux_cum = dict((c.name, Hist([])) for c in self.available_channels)
