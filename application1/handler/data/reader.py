@@ -47,7 +47,7 @@ class DataReader:
     def get_available_channels(source, t0, exclude_patterns: list = None):
         LOG.info(f"Fetching available channels from {source}")
         with FrameFile(source) as ffl:
-            with ffl._get_frame(t0) as f:
+            with ffl.get_frame(t0) as f:
                 channels = [str(adc.contents.name) for adc in f.iter_adc()]
                 if exclude_patterns:
                     return [c for c in channels if not any(fnmatch(c, p) for p in exclude_patterns)]
