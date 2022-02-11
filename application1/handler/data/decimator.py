@@ -18,9 +18,6 @@ class Decimator:
         if self.verbose:
             LOG.info(f"Decimating {segment.data.size} data points with target frequency {self.f_target}Hz...")
             t0 = time.time()
-        if self.f_target > segment.f_sample:
-            LOG.info(f"Unable to downsample. Target freq {self.f_target}Hz > original {segment.f_sample}Hz")
-            return segment
 
         ds_ratio = segment.f_sample / self.f_target
 
