@@ -3,6 +3,7 @@ import numpy as np
 from tqdm import tqdm
 import sys
 import os
+import cProfile
 
 from application1.utils import *
 from application1.model import ChannelSegment, Hist, FFLCache
@@ -144,4 +145,4 @@ if __name__ == '__main__':
                           t_start=1262230000,
                           t_stop=1262240000)
     # excavator.run(n_iter=1)
-    excavator.decimate_data()
+    cProfile.run("excavator.decimate_data()")
