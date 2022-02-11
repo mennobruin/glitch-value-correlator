@@ -13,11 +13,9 @@ LOG = ConfigurationManager.get_logger(__name__)
 
 class DataReader:
 
-    FRAME_FILE = '{channel}_{t_start}_{t_stop}'
-
     def __init__(self):
         self.default_path = get_resource_path(depth=2)
-        self.cache = {}
+        self.frame_file = None
 
     def get_channel(self, channel_name, t_start, t_stop, source='raw', connection=None) -> ChannelSegment:
         if connection:
@@ -29,8 +27,9 @@ class DataReader:
                                duration=None,
                                unit=None)
         else:
-            with self._get_frame_file(source) as ffl:
-                frame = ffl.getChannel(channel_name, t_start, t_stop)
+            if not self.frame_file:
+                self.frame_file = FrameFile(source)
+            frame = self.frame_file.getChannel(channel_name, t_start, t_stop)
             s = ChannelSegment(channel=channel_name,
                                data=frame.data,
                                f_sample=frame.fsample,
@@ -38,10 +37,6 @@ class DataReader:
                                duration=frame.dt,
                                unit=frame.unit)
         return s
-
-    @lru_cache(maxsize=10)
-    def _get_frame_file(self, source):
-        return FrameFile(source)
 
     @staticmethod
     def get_available_channels(source, t0, exclude_patterns: list = None):
