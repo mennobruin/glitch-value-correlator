@@ -82,9 +82,9 @@ class Excavator:
         aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=self.t_stop)
         segments = aux_data.segments
 
-        channel_path = self.ds_path + "channels.txt"
+        channel_path = self.ds_path + "channels.csv"
         if not os.path.isfile(channel_path):
-            np.savetxt(channel_path, self.available_channels)
+            np.savetxt(channel_path, self.available_channels, delimiter=',')
 
         for segment in tqdm(segments):
             gps_start, gps_end = segment
