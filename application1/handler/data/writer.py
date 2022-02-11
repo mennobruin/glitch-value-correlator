@@ -18,4 +18,5 @@ class DataWriter:
 
         with open(file_path + file_name, 'w+') as f:
             writer = csv.writer(f)
-            writer.writerows(data)
+            for obj in data:
+                writer.writerow(obj)
