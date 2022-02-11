@@ -28,7 +28,7 @@ class Excavator:
         self.ds_path = self.resource_path + 'ds_data/'
         self.ds_data_path = self.ds_path + 'data/'
         if not os.path.exists(self.ds_data_path):
-            os.mkdir(self.ds_data_path)
+            os.makedirs(self.ds_data_path)
         print(self.ds_data_path)
 
         self.reader = DataReader()
