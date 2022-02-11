@@ -29,7 +29,8 @@ class DataReader:
                                duration=None,
                                unit=None)
         else:
-            frame = self._get_frame(source, channel_name, t_start, t_stop)
+            with self._get_frame_file(source) as ffl:
+                frame = ffl.getChannel(channel_name, t_start, t_stop)
             s = ChannelSegment(channel=channel_name,
                                data=frame.data,
                                f_sample=frame.fsample,
@@ -38,10 +39,9 @@ class DataReader:
                                unit=frame.unit)
         return s
 
-    @lru_cache
-    def _get_frame(self, source, channel_name, t_start, t_stop):
-        with FrameFile(source) as ffl:
-            return ffl.getChannel(channel_name, t_start, t_stop)
+    @lru_cache(maxsize=10)
+    def _get_frame_file(self, source):
+        return FrameFile(source)
 
     @staticmethod
     def get_available_channels(source, t0, exclude_patterns: list = None):
