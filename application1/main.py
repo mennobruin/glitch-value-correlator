@@ -7,7 +7,7 @@ import os
 from application1.utils import *
 from application1.model import ChannelSegment, Hist, FFLCache
 from application1.model.fom import KolgomorovSmirnov
-from application1.handler.data import Decimator, DataReader
+from application1.handler.data import Decimator, DataReader, DataWriter
 from application1.handler.triggers import Omicron, DefaultPipeline
 from core.config import ConfigurationManager
 
@@ -31,6 +31,7 @@ class Excavator:
         print(self.ds_data_path)
 
         self.reader = DataReader()
+        self.writer = DataWriter()
 
         bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
         self.available_channels = self.reader.get_available_channels(source, t_start, exclude_patterns=bl_patterns)[0:20]
@@ -81,9 +82,7 @@ class Excavator:
         aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=self.t_stop)
         segments = aux_data.segments
 
-        channel_path = self.ds_path + "channels.csv"
-        if not os.path.isfile(channel_path):
-            np.savetxt(channel_path, self.available_channels, delimiter=',')
+        self.writer.write_csv(data=self.available_channels, file_name="channels", file_path=self.ds_path)
 
         for segment in tqdm(segments):
             gps_start, gps_end = segment
