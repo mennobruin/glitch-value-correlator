@@ -53,8 +53,7 @@ class Excavator:
         # segment_50hz: Segment = decimator.decimate(segment, target_frequency=50)
         #
         aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=self.t_stop)
-        h_aux_cum, h_trig_cum = self.construct_histograms(channels=self.available_channels,
-                                                          aux_data=aux_data,
+        h_aux_cum, h_trig_cum = self.construct_histograms(aux_data=aux_data,
                                                           segments=aux_data.segments,
                                                           triggers=triggers)
 
@@ -63,11 +62,11 @@ class Excavator:
 
         fom_ks = KolgomorovSmirnov()
         for channel in self.available_channels:
-            h_aux = h_aux_cum[channel]
-            h_trig = h_trig_cum[channel]
+            h_aux = h_aux_cum[channel.name]
+            h_trig = h_trig_cum[channel.name]
             h_aux.align(h_trig)
 
-            fom_ks.calculate(channel, h_aux=h_aux, h_trig=h_trig)
+            fom_ks.calculate(channel.name, h_aux=h_aux, h_trig=h_trig)
 
         for k, v in sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True):
             print(k, v)
@@ -85,27 +84,29 @@ class Excavator:
 
         self.writer.write_csv(data=self.available_channels, file_name="channels", file_path=self.ds_path)
 
+        n_ignore = 0
         for segment in tqdm(segments):
             gps_start, gps_end = segment
             ds_data = np.zeros((self.n_channels, int((gps_end - gps_start) * self.f_target)))
             for i, channel in enumerate(self.available_channels):
-                channel_segment = self.reader.get_channel(channel_name=channel,
-                                                          t_start=gps_start,
-                                                          t_stop=gps_end,
-                                                          source=self.source)
-                if self.f_target > channel_segment.f_sample:
+                if self.f_target > channel.f_sample:
+                    n_ignore += 1
                     continue
-                else:
-                    ds_segment = decimator.decimate(segment=channel_segment)
-                    ds_data[i, :] = ds_segment.data
+                channel_segment = self.reader.get_channel_segment(channel_name=channel.name,
+                                                                  t_start=gps_start,
+                                                                  t_stop=gps_end,
+                                                                  source=self.source)
+                ds_segment = decimator.decimate(segment=channel_segment)
+                ds_data[i, :] = ds_segment.data
             file_path = self.ds_data_path + self.FILE_TEMPLATE.format(f_target=self.f_target,
                                                                       t_start=gps_start,
                                                                       t_stop=gps_end)
             np.save(file_path, ds_data)
+        LOG.info(f"Disregarded {n_ignore}/{self.n_channels} channels with sampling frequency below {self.f_target}Hz")
 
-    def construct_histograms(self, channels, aux_data, segments, triggers) -> ({str, Hist}):
-        h_aux_cum = dict((c, Hist([])) for c in channels)
-        h_trig_cum = dict((c, Hist([])) for c in channels)
+    def construct_histograms(self, aux_data, segments, triggers) -> ({str, Hist}):
+        h_aux_cum = dict((c.name, Hist([])) for c in self.available_channels)
+        h_trig_cum = dict((c.name, Hist([])) for c in self.available_channels)
 
         cum_aux_veto = [np.zeros(int(round(abs(segment) * self.f_target)), dtype=bool) for segment in segments]
         cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in segments]
@@ -121,7 +122,7 @@ class Excavator:
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
             i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
 
-            for channel in tqdm(channels, position=0, leave=True):
+            for channel in tqdm(self.available_channels, position=0, leave=True):
                 x_aux = aux_data.get_data_from_segment(request_segment=segment, channel=channel)
                 x_trig = x_aux[i_trigger]
                 # todo: handle non-finite values. Either discard channel or replace values.
@@ -131,10 +132,10 @@ class Excavator:
                 x_aux_veto = x_aux[~cum_aux_veto[i]]
                 x_trig_veto = x_trig[~cum_trig_veto[i]]
 
-                h_aux = Hist(x_aux_veto, spanlike=h_aux_cum[channel])
+                h_aux = Hist(x_aux_veto, spanlike=h_aux_cum[channel.name])
                 h_trig = Hist(x_trig_veto, spanlike=h_aux)
-                h_aux_cum[channel] += h_aux
-                h_trig_cum[channel] += h_trig
+                h_aux_cum[channel.name] += h_aux
+                h_trig_cum[channel.name] += h_trig
 
         return h_aux_cum, h_trig_cum
 
