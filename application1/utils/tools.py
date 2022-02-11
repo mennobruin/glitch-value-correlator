@@ -1,5 +1,6 @@
 import numpy as np
 import pathlib
+import os
 
 from core.config import ConfigurationManager
 
@@ -29,3 +30,12 @@ def count_triggers_in_segment(triggers, gps_start, gps_end):
 
 def get_resource_path(depth: int):
     return str(pathlib.Path(__file__).parents[depth].resolve()) + "/resources/"
+
+
+def check_extension(file_name, extension):
+    root, ext = os.path.splitext(file_name)
+    if not ext:
+        return file_name + extension
+    if ext != extension:
+        LOG.warning(f'Unexpected extension {ext} in {file_name}. Expected {extension}.')
+    return file_name

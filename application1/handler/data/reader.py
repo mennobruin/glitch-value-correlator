@@ -1,14 +1,12 @@
-import pandas as pd
-import os
 import time
-
 from fnmatch import fnmatch
-from gwpy.timeseries import TimeSeries
-from virgotools.frame_lib import getChannel, FrameFile
 
-from core.config.configuration_manager import ConfigurationManager
+import pandas as pd
+from gwpy.timeseries import TimeSeries
+from virgotools.frame_lib import FrameFile
+
 from application1.model.channel_segment import ChannelSegment
-from application1.utils import get_resource_path
+from application1.utils import *
 
 LOG = ConfigurationManager.get_logger(__name__)
 
@@ -56,10 +54,7 @@ class DataReader:
                     return channels
 
     def load_csv(self, csv_file, usecols=None) -> pd.DataFrame:
-        root, ext = os.path.splitext(csv_file)
-        if not ext:
-            ext = '.csv'
-        csv_file = root + ext
+        csv_file = check_extension(csv_file, extension='.csv')
 
         LOG.info(f"Loading {csv_file}")
         if not os.path.isfile(csv_file):
