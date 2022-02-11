@@ -86,8 +86,11 @@ class Excavator:
                                                           t_start=gps_start,
                                                           t_stop=gps_end,
                                                           source=self.source)
-                ds_segment = decimator.decimate(segment=channel_segment)
-                ds_data[i, :] = ds_segment.data
+                if self.f_target > segment.f_sample:
+                    continue
+                else:
+                    ds_segment = decimator.decimate(segment=channel_segment)
+                    ds_data[i, :] = ds_segment.data
             file_path = self.ds_data_path + self.FILE_TEMPLATE.format(f_target=self.f_target,
                                                                       t_start=gps_start,
                                                                       t_stop=gps_end)
