@@ -35,7 +35,7 @@ class Excavator:
         self.writer = DataWriter()
 
         bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
-        self.available_channels = self.reader.get_available_channels(source, t_start, exclude_patterns=bl_patterns)[0:20]
+        self.available_channels = self.reader.get_available_channels(source, t_start, exclude_patterns=bl_patterns)[0:200]
         self.n_channels = len(self.available_channels)
 
     def run(self, n_iter):
