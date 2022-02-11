@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 import sys
+import os
 
 from application1.utils import *
 from application1.model import ChannelSegment, Hist, FFLCache
@@ -15,7 +16,7 @@ LOG = ConfigurationManager.get_logger(__name__)
 
 class Excavator:
     EXCLUDE_PATTERNS = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
-    FILE_TEMPLATE = 'excavator_f{f_target}_gs{t_start}_ge{t_stop}'
+    FILE_TEMPLATE = 'data/excavator_f{f_target}_gs{t_start}_ge{t_stop}'
 
     def __init__(self, source, channel_name, t_start, t_stop, f_target=1, channel_bl_patterns=None):
         self.source = source
@@ -77,6 +78,10 @@ class Excavator:
 
         aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=self.t_stop)
         segments = aux_data.segments
+
+        channel_path = self.ds_data_path + "channels.txt"
+        if not os.path.isfile(channel_path):
+            np.savetxt(channel_path, self.available_channels)
 
         for segment in tqdm(segments):
             gps_start, gps_end = segment
