@@ -92,7 +92,7 @@ class Excavator:
                                                           t_start=gps_start,
                                                           t_stop=gps_end,
                                                           source=self.source)
-                if self.f_target > segment.f_sample:
+                if self.f_target > channel_segment.f_sample:
                     continue
                 else:
                     ds_segment = decimator.decimate(segment=channel_segment)
