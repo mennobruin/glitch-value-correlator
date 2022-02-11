@@ -19,6 +19,7 @@ class Decimator:
             LOG.info(f"Decimating {segment.data.size} data points with target frequency {self.f_target}Hz...")
             t0 = time.time()
 
+        print(segment.f_sample, self.f_target)
         ds_ratio = segment.f_sample / self.f_target
 
         if not ds_ratio.is_integer():
