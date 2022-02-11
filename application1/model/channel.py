@@ -7,5 +7,6 @@ class Channel:
         self.f_sample = f_sample
         self.unit = unit
 
-    def __repr__(self):
-        return f'{self.name}, {self.f_sample}, {self.unit}'
+    def __iter__(self):
+        for attr, value in vars(self):
+            yield attr, value
