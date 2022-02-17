@@ -1,24 +1,28 @@
-import time
 import numpy as np
 
 from core.config.configuration_manager import ConfigurationManager
 from application1.model.channel_segment import ChannelSegment
+
+from virgotools.frame_lib import FrameFile
 
 LOG = ConfigurationManager.get_logger(__name__)
 
 
 class Decimator:
 
-    def __init__(self, f_target, method='mean', verbose=False):
+    def __init__(self, f_target, method='mean'):
         self.f_target = f_target
         self.method = method
-        self.verbose = verbose
 
-    def decimate(self, segment: ChannelSegment):
+    def decimate_gwf(self, gwf_file, segments):
+
+        with FrameFile(gwf_file) as gwf:
+            for i, frame in enumerate(gwf):
+                print(i, frame)
+
+
+    def decimate_segment(self, segment: ChannelSegment):
         channel = segment.channel
-        if self.verbose:
-            LOG.info(f"Decimating {segment.data.size} data points with target frequency {self.f_target}Hz...")
-            t0 = time.time()
 
         ds_ratio = channel.f_sample / self.f_target
 
@@ -30,9 +34,6 @@ class Decimator:
             segment.data = self._n_sample_average(segment.data, ds_ratio)
         channel.f_sample = self.f_target
         segment.decimated = True
-
-        if self.verbose:
-            LOG.info(f"Decimating complete. Time elapsed: {time.time() - t0:.1f}s")
 
         return segment
 

@@ -13,9 +13,8 @@ class FFLCache:
     FFL_FORMAT = [('gwf', str, 100), ('gps_start', float), ('duration', float)]
     FFL_COLS = [0, 1, 2]
 
-    def __init__(self, ffl_file, f_target, gps_start, gps_end):
+    def __init__(self, ffl_file, gps_start, gps_end):
         self.ffl_file = check_extension(ffl_file, extension='.ffl')
-        self.f_target = f_target
         self.gps_start = gps_start
         self.gps_end = gps_end
         self.frames = self._get_frames()

@@ -52,7 +52,7 @@ class Excavator:
         # segment: Segment = reader.get(channel_name, t_start, t_stop, source=source)
         # segment_50hz: Segment = decimator.decimate(segment, target_frequency=50)
         #
-        aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=self.t_stop)
+        aux_data = FFLCache(ffl_file=self.source, gps_start=self.t_start, gps_end=self.t_stop)
         h_aux_cum, h_trig_cum = self.construct_histograms(aux_data=aux_data,
                                                           segments=aux_data.segments,
                                                           triggers=triggers)
@@ -79,27 +79,30 @@ class Excavator:
     def decimate_data(self):
         decimator = Decimator(f_target=self.f_target)
 
-        aux_data = FFLCache(ffl_file=self.source, f_target=None, gps_start=self.t_start, gps_end=self.t_stop)
+        aux_data = FFLCache(ffl_file=self.source, gps_start=self.t_start, gps_end=self.t_stop)
         segments = aux_data.segments
 
-        self.writer.write_csv(data=self.available_channels, file_name="channels", file_path=self.ds_path)
+        for gwf_file in aux_data.gwf_files[0]:
+            decimator.decimate_gwf(gwf_file, segments)
 
-        channels = [c for c in self.available_channels if c.f_sample > self.f_target]
-        for segment in tqdm(segments):
-            gps_start, gps_end = segment
-            ds_data = np.zeros((self.n_channels, int((gps_end - gps_start) * self.f_target)))
-            for i, channel in enumerate(channels):
-                channel_segment = self.reader.get_channel_segment(channel_name=channel.name,
-                                                                  t_start=gps_start,
-                                                                  t_stop=gps_end,
-                                                                  source=self.source)
-                ds_segment = decimator.decimate(segment=channel_segment)
-                ds_data[i, :] = ds_segment.data
-            file_path = self.ds_data_path + self.FILE_TEMPLATE.format(f_target=self.f_target,
-                                                                      t_start=gps_start,
-                                                                      t_stop=gps_end)
-            np.save(file_path, ds_data)
-        LOG.info(f"Disregarded {self.n_channels-len(channels)}/{self.n_channels} channels with sampling frequency below {self.f_target}Hz")
+        # self.writer.write_csv(data=self.available_channels, file_name="channels", file_path=self.ds_path)
+
+        # channels = [c for c in self.available_channels if c.f_sample > self.f_target]
+        # for segment in tqdm(segments):
+        #     gps_start, gps_end = segment
+        #     ds_data = np.zeros((self.n_channels, int((gps_end - gps_start) * self.f_target)))
+        #     for i, channel in enumerate(channels):
+        #         channel_segment = self.reader.get_channel_segment(channel_name=channel.name,
+        #                                                           t_start=gps_start,
+        #                                                           t_stop=gps_end,
+        #                                                           source=self.source)
+        #         ds_segment = decimator.decimate_segment(segment=channel_segment)
+        #         ds_data[i, :] = ds_segment.data
+        #     file_path = self.ds_data_path + self.FILE_TEMPLATE.format(f_target=self.f_target,
+        #                                                               t_start=gps_start,
+        #                                                               t_stop=gps_end)
+        #     np.save(file_path, ds_data)
+        # LOG.info(f"Disregarded {self.n_channels-len(channels)}/{self.n_channels} channels with sampling frequency below {self.f_target}Hz")
 
     def construct_histograms(self, aux_data, segments, triggers) -> ({str, Hist}):
         h_aux_cum = dict((c.name, Hist([])) for c in self.available_channels)

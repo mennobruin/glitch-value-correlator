@@ -1,5 +1,4 @@
 from fnmatch import fnmatch
-from functools import lru_cache
 
 import pandas as pd
 from gwpy.timeseries import TimeSeries
@@ -23,6 +22,7 @@ class DataReader:
             channel = Channel(name=channel_name, f_sample=None)
             segment = ChannelSegment(channel=channel, data=x, gps_time=None, duration=None)
         else:
+            # TODO: try using Frame objects directly instead of FrameFile objects to improve speed
             if not self.frame_file:
                 self.frame_file = FrameFile(source)
             frame = self.frame_file.getChannel(channel_name, t_start, t_stop)
@@ -31,7 +31,7 @@ class DataReader:
         return segment
 
     @staticmethod
-    def get_available_channels(source, t0, exclude_patterns: list = None):
+    def get_available_channels(source, t0, exclude_patterns: list = None) -> [Channel]:
         LOG.info(f"Fetching available channels from {source}")
         with FrameFile(source) as ffl:
             with ffl.get_frame(t0) as f:
