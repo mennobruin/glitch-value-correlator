@@ -41,13 +41,13 @@ class Resampler:
         for segment in tqdm(segments):
             gps_start, gps_end = segment
             ds_data = []
-            for i, channel in enumerate(channels):
+            for channel in channels:
                 channel_segment = self.reader.get_channel_segment(channel_name=channel.name,
                                                                   t_start=gps_start,
                                                                   t_stop=gps_end,
                                                                   source=ffl_cache.ffl_file)
                 ds_segment = self.downsample_segment(segment=channel_segment)
-                ds_data[i].append(ds_segment.data)
+                ds_data.append(ds_segment.data)
             file_name = self.FILE_TEMPLATE.format(f_target=self.f_target, t_start=gps_start, t_stop=gps_end)
             file_path = self.ds_data_path + file_name
             with h5py.File(file_path + '.h5', 'w') as f:
