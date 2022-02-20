@@ -52,10 +52,9 @@ class Resampler:
                 ds_data[i] = ds_segment.data
             file_name = self.FILE_TEMPLATE.format(f_target=self.f_target, t_start=gps_start, t_stop=gps_end)
             file_path = self.ds_data_path + file_name
-            np.save(file_path, ds_data)
             with h5py.File(file_path + '.h5', 'w') as f:
-                f.create_dataset(name=file_name, data=ds_data)
-        LOG.info(f"Disregarded {n_channels - len(channels)}/{n_channels} channels with sampling frequency below {self.f_target}Hz")
+                f.create_dataset(name='data', data=ds_data)
+                f.create_dataset(name='channels', data=ds_data_channels)
 
     def downsample_segment(self, segment: ChannelSegment):
         channel = segment.channel
@@ -87,7 +86,6 @@ class Resampler:
 
         if ds_ratio.is_integer():  # decimate
             filt = cheby1(N=self.FILTER_ORDER, rp=0.05, Wn=0.8 / ds_ratio, output='sos')
-            segment.data = sosfiltfilt(filt, segment.data)[::int(ds_ratio)]
+            return sosfiltfilt(filt, segment.data)[::int(ds_ratio)]
         else:  # Fourier resampling
-            segment.data = resample(segment.data, segment.n_points, window='hamming')
-        return segment
+            return resample(segment.data, segment.n_points, window='hamming')
