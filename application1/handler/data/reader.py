@@ -1,3 +1,5 @@
+import os
+
 from fnmatch import fnmatch
 
 import pandas as pd
@@ -5,7 +7,7 @@ from gwpy.timeseries import TimeSeries
 from virgotools.frame_lib import FrameFile
 
 from application1.model import ChannelSegment, Channel
-from application1.utils import *
+from application1.utils import get_resource_path, check_extension
 
 LOG = ConfigurationManager.get_logger(__name__)
 
