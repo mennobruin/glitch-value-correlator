@@ -48,7 +48,7 @@ class Resampler:
                                                                   t_stop=gps_end,
                                                                   source=ffl_cache.ffl_file)
                 ds_segment = self.downsample_segment(segment=channel_segment)
-                ds_data_channels[i] = channel
+                ds_data_channels[i] = channel.name
                 ds_data[i] = ds_segment.data
             file_name = self.FILE_TEMPLATE.format(f_target=self.f_target, t_start=gps_start, t_stop=gps_end)
             file_path = self.ds_data_path + file_name
