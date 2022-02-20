@@ -3,8 +3,9 @@ import numpy as np
 from ligo import segments
 from framel import frgetvect1d
 
+from .channel import Channel
+
 from application1.handler.data.reader import DataReader
-from application1.model import Channel
 from application1.utils import check_extension
 
 

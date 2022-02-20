@@ -6,9 +6,13 @@ import os
 import cProfile
 
 from application1.utils import *
-from application1.model import ChannelSegment, Hist, FFLCache
+from application1.model.channel_segment import ChannelSegment
+from application1.model.old_histogram import Hist
+from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov
-from application1.handler.data import Resampler, DataReader, DataWriter
+from application1.handler.data.reader import DataReader
+from application1.handler.data.writer import DataWriter
+from application1.handler.data.resampler import Resampler
 from application1.handler.triggers import Omicron, DefaultPipeline
 from core.config import ConfigurationManager
 
