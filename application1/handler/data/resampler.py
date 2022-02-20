@@ -9,8 +9,9 @@ from math import isclose
 
 from core.config.configuration_manager import ConfigurationManager
 from application1.utils import get_resource_path
-from application1.model import ChannelSegment, FFLCache
-from application1.handler.data import DataReader
+from application1.model.channel_segment import ChannelSegment
+from application1.model.ffl_cache import FFLCache
+from application1.handler.data.reader import DataReader
 
 from virgotools.frame_lib import FrameFile
 
