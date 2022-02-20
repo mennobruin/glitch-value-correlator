@@ -10,3 +10,7 @@ class ChannelSegment:
         self.gps_end = gps_time + duration
         self.duration = duration
         self.decimated = False
+
+    @property
+    def n_points(self):
+        return self.duration * self.channel.f_sample
