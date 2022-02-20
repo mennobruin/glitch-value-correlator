@@ -26,7 +26,7 @@ class Resampler:
     def __init__(self, f_target, method='mean'):
         self.f_target = f_target
         self.method = method
-        self.resource_path = get_resource_path(depth=0)
+        self.resource_path = get_resource_path(depth=1)
         self.ds_path = self.resource_path + 'ds_data/'
         self.ds_data_path = self.ds_path + 'data/'
         os.makedirs(self.ds_data_path, exist_ok=True)
@@ -35,7 +35,6 @@ class Resampler:
 
     def downsample_ffl(self, ffl_cache: FFLCache, channels):
         segments = ffl_cache.segments
-        n_channels = len(channels)
         channels = [c for c in channels if c.f_sample > self.f_target]
 
         for segment in tqdm(segments):
@@ -51,8 +50,8 @@ class Resampler:
             file_name = self.FILE_TEMPLATE.format(f_target=self.f_target, t_start=gps_start, t_stop=gps_end)
             file_path = self.ds_data_path + file_name
             with h5py.File(file_path + '.h5', 'w') as f:
-                f.create_dataset(name='channels', data=[ascii(c.name) for c in channels])
                 f.create_dataset(name='data', data=ds_data)
+                f.create_dataset(name='channels', data=np.array([c.name for c in channels], dtype='S'))
 
     def downsample_segment(self, segment: ChannelSegment):
         channel = segment.channel
