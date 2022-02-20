@@ -8,7 +8,7 @@ import cProfile
 from application1.utils import *
 from application1.model import ChannelSegment, Hist, FFLCache
 from application1.model.fom import KolgomorovSmirnov
-from application1.handler.data import Decimator, DataReader, DataWriter
+from application1.handler.data import Resampler, DataReader, DataWriter
 from application1.handler.triggers import Omicron, DefaultPipeline
 from core.config import ConfigurationManager
 
@@ -17,7 +17,6 @@ LOG = ConfigurationManager.get_logger(__name__)
 
 class Excavator:
     EXCLUDE_PATTERNS = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
-    FILE_TEMPLATE = 'excavator_f{f_target}_gs{t_start}_ge{t_stop}'
 
     def __init__(self, source, channel_name, t_start, t_stop, f_target=50, channel_bl_patterns=None):
         self.source = source
@@ -26,17 +25,12 @@ class Excavator:
         self.t_stop = t_stop
         self.f_target = f_target
         self.resource_path = get_resource_path(depth=0)
-        self.ds_path = self.resource_path + 'ds_data/'
-        self.ds_data_path = self.ds_path + 'data/'
-        os.makedirs(self.ds_data_path, exist_ok=True)
-        print(self.ds_data_path)
 
         self.reader = DataReader()
         self.writer = DataWriter()
 
         bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
         self.available_channels = self.reader.get_available_channels(source, t_start, exclude_patterns=bl_patterns)[0:200]
-        self.n_channels = len(self.available_channels)
 
     def run(self, n_iter):
 
@@ -77,32 +71,9 @@ class Excavator:
         # plt.show()
 
     def decimate_data(self):
-        decimator = Decimator(f_target=self.f_target)
-
+        decimator = Resampler(f_target=self.f_target, method='decimate')
         aux_data = FFLCache(ffl_file=self.source, gps_start=self.t_start, gps_end=self.t_stop)
-        segments = aux_data.segments
-
-        for gwf_file in aux_data.gwf_files[0]:
-            decimator.decimate_gwf(gwf_file, segments)
-
-        # self.writer.write_csv(data=self.available_channels, file_name="channels", file_path=self.ds_path)
-
-        # channels = [c for c in self.available_channels if c.f_sample > self.f_target]
-        # for segment in tqdm(segments):
-        #     gps_start, gps_end = segment
-        #     ds_data = np.zeros((self.n_channels, int((gps_end - gps_start) * self.f_target)))
-        #     for i, channel in enumerate(channels):
-        #         channel_segment = self.reader.get_channel_segment(channel_name=channel.name,
-        #                                                           t_start=gps_start,
-        #                                                           t_stop=gps_end,
-        #                                                           source=self.source)
-        #         ds_segment = decimator.decimate_segment(segment=channel_segment)
-        #         ds_data[i, :] = ds_segment.data
-        #     file_path = self.ds_data_path + self.FILE_TEMPLATE.format(f_target=self.f_target,
-        #                                                               t_start=gps_start,
-        #                                                               t_stop=gps_end)
-        #     np.save(file_path, ds_data)
-        # LOG.info(f"Disregarded {self.n_channels-len(channels)}/{self.n_channels} channels with sampling frequency below {self.f_target}Hz")
+        decimator.downsample_ffl(ffl_cache=aux_data, channels=self.available_channels)
 
     def construct_histograms(self, aux_data, segments, triggers) -> ({str, Hist}):
         h_aux_cum = dict((c.name, Hist([])) for c in self.available_channels)

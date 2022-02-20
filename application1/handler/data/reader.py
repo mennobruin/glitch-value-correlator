@@ -22,7 +22,6 @@ class DataReader:
             channel = Channel(name=channel_name, f_sample=None)
             segment = ChannelSegment(channel=channel, data=x, gps_time=None, duration=None)
         else:
-            # TODO: try using Frame objects directly instead of FrameFile objects to improve speed
             if not self.frame_file:
                 self.frame_file = FrameFile(source)
             frame = self.frame_file.getChannel(channel_name, t_start, t_stop)
