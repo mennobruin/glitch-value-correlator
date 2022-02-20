@@ -4,7 +4,7 @@ import h5py
 
 from tqdm import tqdm
 from scipy import nanmean
-from scipy.signal import sosfiltfilt, resample, cheby1
+from scipy.signal import sosfiltfilt, sosfilt, resample, cheby1
 from math import isclose
 
 from core.config.configuration_manager import ConfigurationManager
@@ -47,7 +47,7 @@ class Resampler:
                                                                   source=ffl_cache.ffl_file)
                 ds_segment = self.downsample_segment(segment=channel_segment)
                 ds_data.append(ds_segment.data)
-            file_name = self.FILE_TEMPLATE.format(f_target=self.f_target, t_start=gps_start, t_stop=gps_end)
+            file_name = self.FILE_TEMPLATE.format(f_target=self.f_target, t_start=int(gps_start), t_stop=int(gps_end))
             file_path = self.ds_data_path + file_name
             with h5py.File(file_path + '.h5', 'w') as f:
                 f.create_dataset(name='data', data=ds_data)
@@ -83,6 +83,7 @@ class Resampler:
 
         if ds_ratio.is_integer():  # decimate
             filt = cheby1(N=self.FILTER_ORDER, rp=0.05, Wn=0.8 / ds_ratio, output='sos')
-            return sosfiltfilt(filt, segment.data)[::int(ds_ratio)]
+            # return sosfiltfilt(filt, segment.data)[::int(ds_ratio)]
+            return sosfilt(filt, segment.data)[::int(ds_ratio)]
         else:  # Fourier resampling
             return resample(segment.data, segment.n_points, window='hamming')
