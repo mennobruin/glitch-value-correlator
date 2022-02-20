@@ -51,7 +51,7 @@ class Resampler:
             file_name = self.FILE_TEMPLATE.format(f_target=self.f_target, t_start=gps_start, t_stop=gps_end)
             file_path = self.ds_data_path + file_name
             with h5py.File(file_path + '.h5', 'w') as f:
-                f.create_dataset(name='channels', data=[c.name for c in channels])
+                f.create_dataset(name='channels', data=[ascii(c.name) for c in channels])
                 f.create_dataset(name='data', data=ds_data)
 
     def downsample_segment(self, segment: ChannelSegment):
