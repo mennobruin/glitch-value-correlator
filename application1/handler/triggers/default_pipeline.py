@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..data import DataReader
+from ..data.reader import DataReader
 from core.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
