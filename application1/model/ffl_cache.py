@@ -5,7 +5,7 @@ from framel import frgetvect1d
 
 from application1.handler.data.reader import DataReader
 from application1.model import Channel
-from application1.utils import *
+from application1.utils import check_extension
 
 
 class FFLCache:
