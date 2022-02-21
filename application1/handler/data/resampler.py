@@ -78,6 +78,9 @@ class Resampler:
     def _decimate(self, segment: ChannelSegment):
         ds_ratio = segment.channel.f_sample / self.f_target
 
+        # TODO: check if ds_ratio is ever integer (it should be),
+        #  performance difference is negligible between filt and filtfilt (it shouldn't be)
+
         if isclose(ds_ratio, 1):  # f_sample ~= f_target
             return segment
 
