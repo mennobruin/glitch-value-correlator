@@ -24,7 +24,7 @@ class DataReader:
         if connection:
             x = TimeSeries.fetch(channel_name, t_start, t_stop, connection=connection)
             channel = Channel(name=channel_name, f_sample=None)
-            segment = ChannelSegment(channel=channel, data=x, gps_time=None, duration=None)
+            segment = ChannelSegment(channel=channel, data=x, gps_time=None)
         else:
             if not self.frame_file:
                 self.frame_file = FrameFile(source)
