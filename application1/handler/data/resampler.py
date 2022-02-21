@@ -66,16 +66,19 @@ class Resampler:
         else:
             LOG.error(f"No implementation found for resampling method '{self.method}'.")
 
+        print(segment.data.dtype, segment.data.shape)
+
         channel.f_sample = self.f_target
         segment.decimated = True
 
         return segment
 
     def _n_sample_average(self, x: np.array):
-        return np.nanmean(x.reshape(-1, self.f_target), axis=1).astype(np.float64)
+        return np.nanmean(x.reshape(-1, self.f_target), axis=1)
 
     def _decimate(self, segment: ChannelSegment):
         ds_ratio = segment.channel.f_sample / self.f_target
+        print(ds_ratio.is_integer(), ds_ratio)
 
         # TODO: check if ds_ratio is ever integer (it should be),
         #  performance difference is negligible between filt and filtfilt (it shouldn't be)
