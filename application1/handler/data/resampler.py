@@ -60,7 +60,8 @@ class Resampler:
             padding = np.empty(math.ceil(data.size / self.f_target) * self.f_target - data.size)
             padding.fill(np.nan)
             padded_data = np.append(data, padding)
-            segment.data = self._n_sample_average(padded_data)
+            ds_ratio = len(padded_data) // segment.duration * self.f_target
+            segment.data = self._n_sample_average(padded_data, ratio=ds_ratio)
         elif self.method == 'decimate':
             segment.data = self._decimate(segment)
         else:
@@ -73,8 +74,8 @@ class Resampler:
 
         return segment
 
-    def _n_sample_average(self, x: np.array):
-        return np.nanmean(x.reshape(-1, self.f_target), axis=1)
+    def _n_sample_average(self, x: np.array, ratio):
+        return np.nanmean(x.reshape(-1, ratio), axis=1)
 
     def _decimate(self, segment: ChannelSegment):
         ds_ratio = segment.channel.f_sample / self.f_target
