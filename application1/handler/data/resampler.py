@@ -60,7 +60,9 @@ class Resampler:
             padding = np.empty(math.ceil(data.size / self.f_target) * self.f_target - data.size)
             padding.fill(np.nan)
             padded_data = np.append(data, padding)
-            ds_ratio = len(padded_data) // int(segment.duration) * self.f_target
+            print(segment.duration)
+            ds_ratio = len(padded_data) / int(segment.duration) * self.f_target
+            print(ds_ratio)
             segment.data = self._n_sample_average(padded_data, ratio=ds_ratio)
         elif self.method == 'decimate':
             segment.data = self._decimate(segment)
