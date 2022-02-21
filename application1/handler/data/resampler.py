@@ -58,7 +58,7 @@ class Resampler:
         data = segment.data
 
         if self.method == 'mean':
-            padding = np.empty(np.ceil(data.size / self.f_target) * self.f_target - data.size)
+            padding = np.empty(np.ceil(data.size / self.f_target, dtype=int) * self.f_target - data.size)
             padding.fill(np.nan)
             padded_data = np.append(data, padding)
             segment.data = self._n_sample_average(padded_data)
