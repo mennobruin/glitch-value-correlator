@@ -72,7 +72,7 @@ class Resampler:
         return segment
 
     def _n_sample_average(self, x: np.array):
-        return np.nanmean(x.reshape(-1, self.f_target), axis=1)
+        return np.nanmean(x.reshape(-1, self.f_target), axis=1).astype(np.float64)
 
     def _decimate(self, segment: ChannelSegment):
         ds_ratio = segment.channel.f_sample / self.f_target
