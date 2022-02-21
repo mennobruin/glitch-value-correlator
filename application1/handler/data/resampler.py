@@ -1,11 +1,10 @@
 import numpy as np
 import os
 import h5py
+import math
 
 from tqdm import tqdm
-from scipy import nanmean
 from scipy.signal import sosfiltfilt, sosfilt, resample, cheby1
-from math import isclose
 
 from core.config.configuration_manager import ConfigurationManager
 from application1.utils import get_resource_path
@@ -58,7 +57,7 @@ class Resampler:
         data = segment.data
 
         if self.method == 'mean':
-            padding = np.empty(np.ceil(data.size / self.f_target, dtype=int) * self.f_target - data.size)
+            padding = np.empty(math.ceil(data.size / self.f_target) * self.f_target - data.size)
             padding.fill(np.nan)
             padded_data = np.append(data, padding)
             segment.data = self._n_sample_average(padded_data)
@@ -73,7 +72,7 @@ class Resampler:
         return segment
 
     def _n_sample_average(self, x: np.array):
-        return nanmean(x.reshape(-1, self.f_target), axis=1)
+        return np.nanmean(x.reshape(-1, self.f_target), axis=1)
 
     def _decimate(self, segment: ChannelSegment):
         ds_ratio = segment.channel.f_sample / self.f_target
@@ -81,7 +80,7 @@ class Resampler:
         # TODO: check if ds_ratio is ever integer (it should be),
         #  performance difference is negligible between filt and filtfilt (it shouldn't be)
 
-        if isclose(ds_ratio, 1):  # f_sample ~= f_target
+        if math.isclose(ds_ratio, 1):  # f_sample ~= f_target
             return segment
 
         if ds_ratio.is_integer():  # decimate
