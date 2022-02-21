@@ -29,7 +29,10 @@ class DataReader:
             if not self.frame_file:
                 self.frame_file = FrameFile(source)
             frame = self.frame_file.getChannel(channel_name, t_start, t_stop)
-            print(frame)
+            print([frame.__dict__])
+            print([v for v in frame.vars()])
+            print([(k, v) for (k, v) in frame.__dict__])
+            print("obj.%s = %r" % (attr, getattr(frame, attr)) for attr in dir(frame))
             channel = Channel(name=channel_name, f_sample=frame.fsample, unit=frame.unit)
             segment = ChannelSegment(channel=channel, data=frame.data, gps_time=frame.gps, duration=frame.dt)
         return segment
