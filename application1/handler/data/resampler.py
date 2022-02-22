@@ -83,15 +83,11 @@ class Resampler:
         ds_ratio = segment.channel.f_sample / self.f_target
         print(ds_ratio.is_integer(), ds_ratio)
 
-        # TODO: check if ds_ratio is ever integer (it should be),
-        #  performance difference is negligible between filt and filtfilt (it shouldn't be)
-
         if math.isclose(ds_ratio, 1):  # f_sample ~= f_target
             return segment
 
         if ds_ratio.is_integer():  # decimate
             filt = cheby1(N=self.FILTER_ORDER, rp=0.05, Wn=0.8 / ds_ratio, output='sos')
-            # return sosfiltfilt(filt, segment.data)[::int(ds_ratio)]
-            return sosfilt(filt, segment.data)[::int(ds_ratio)]
+            return sosfiltfilt(filt, segment.data)[::int(ds_ratio)]
         else:  # Fourier resampling
             return resample(segment.data, segment.n_points, window='hamming')
