@@ -19,7 +19,7 @@ LOG = ConfigurationManager.get_logger(__name__)
 
 class Resampler:
 
-    FILE_TEMPLATE = 'excavator_f{f_target}_gs{t_start}_ge{t_stop}'
+    FILE_TEMPLATE = 'excavator_f{f_target}_gs{t_start}_ge{t_stop}_{method}'
     FILTER_ORDER = 4
 
     def __init__(self, f_target, method='mean'):
@@ -46,7 +46,10 @@ class Resampler:
                                                                   source=ffl_cache.ffl_file)
                 ds_segment = self.downsample_segment(segment=channel_segment)
                 ds_data.append(ds_segment.data)
-            file_name = self.FILE_TEMPLATE.format(f_target=self.f_target, t_start=int(gps_start), t_stop=int(gps_end))
+            file_name = self.FILE_TEMPLATE.format(f_target=self.f_target,
+                                                  t_start=int(gps_start),
+                                                  t_stop=int(gps_end),
+                                                  method=self.method)
             file_path = self.ds_data_path + file_name
             with h5py.File(file_path + '.h5', 'w') as f:
                 f.create_dataset(name='data', data=ds_data)
