@@ -11,5 +11,6 @@ data_path = ds_path + 'data/'
 files = os.listdir(data_path)
 f = files[3]
 with h5py.File(data_path + f, 'r') as hf:
-    data = hf.keys()
-    print(data)
+    channels = hf.get('channels')
+    data = hf.get('data')
+    print(channels[0:10])
