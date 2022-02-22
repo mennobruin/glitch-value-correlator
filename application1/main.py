@@ -30,11 +30,13 @@ class Excavator:
         self.f_target = f_target
         self.resource_path = get_resource_path(depth=0)
 
+        bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
         self.reader = DataReader()
+        self.reader.set_frame_file(ffl_source=source)
+        self.reader.set_patterns(patterns=bl_patterns)
         self.writer = DataWriter()
 
-        bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
-        self.available_channels = self.reader.get_available_channels(source, t_start, exclude_patterns=bl_patterns)[0:200]
+        self.available_channels = self.reader.get_available_channels(t0=t_start)
 
     def run(self, n_iter):
 
@@ -75,9 +77,9 @@ class Excavator:
         # plt.show()
 
     def decimate_data(self):
-        decimator = Resampler(f_target=self.f_target)  # , method='decimate')
+        decimator = Resampler(f_target=self.f_target, reader=self.reader, method='decimate')
         aux_data = FFLCache(ffl_file=self.source, gps_start=self.t_start, gps_end=self.t_stop)
-        decimator.downsample_ffl(ffl_cache=aux_data, channels=self.available_channels)
+        decimator.downsample_ffl(ffl_cache=aux_data)
 
     def construct_histograms(self, aux_data, segments, triggers) -> ({str, Hist}):
         h_aux_cum = dict((c.name, Hist([])) for c in self.available_channels)

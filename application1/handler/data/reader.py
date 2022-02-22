@@ -19,32 +19,37 @@ class DataReader:
     def __init__(self):
         self.default_path = get_resource_path(depth=2)
         self.frame_file = None
+        self.exclude_patterns = None
 
-    def get_channel_segment(self, channel_name, t_start, t_stop, source='raw', connection=None) -> ChannelSegment:
+    def set_frame_file(self, ffl_source):
+        self.frame_file = FrameFile(ffl_source)
+
+    def set_patterns(self, patterns):
+        self.exclude_patterns = patterns
+
+    def close(self):
+        self.frame_file.close()
+
+    def get_channel_segment(self, channel_name, t_start, t_stop, connection=None) -> ChannelSegment:
         if connection:
             x = TimeSeries.fetch(channel_name, t_start, t_stop, connection=connection)
             channel = Channel(name=channel_name, f_sample=None)
             segment = ChannelSegment(channel=channel, data=x, gps_time=None)
         else:
-            if not self.frame_file:
-                self.frame_file = FrameFile(source)
             frame = self.frame_file.getChannel(channel_name, t_start, t_stop)
             channel = Channel(name=channel_name, f_sample=frame.fsample, unit=frame.unit)
             segment = ChannelSegment(channel=channel, data=frame.data, gps_time=frame.gps)
         return segment
 
-    @staticmethod
-    def get_available_channels(source, t0, exclude_patterns: list = None) -> [Channel]:
-        LOG.info(f"Fetching available channels from {source}")
-        with FrameFile(source) as ffl:
-            with ffl.get_frame(t0) as f:
-                channels = [Channel(name=str(adc.contents.name),
-                                    f_sample=adc.contents.sampleRate)
-                            for adc in f.iter_adc()]
-                if exclude_patterns:
-                    return [c for c in channels if not any(fnmatch(c.name, p) for p in exclude_patterns)]
-                else:
-                    return channels
+    def get_available_channels(self, t0) -> [Channel]:
+        with self.frame_file.get_frame(t0) as f:
+            channels = [Channel(name=str(adc.contents.name),
+                                f_sample=adc.contents.sampleRate)
+                        for adc in f.iter_adc()]
+            if self.exclude_patterns:
+                return [c for c in channels if not any(fnmatch(c.name, p) for p in self.exclude_patterns)]
+            else:
+                return channels
 
     def load_csv(self, csv_file, usecols=None) -> pd.DataFrame:
         csv_file = check_extension(csv_file, extension='.csv')
@@ -56,7 +61,5 @@ class DataReader:
                 LOG.error(f"Unable to load csv_file: {csv_file}, check if the file exists.")
                 raise FileNotFoundError
 
-        print(type(csv_file), csv_file)
-        print(type(usecols), usecols)
         return pd.read_csv(csv_file, usecols=usecols)
 

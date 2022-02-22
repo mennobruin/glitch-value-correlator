@@ -22,7 +22,7 @@ class Resampler:
     FILE_TEMPLATE = 'excavator_f{f_target}_gs{t_start}_ge{t_stop}_{method}'
     FILTER_ORDER = 4
 
-    def __init__(self, f_target, method='mean'):
+    def __init__(self, f_target, reader: DataReader, method='mean'):
         self.f_target = f_target
         self.method = method
         self.resource_path = get_resource_path(depth=1)
@@ -30,10 +30,11 @@ class Resampler:
         self.ds_data_path = self.ds_path + 'data/'
         os.makedirs(self.ds_data_path, exist_ok=True)
         print(self.ds_data_path)
-        self.reader = DataReader()
+        self.reader = reader
 
-    def downsample_ffl(self, ffl_cache: FFLCache, channels):
+    def downsample_ffl(self, ffl_cache: FFLCache):
         segments = ffl_cache.segments
+        channels = self.reader.get_available_channels(t0=ffl_cache.gps_start)
         channels = [c for c in channels if c.f_sample > self.f_target]
 
         for segment in tqdm(segments):
@@ -42,8 +43,7 @@ class Resampler:
             for channel in channels:
                 channel_segment = self.reader.get_channel_segment(channel_name=channel.name,
                                                                   t_start=gps_start,
-                                                                  t_stop=gps_end,
-                                                                  source=ffl_cache.ffl_file)
+                                                                  t_stop=gps_end)
                 ds_segment = self.downsample_segment(segment=channel_segment)
                 ds_data.append(ds_segment.data)
             file_name = self.FILE_TEMPLATE.format(f_target=self.f_target,
