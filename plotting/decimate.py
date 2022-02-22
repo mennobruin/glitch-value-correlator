@@ -10,4 +10,6 @@ data_path = ds_path + 'data/'
 
 files = os.listdir(data_path)
 for f in files:
-    print(f)
+    hfile = h5py.File(data_path + f, 'r')
+    data = hfile.keys()
+    print(data[0:10])
