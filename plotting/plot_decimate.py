@@ -3,6 +3,7 @@ import h5py
 import pathlib
 import os
 import re
+import numpy as np
 
 from virgotools.frame_lib import FrameFile
 
@@ -18,8 +19,8 @@ with h5py.File(data_path + f, 'r') as hf:
     all_data = hf.get('data')
 
     i = 3
-    channel_name = all_channels[i]
-    data = all_data[i]
+    channel_name = str(all_channels[i])
+    data = np.array(all_data[i])
 
     print(tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric()))
     f_sample, gs, ge, _ = tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric())
