@@ -18,7 +18,7 @@ with h5py.File(data_path + f, 'r') as hf:
     all_channels = hf.get('channels')
     all_data = hf.get('data')
 
-    i = 3
+    i = 5
     channel_name = all_channels[i].decode('ASCII')
     data = np.array(all_data[i])
 
