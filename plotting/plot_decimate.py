@@ -19,7 +19,7 @@ with h5py.File(data_path + f, 'r') as hf:
     all_data = hf.get('data')
 
     i = 3
-    channel_name = str(all_channels[i])
+    channel_name = all_channels[i].decode('ASCII')
     data = np.array(all_data[i])
 
     print(tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric()))
