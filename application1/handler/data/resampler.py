@@ -81,7 +81,6 @@ class Resampler:
 
     def _decimate(self, segment: ChannelSegment):
         ds_ratio = segment.channel.f_sample / self.f_target
-        print(ds_ratio.is_integer(), ds_ratio)
 
         if math.isclose(ds_ratio, 1):  # f_sample ~= f_target
             return segment
