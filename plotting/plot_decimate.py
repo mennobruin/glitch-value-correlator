@@ -22,7 +22,7 @@ with h5py.File(data_path + f, 'r') as hf:
     data = all_data[i]
 
     print(tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric()))
-    gs, ge, _ = tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric())
+    f_sample, gs, ge, _ = tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric())
 
     with FrameFile(source) as ff:
         unsampled_data = ff.getChannel(channel_name, gs, ge).data
