@@ -42,7 +42,7 @@ def test_getChannel():
             print(f'error trying to decode {channel}. Skipping.')
 
 
-# cProfile.run('test_getChannel()')
+cProfile.run('test_getChannel()')
 """ result
 14458 channels found
 3800 channels >= 50Hz
