@@ -18,7 +18,7 @@ frame_file = FrameFile(source)
 
 def get_available_channels(t0):
     with frame_file.get_frame(t0) as f:
-        channels = [Channel(name=adc.contents.name.decode('ASCII'),
+        channels = [Channel(name=str(adc.contents.name),
                             f_sample=adc.contents.sampleRate)
                     for adc in f.iter_adc()]
         if exclude_patterns:
@@ -36,7 +36,10 @@ print(f'number of channels (>=50Hz): {len(channels)}')
 
 def test_getChannel():
     for channel in tqdm(channels):
-        frame_file.getChannel(channel.name, t_start, t_stop)
+        try:
+            frame_file.getChannel(channel.name, t_start, t_stop)
+        except UnicodeDecodeError:
+            print(f'error trying to decode {channel}. Skipping.')
 
 
 # cProfile.run('test_getChannel()')
