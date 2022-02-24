@@ -1,3 +1,6 @@
+import cProfile
+
+from tqdm import tqdm
 from fnmatch import fnmatch
 
 from application1.model.channel import Channel
@@ -27,6 +30,12 @@ def get_available_channels(t0):
 channels = get_available_channels(t0=t_start)
 print(f'number of channels: {len(channels)}')
 
-channels = [c for c in channels if c.f_sample > f_target]
+channels = [c for c in channels if c.f_sample >= f_target]
 print(f'number of channels (>=50Hz): {len(channels)}')
 
+
+def test_getChannel():
+    for channel in tqdm(channels):
+        frame_file.getChannel(channel, t_start, t_stop)
+
+cProfile.run('test_getChannel()')
