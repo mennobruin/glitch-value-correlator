@@ -5,10 +5,11 @@ from fnmatch import fnmatch
 
 from application1.model.channel import Channel
 
+import PyFd as fd
 from virgotools.frame_lib import FrameFile, FrVect2array
 
 
-source = '/virgoData/ffl/raw_O3b_arch'
+source = '/virgoData/ffl/raw_O3b_arch.ffl'
 t_start = 1262230000
 t_stop = t_start + 100
 f_target = 50
@@ -53,11 +54,21 @@ def test_iterAdc():
                     data = FrVect2array(adc.contents.data)
 
 
+def test_diy():
+    ff = fd.FrFileINew(source)
+    dt = 10
+    adc = fd.FrAdcDataRead(ff)
+    for t in tqdm(range(t_start, t_stop, dt)):
+        print(adc.contents.name)
+        data = FrVect2array(adc.contents.data)
+        adc = adc.contents.next
+
+
 cProfile.run('test_iterAdc()')
 """ results
 14458 channels found
 3800 channels >= 50Hz
 
 calling getChannel on every one takes 14m00s, of which 13m29s come from getChannel
-
+using get_frame + iter_adc takes 2m15s, of which 1m56 come from get_frame
 """
