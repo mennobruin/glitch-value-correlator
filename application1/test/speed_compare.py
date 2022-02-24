@@ -18,7 +18,7 @@ frame_file = FrameFile(source)
 
 def get_available_channels(t0):
     with frame_file.get_frame(t0) as f:
-        channels = [Channel(name=str(adc.contents.name),
+        channels = [Channel(name=adc.contents.name.decode('ASCII'),
                             f_sample=adc.contents.sampleRate)
                     for adc in f.iter_adc()]
         if exclude_patterns:
@@ -39,4 +39,11 @@ def test_getChannel():
         frame_file.getChannel(channel.name, t_start, t_stop)
 
 
-cProfile.run('test_getChannel()')
+# cProfile.run('test_getChannel()')
+""" result
+14458 channels found
+3800 channels >= 50Hz
+
+calling getChannel on every one takes 
+
+"""
