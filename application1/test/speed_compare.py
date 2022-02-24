@@ -58,7 +58,7 @@ def test_diy():
     ff = fd.FrFileINew(source)
     dt = 10
     for t in tqdm(range(t_start, t_stop, dt)):
-        frame = fd.FrameReadT(ff)
+        frame = fd.FrameReadT(ff, t)
         adc = fd.FrAdcDataRead(frame)
         while adc:
             data = FrVect2array(adc.contents.data)
