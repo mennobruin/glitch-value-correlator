@@ -64,7 +64,7 @@ def test_diy():
         adc = adc.contents.next
 
 
-cProfile.run('test_iterAdc()')
+cProfile.run('test_diy()')
 """ results
 14458 channels found
 3800 channels >= 50Hz
