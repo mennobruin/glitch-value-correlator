@@ -5,7 +5,8 @@ from fnmatch import fnmatch
 
 from application1.model.channel import Channel
 
-from virgotools.frame_lib import FrameFile
+from virgotools.frame_lib import FrameFile, FrVect2array
+
 
 source = '/virgoData/ffl/raw_O3b_arch'
 t_start = 1262230000
@@ -39,14 +40,24 @@ def test_getChannel():
         try:
             frame_file.getChannel(channel.name, t_start, t_stop)
         except UnicodeDecodeError:
-            print(f'error trying to decode {channel}. Skipping.')
+            print(f'error trying to decode {channel.name}. Skipping.')
 
 
-cProfile.run('test_getChannel()')
-""" result
+def test_iterAdc():
+    dt = 10
+    for t in tqdm(range(t_start, t_stop, dt)):
+        with frame_file.get_frame(t) as f:
+            for adc in f.iter_adc():
+                f_sample = adc.contents.sampleRate
+                if f_sample >= 50:
+                    data = FrVect2array(adc.contents.data)
+
+
+cProfile.run('test_iterAdc()')
+""" results
 14458 channels found
 3800 channels >= 50Hz
 
-calling getChannel on every one takes 
+calling getChannel on every one takes 14m00s, of which 13m29s come from getChannel
 
 """
