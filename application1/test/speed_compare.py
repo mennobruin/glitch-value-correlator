@@ -36,6 +36,7 @@ print(f'number of channels (>=50Hz): {len(channels)}')
 
 def test_getChannel():
     for channel in tqdm(channels):
-        frame_file.getChannel(channel, t_start, t_stop)
+        frame_file.getChannel(channel.name, t_start, t_stop)
+
 
 cProfile.run('test_getChannel()')
