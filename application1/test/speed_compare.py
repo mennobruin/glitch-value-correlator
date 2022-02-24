@@ -57,11 +57,12 @@ def test_iterAdc():
 def test_diy():
     ff = fd.FrFileINew(source)
     dt = 10
-    adc = fd.FrAdcDataRead(ff)
     for t in tqdm(range(t_start, t_stop, dt)):
-        print(adc.contents.name)
-        data = FrVect2array(adc.contents.data)
-        adc = adc.contents.next
+        frame = fd.FrameReadT(ff)
+        adc = fd.FrAdcDataRead(frame)
+        while adc:
+            data = FrVect2array(adc.contents.data)
+            adc = adc.contents.next
 
 
 cProfile.run('test_diy()')
