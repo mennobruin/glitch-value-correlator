@@ -57,7 +57,7 @@ def test_iterAdc():
 
 ff2 = fd.FrFileINew(source)
 for frame in ff2:
-    print(frame.contents.curFrame.contents.GTimeS)
+    print(frame.curFrame)
 
 
 def test_diy():
