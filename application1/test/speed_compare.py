@@ -11,7 +11,7 @@ from virgotools.frame_lib import FrameFile, FrVect2array
 
 source = '/virgoData/ffl/raw_O3b_arch.ffl'
 t_start = 1262230000
-t_stop = t_start + 100
+t_stop = t_start + 1000
 f_target = 50
 
 exclude_patterns = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
@@ -73,7 +73,7 @@ def test_diy():
             fd.FrameFree(frame)
 
 
-test_iterAdc()
+# test_iterAdc()
 test_diy()
 
 # cProfile.run('test_iterAdc()')
@@ -84,5 +84,10 @@ test_diy()
 calling getChannel on every one takes 14m00s, of which 13m29s come from getChannel
 using get_frame + iter_adc takes 2m36s / 2m41, of which 2m13 / 2m16 come from get_frame (*)
 using PyFd directly takes 2m23s / 2m32s (*)
-(*) n.b: loading frame file is slow, picks up speed
+(*) n.b: includes loading frame file, which is slow, picks up speed.
+
+pre-loading frame file:
+using get_frame + iter_adc takes 2m24s / 2m16 / 2m16 / 2m22
+using PyFd directly takes 2m21s / 2m09s / 2m28 / 2m18
+
 """
