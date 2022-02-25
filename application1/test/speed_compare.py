@@ -57,7 +57,7 @@ def test_iterAdc():
 
 ff2 = fd.FrFileINew(source)
 for frame in ff2:
-    print(frame.__dict__)
+    print(frame.contents.__dict__)
     break
 
 
