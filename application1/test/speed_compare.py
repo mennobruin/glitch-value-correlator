@@ -36,8 +36,8 @@ channels = [c for c in channels if c.f_sample >= f_target]
 print(f'number of channels (>=50Hz): {len(channels)}')
 
 
+ff = FrameFile(source)
 def test_getChannel():
-    ff = FrameFile(source)
     for channel in tqdm(channels):
         try:
             ff.getChannel(channel.name, t_start, t_stop)
@@ -47,7 +47,6 @@ def test_getChannel():
 
 def test_iterAdc():
     dt = 10
-    ff = FrameFile(source)
     for t in tqdm(range(t_start, t_stop, dt)):
         with ff.get_frame(t) as f:
             for adc in f.iter_adc():
@@ -56,11 +55,11 @@ def test_iterAdc():
                     data = FrVect2array(adc.contents.data)
 
 
+ff2 = fd.FrFileINew(source)
 def test_diy():
-    ff = fd.FrFileINew(source)
     dt = 10
     for t in tqdm(range(t_start, t_stop, dt)):
-        frame = fd.FrameReadT(ff, t)
+        frame = fd.FrameReadT(ff2, t)
         try:
             adc = frame.contents.rawData.contents.firstAdc
             while adc:
@@ -74,12 +73,16 @@ def test_diy():
             fd.FrameFree(frame)
 
 
-cProfile.run('test_iterAdc()')
+test_iterAdc()
+test_diy()
+
+# cProfile.run('test_iterAdc()')
 """ results
 14458 channels found
 3800 channels >= 50Hz
 
 calling getChannel on every one takes 14m00s, of which 13m29s come from getChannel
-using get_frame + iter_adc takes 2m15s, of which 1m56 come from get_frame
-using PyFd directly takes 2m23s / 2m32s (n.b: picks up speed for some reason, starts is slow, perhaps loading the framefile?)
+using get_frame + iter_adc takes 2m36s / 2m41, of which 2m13 / 2m16 come from get_frame (*)
+using PyFd directly takes 2m23s / 2m32s (*)
+(*) n.b: loading frame file is slow, picks up speed
 """
