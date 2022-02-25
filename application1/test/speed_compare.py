@@ -70,7 +70,7 @@ def test_diy():
             fd.FrameFree(frame)
 
 
-cProfile.run('test_diy()')
+cProfile.run('test_iterAdc()')
 """ results
 14458 channels found
 3800 channels >= 50Hz
