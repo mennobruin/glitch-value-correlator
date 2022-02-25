@@ -72,11 +72,12 @@ def test_diy():
             fd.FrameFree(frame)
 
 
-cProfile.run('test_diy()')
+cProfile.run('test_iterAdc()')
 """ results
 14458 channels found
 3800 channels >= 50Hz
 
 calling getChannel on every one takes 14m00s, of which 13m29s come from getChannel
 using get_frame + iter_adc takes 2m15s, of which 1m56 come from get_frame
+using PyFd directly takes XmXs
 """
