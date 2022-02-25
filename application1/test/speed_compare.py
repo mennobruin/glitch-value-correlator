@@ -15,11 +15,11 @@ t_stop = t_start + 100
 f_target = 50
 
 exclude_patterns = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
-frame_file = FrameFile(source)
 
 
 def get_available_channels(t0):
-    with frame_file.get_frame(t0) as f:
+    ff = FrameFile(source)
+    with ff.get_frame(t0) as f:
         channels = [Channel(name=str(adc.contents.name),
                             f_sample=adc.contents.sampleRate)
                     for adc in f.iter_adc()]
@@ -37,17 +37,19 @@ print(f'number of channels (>=50Hz): {len(channels)}')
 
 
 def test_getChannel():
+    ff = FrameFile(source)
     for channel in tqdm(channels):
         try:
-            frame_file.getChannel(channel.name, t_start, t_stop)
+            ff.getChannel(channel.name, t_start, t_stop)
         except UnicodeDecodeError:
             print(f'error trying to decode {channel.name}. Skipping.')
 
 
 def test_iterAdc():
     dt = 10
+    ff = FrameFile(source)
     for t in tqdm(range(t_start, t_stop, dt)):
-        with frame_file.get_frame(t) as f:
+        with ff.get_frame(t) as f:
             for adc in f.iter_adc():
                 f_sample = adc.contents.sampleRate
                 if f_sample >= 50:
@@ -79,5 +81,5 @@ cProfile.run('test_iterAdc()')
 
 calling getChannel on every one takes 14m00s, of which 13m29s come from getChannel
 using get_frame + iter_adc takes 2m15s, of which 1m56 come from get_frame
-using PyFd directly takes XmXs
+using PyFd directly takes 2m23s / 2m32s (n.b: picks up speed for some reason, starts is slow, perhaps loading the framefile?)
 """
