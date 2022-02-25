@@ -56,6 +56,9 @@ def test_iterAdc():
 
 
 ff2 = fd.FrFileINew(source)
+for f in ff2:
+    print(f)
+
 def test_diy():
     dt = 10
     for t in tqdm(range(t_start, t_stop, dt)):
@@ -74,7 +77,7 @@ def test_diy():
 
 
 # test_iterAdc()
-test_diy()
+# test_diy()
 
 # cProfile.run('test_iterAdc()')
 """ results
