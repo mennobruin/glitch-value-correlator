@@ -59,10 +59,15 @@ def test_diy():
     dt = 10
     for t in tqdm(range(t_start, t_stop, dt)):
         frame = fd.FrameReadT(ff, t)
-        adc = fd.FrAdcDataRead(frame)
-        while adc:
-            data = FrVect2array(adc.contents.data)
-            adc = adc.contents.next
+        try:
+            adc = frame.contents.rawData.contents.firstAdc
+            while adc:
+                data = FrVect2array(adc.contents.data)
+                adc = adc.contents.next
+        except Exception as e:
+            print(f"exception caught: {e}")
+        finally:
+            fd.FrameFree(frame)
 
 
 cProfile.run('test_diy()')
