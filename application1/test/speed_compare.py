@@ -56,15 +56,11 @@ def test_iterAdc():
 
 
 ff2 = fd.FrFileINew(source)
-for frame in ff2:
-    print(frame.curFrame.contents.GTimeS)
-    break
-
-
 def test_diy():
     dt = 10
     for t in tqdm(range(t_start, t_stop, dt)):
         frame = fd.FrameReadT(ff2, t)
+        print(frame.contents.GTimeS)
         try:
             adc = frame.contents.rawData.contents.firstAdc
             while adc:
@@ -79,7 +75,7 @@ def test_diy():
 
 
 # test_iterAdc()
-# test_diy()
+test_diy()
 
 # cProfile.run('test_iterAdc()')
 """ results
