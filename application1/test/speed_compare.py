@@ -29,20 +29,20 @@ def get_available_channels(t0):
             return channels
 
 
-channels = get_available_channels(t0=t_start)
-print(f'number of channels: {len(channels)}')
-
-channels = [c for c in channels if c.f_sample >= f_target]
-print(f'number of channels (>=50Hz): {len(channels)}')
-
-
+# channels = get_available_channels(t0=t_start)
+# print(f'number of channels: {len(channels)}')
+#
+# channels = [c for c in channels if c.f_sample >= f_target]
+# print(f'number of channels (>=50Hz): {len(channels)}')
+#
+#
 ff = FrameFile(source)
-def test_getChannel():
-    for channel in tqdm(channels):
-        try:
-            ff.getChannel(channel.name, t_start, t_stop)
-        except UnicodeDecodeError:
-            print(f'error trying to decode {channel.name}. Skipping.')
+# def test_getChannel():
+#     for channel in tqdm(channels):
+#         try:
+#             ff.getChannel(channel.name, t_start, t_stop)
+#         except UnicodeDecodeError:
+#             print(f'error trying to decode {channel.name}. Skipping.')
 
 
 def test_iterAdc():
@@ -57,7 +57,7 @@ def test_iterAdc():
 
 ff2 = fd.FrFileINew(source)
 for f in ff2:
-    print(f)
+    print(f.contents.contents.GTimeS)
 
 def test_diy():
     dt = 10
