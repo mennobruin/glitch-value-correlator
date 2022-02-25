@@ -93,4 +93,6 @@ pre-loading frame file:
 using get_frame + iter_adc takes 2m24s / 2m16 / 2m16 / 2m22
 using PyFd directly takes 2m21s / 2m09s / 2m28 / 2m18
 
+using PyFd directly on 1000s of data takes 18m26s, which is 1.1x realtime
+
 """
