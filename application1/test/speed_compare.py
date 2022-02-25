@@ -62,7 +62,9 @@ def test_diy():
         try:
             adc = frame.contents.rawData.contents.firstAdc
             while adc:
-                data = FrVect2array(adc.contents.data)
+                f_sample = adc.contents.sampleRate
+                if f_sample >= 50:
+                    data = FrVect2array(adc.contents.data)
                 adc = adc.contents.next
         except Exception as e:
             print(f"exception caught: {e}")
@@ -70,7 +72,7 @@ def test_diy():
             fd.FrameFree(frame)
 
 
-cProfile.run('test_iterAdc()')
+cProfile.run('test_diy()')
 """ results
 14458 channels found
 3800 channels >= 50Hz
