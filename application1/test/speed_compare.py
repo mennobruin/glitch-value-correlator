@@ -11,7 +11,7 @@ from virgotools.frame_lib import FrameFile, FrVect2array
 
 source = '/virgoData/ffl/raw_O3b_arch.ffl'
 t_start = 1262230000
-t_stop = t_start + 1000
+t_stop = t_start + 100
 f_target = 50
 
 exclude_patterns = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms']
@@ -60,7 +60,6 @@ def test_diy():
     dt = 10
     for t in tqdm(range(t_start, t_stop, dt)):
         frame = fd.FrameReadT(ff2, t)
-        print(frame.contents.GTimeS)
         try:
             adc = frame.contents.rawData.contents.firstAdc
             while adc:
