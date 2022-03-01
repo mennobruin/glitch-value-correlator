@@ -2,6 +2,7 @@ import numpy as np
 import os
 import h5py
 import math
+import multiprocessing as mp
 
 from tqdm import tqdm
 from scipy.signal import sosfiltfilt, sosfilt, resample, cheby1
@@ -31,29 +32,35 @@ class Resampler:
         os.makedirs(self.ds_data_path, exist_ok=True)
         print(self.ds_data_path)
         self.reader = reader
+        self.channels = None
 
     def downsample_ffl(self, ffl_cache: FFLCache):
         segments = ffl_cache.segments
         channels = self.reader.get_available_channels(t0=ffl_cache.gps_start)
-        channels = [c for c in channels if c.f_sample > self.f_target]
+        self.channels = [c for c in channels if c.f_sample > self.f_target]
 
-        for segment in tqdm(segments):
-            gps_start, gps_end = segment
-            ds_data = []
-            for channel in channels:
-                channel_segment = self.reader.get_channel_segment(channel_name=channel.name,
-                                                                  t_start=gps_start,
-                                                                  t_stop=gps_end)
-                ds_segment = self.downsample_segment(segment=channel_segment)
-                ds_data.append(ds_segment.data)
-            file_name = self.FILE_TEMPLATE.format(f_target=self.f_target,
-                                                  t_start=int(gps_start),
-                                                  t_stop=int(gps_end),
-                                                  method=self.method)
-            file_path = self.ds_data_path + file_name
-            with h5py.File(file_path + '.h5', 'w') as f:
-                f.create_dataset(name='data', data=ds_data)
-                f.create_dataset(name='channels', data=np.array([c.name for c in channels], dtype='S'))
+        with mp.Pool(mp.cpu_count() - 1) as mp_pool:
+            with tqdm(len(segments)) as progress:
+                for i, _ in mp_pool.imap_unordered(self.process_segment, segments):
+                    progress.update()
+
+    def process_segment(self, segment):
+        gps_start, gps_end = segment
+        ds_data = []
+        for channel in self.channels:
+            channel_segment = self.reader.get_channel_segment(channel_name=channel.name,
+                                                              t_start=gps_start,
+                                                              t_stop=gps_end)
+            ds_segment = self.downsample_segment(segment=channel_segment)
+            ds_data.append(ds_segment.data)
+        file_name = self.FILE_TEMPLATE.format(f_target=self.f_target,
+                                              t_start=int(gps_start),
+                                              t_stop=int(gps_end),
+                                              method=self.method)
+        file_path = self.ds_data_path + file_name
+        with h5py.File(file_path + '.h5', 'w') as f:
+            f.create_dataset(name='data', data=ds_data)
+            f.create_dataset(name='channels', data=np.array([c.name for c in self.channels], dtype='S'))
 
     def downsample_segment(self, segment: ChannelSegment):
         channel = segment.channel
