@@ -35,7 +35,7 @@ class Resampler:
         self.channels = None
 
     def downsample_ffl(self, ffl_cache: FFLCache):
-        segments = ffl_cache.segments
+        segments = [(gs, ge) for (gs, ge) in ffl_cache.segments]
         channels = self.reader.get_available_channels(t0=ffl_cache.gps_start)
         self.channels = [c for c in channels if c.f_sample > self.f_target]
 
@@ -47,21 +47,17 @@ class Resampler:
     def process_segment(self, segment):
         gps_start, gps_end = segment
         ds_data = []
-        print("test1")
         for channel in self.channels:
-            print("-----------------")
             channel_segment = self.reader.get_channel_segment(channel_name=channel.name,
                                                               t_start=gps_start,
                                                               t_stop=gps_end)
             ds_segment = self.downsample_segment(segment=channel_segment)
             ds_data.append(ds_segment.data)
-        print("test2")
         file_name = self.FILE_TEMPLATE.format(f_target=self.f_target,
                                               t_start=int(gps_start),
                                               t_stop=int(gps_end),
                                               method=self.method)
         file_path = self.ds_data_path + file_name
-        print("test3")
         with h5py.File(file_path + '.h5', 'w') as f:
             f.create_dataset(name='data', data=ds_data)
             f.create_dataset(name='channels', data=np.array([c.name for c in self.channels], dtype='S'))
@@ -70,7 +66,6 @@ class Resampler:
         channel = segment.channel
         data = segment.data
 
-        print("test4")
         if self.method == 'mean':
             padding = np.empty(math.ceil(data.size / self.f_target) * self.f_target - data.size)
             padding.fill(np.nan)
@@ -82,7 +77,6 @@ class Resampler:
         else:
             LOG.error(f"No implementation found for resampling method '{self.method}'.")
 
-        print("test5")
         channel.f_sample = self.f_target
         segment.decimated = True
 
@@ -95,11 +89,9 @@ class Resampler:
     def _decimate(self, segment: ChannelSegment):
         ds_ratio = segment.channel.f_sample / self.f_target
 
-        print("test6")
         if math.isclose(ds_ratio, 1):  # f_sample ~= f_target
             return segment
 
-        print("test7")
         if ds_ratio.is_integer():  # decimate
             filt = cheby1(N=self.FILTER_ORDER, rp=0.05, Wn=0.8 / ds_ratio, output='sos')
             return sosfiltfilt(filt, segment.data)[::int(ds_ratio)]
