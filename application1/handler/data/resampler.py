@@ -56,23 +56,22 @@ class Resampler:
         gps_start, gps_stop = segment
         ds_data = np.array([])
 
-        for t in tqdm(np.arange(gps_start, gps_stop, self.FRAME_DURATION)):
-            frame_data = []
-            with FrameFile(self.source).get_frame(t) as f:
-                for adc in f.iter_adc():
-                    f_sample = adc.contents.sampleRate
-                    if f_sample >= 50:
-                        frame_data.append(self.downsample_adc(adc, f_sample))
-            ds_data = np.hstack((ds_data, frame_data))
-
         file_name = self.FILE_TEMPLATE.format(f_target=self.f_target,
                                               t_start=int(gps_start),
                                               t_stop=int(gps_stop),
                                               method=self.method)
         file_path = self.ds_data_path + file_name
         with h5py.File(file_path + '.h5', 'w') as f:
-            f.create_dataset(name='data', data=ds_data)
             f.create_dataset(name='channels', data=np.array([c.name for c in self.channels], dtype='S'))
+
+            for t in tqdm(np.arange(gps_start, gps_stop, self.FRAME_DURATION)):
+                ds_data = []
+                with FrameFile(self.source).get_frame(t) as f:
+                    for adc in f.iter_adc():
+                        f_sample = adc.contents.sampleRate
+                        if f_sample >= 50:
+                            ds_data.append(self.downsample_adc(adc, f_sample))
+                f.create_dataset(name=f'data_gs{t}_ge{t+self.FRAME_DURATION}', data=ds_data)
 
     def downsample_adc(self, adc, f_sample):
         data = FrVect2array(adc.contents.data)
@@ -83,7 +82,13 @@ class Resampler:
             padding.fill(np.nan)
             padded_data = np.append(data, padding)
             ds_ratio = len(padded_data) / (self.FRAME_DURATION * self.f_target)
-            ds_data = self._n_sample_average(padded_data, ratio=int(ds_ratio))
+            try:
+                ds_data = self._n_sample_average(padded_data, ratio=int(ds_ratio))
+            except ValueError as e:
+                print(data.size)
+                print(padding.size)
+                print(ds_ratio)
+                print(e)
         elif self.method == 'decimate':
             ds_data = self._decimate(data, f_sample)
         else:
