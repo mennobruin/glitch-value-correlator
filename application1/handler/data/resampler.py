@@ -3,9 +3,9 @@ import os
 import h5py
 import math
 import multiprocessing as mp
+import scipy.signal as sig
 
 from tqdm import tqdm
-from scipy.signal import sosfiltfilt, sosfilt, resample, cheby1
 
 from core.config.configuration_manager import ConfigurationManager
 from application1.utils import get_resource_path
@@ -83,8 +83,10 @@ class Resampler:
             padded_data = np.append(data, padding)
             ds_ratio = len(padded_data) / n_target
             ds_data = self._n_sample_average(padded_data, ratio=int(ds_ratio))
-        elif self.method == 'decimate':
+        elif self.method == 'filt':
             ds_data = self._decimate(data, f_sample).astype(np.float64)
+        elif self.method == 'filtfilt':
+            ds_data = self._decimate(data, f_sample, filtfilt=True).astype(np.float64)
         else:
             LOG.error(f"No implementation found for resampling method '{self.method}'.")
 
@@ -94,7 +96,7 @@ class Resampler:
     def _n_sample_average(x: np.array, ratio):
         return np.nanmean(x.reshape(-1, ratio), axis=1)
 
-    def _decimate(self, data, f_sample):
+    def _decimate(self, data, f_sample, filtfilt=False):
         ds_ratio = f_sample / self.f_target
 
         if math.isclose(ds_ratio, 1):  # f_sample ~= f_target
@@ -102,7 +104,13 @@ class Resampler:
 
         if ds_ratio.is_integer():  # decimate
             if ds_ratio not in self.filt_cache:
-                self.filt_cache[ds_ratio] = cheby1(N=self.FILTER_ORDER, rp=0.05, Wn=0.8 / ds_ratio, output='sos')
-            return sosfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
-        else:  # Fourier resampling
-            return resample(data, self.f_target * self.FRAME_DURATION, window='hamming')
+                self.filt_cache[ds_ratio] = sig.cheby1(N=self.FILTER_ORDER, rp=0.05, Wn=0.8 / ds_ratio, output='sos')
+            if filtfilt:
+                return sig.sosfiltfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
+            else:
+                return sig.sosfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
+        else:
+            return self._resample(data)
+
+    def _resample(self, data):  # Fourier resampling
+        return sig.resample(data, self.f_target * self.FRAME_DURATION, window='hamming')
