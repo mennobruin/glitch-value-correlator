@@ -16,11 +16,9 @@ files = os.listdir(data_path)
 f = files[3]
 with h5py.File(data_path + f, 'r') as hf:
     frames = list(hf.keys())
-    channel = frames[0]
+    channel = frames[3]
     frame = hf.get(channel)
-
-    i = 5
-    data = np.array(frame[i])
+    data = np.array(frame)
 
     print(channel)
     print(tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric()))
