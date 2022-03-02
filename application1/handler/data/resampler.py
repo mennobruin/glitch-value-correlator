@@ -63,7 +63,7 @@ class Resampler:
         with h5py.File(file_path + '.h5', 'w') as h5f:
             h5f.create_dataset(name='channels', data=np.array([c.name for c in self.channels], dtype='S'))
 
-            for t in tqdm(np.arange(gps_start, gps_stop, self.FRAME_DURATION)):
+            for t in np.arange(gps_start, gps_stop, self.FRAME_DURATION):
                 ds_data = []
                 with FrameFile(self.source).get_frame(t) as ff:
                     for adc in ff.iter_adc():
