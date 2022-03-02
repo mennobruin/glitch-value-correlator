@@ -16,19 +16,17 @@ LOG = ConfigurationManager.get_logger(__name__)
 
 class DataReader:
 
-    def __init__(self):
+    def __init__(self, source=None):
         self.default_path = get_resource_path(depth=2)
-        self.frame_file = None
         self.exclude_patterns = None
+        self.source = source
+        self.frame_file = None
 
     def set_frame_file(self, ffl_source):
-        self.frame_file = FrameFile(ffl_source)
+        self.frame_file = ffl_source
 
     def set_patterns(self, patterns):
         self.exclude_patterns = patterns
-
-    def close(self):
-        self.frame_file.close()
 
     def get_channel_segment(self, channel_name, t_start, t_stop, connection=None) -> ChannelSegment:
         if connection:
@@ -36,13 +34,15 @@ class DataReader:
             channel = Channel(name=channel_name, f_sample=None)
             segment = ChannelSegment(channel=channel, data=x, gps_time=None)
         else:
+            if self.frame_file is None:
+                self.frame_file = FrameFile(self.source)
             frame = self.frame_file.getChannel(channel_name, t_start, t_stop)
             channel = Channel(name=channel_name, f_sample=frame.fsample, unit=frame.unit)
             segment = ChannelSegment(channel=channel, data=frame.data, gps_time=frame.gps)
         return segment
 
     def get_available_channels(self, t0) -> [Channel]:
-        with self.frame_file.get_frame(t0) as f:
+        with FrameFile(self.source).get_frame(t0) as f:
             channels = [Channel(name=str(adc.contents.name),
                                 f_sample=adc.contents.sampleRate)
                         for adc in f.iter_adc()]
