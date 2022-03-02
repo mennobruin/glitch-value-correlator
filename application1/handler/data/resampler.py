@@ -51,7 +51,7 @@ class Resampler:
         ds_data = []
 
         ff = self.reader.frame_file
-        for t in range(gps_start, gps_stop, self.FRAME_DURATION):
+        for t in np.arange(gps_start, gps_stop, self.FRAME_DURATION):
             with ff.get_frame(t) as f:
                 for adc in f.iter_adc():
                     f_sample = adc.contents.sampleRate
