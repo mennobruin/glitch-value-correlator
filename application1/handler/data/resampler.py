@@ -42,21 +42,24 @@ class Resampler:
         self.channels = [c for c in channels if c.f_sample > self.f_target]
         self.source = ffl_cache.ffl_file
 
-        with mp.Pool(mp.cpu_count() - 1) as mp_pool:
+        n_cpu = min(mp.cpu_count() - 1, len(segments))
+        with mp.Pool(n_cpu) as mp_pool:
             with tqdm(len(segments)) as progress:
                 for i, _ in mp_pool.imap_unordered(self.process_segment, segments):
                     progress.update()
 
     def process_segment(self, segment):
         gps_start, gps_stop = segment
-        ds_data = []
+        ds_data = np.array([])
 
         for t in np.arange(gps_start, gps_stop, self.FRAME_DURATION):
+            frame_data = []
             with FrameFile(self.source).get_frame(t) as f:
                 for adc in f.iter_adc():
                     f_sample = adc.contents.sampleRate
                     if f_sample >= 50:
-                        ds_data.append(self.downsample_segment(adc, f_sample))
+                        frame_data.append(self.downsample_segment(adc, f_sample))
+            ds_data = np.hstack((ds_data, frame_data))
 
         file_name = self.FILE_TEMPLATE.format(f_target=self.f_target,
                                               t_start=int(gps_start),
