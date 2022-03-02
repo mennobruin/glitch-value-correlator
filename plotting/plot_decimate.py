@@ -17,7 +17,7 @@ f = files[3]
 with h5py.File(data_path + f, 'r') as hf:
     all_channels = hf.get('channels')
     frames = list(hf.keys())[1:]
-    frame = hf.get(frames[3])
+    frame = hf.get(frames[0])
 
     i = 5
     channel_name = all_channels[i].decode('ASCII')
