@@ -67,7 +67,7 @@ class Resampler:
                             ds_data.append(self.downsample_adc(adc, f_sample))
                             channels.append(str(adc.contents.name))
                 h5f.create_dataset(name=f'data_gs{t}_ge{t+self.FRAME_DURATION}', data=ds_data)
-                h5f.create_dataset(name=f'channels_gs{t}_ge{t+self.FRAME_DURATION}', data=channels, dtype='S')
+                h5f.create_dataset(name=f'channels_gs{t}_ge{t+self.FRAME_DURATION}', data=np.array(channels), dtype='S')
 
     def downsample_adc(self, adc, f_sample):
         data = FrVect2array(adc.contents.data)
