@@ -43,18 +43,17 @@ class Resampler:
         self.channels = [c for c in channels if c.f_sample > self.f_target]
         self.source = ffl_cache.ffl_file
 
-        for segment in segments:
-            self.process_segment(segment)
+        # for segment in segments:
+        #     self.process_segment(segment)
 
-        # n_cpu = min(mp.cpu_count() - 1, len(segments))
-        # with mp.Pool(n_cpu) as mp_pool:
-        #     with tqdm(len(segments)) as progress:
-        #         for i, _ in mp_pool.imap_unordered(self.process_segment, segments):
-        #             progress.update()
+        n_cpu = min(mp.cpu_count() - 1, len(segments))
+        with mp.Pool(n_cpu) as mp_pool:
+            with tqdm(len(segments)) as progress:
+                for _, _ in enumerate(mp_pool.imap_unordered(self.process_segment, segments)):
+                    progress.update()
 
     def process_segment(self, segment):
         gps_start, gps_stop = segment
-        ds_data = np.array([])
 
         file_name = self.FILE_TEMPLATE.format(f_target=self.f_target,
                                               t_start=int(gps_start),
