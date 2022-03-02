@@ -48,9 +48,9 @@ class Resampler:
 
         n_cpu = min(mp.cpu_count() - 1, len(segments))
         with mp.Pool(n_cpu) as mp_pool:
-            with tqdm(len(segments)) as progress:
-                for _, _ in enumerate(mp_pool.imap_unordered(self.process_segment, segments)):
-                    progress.update()
+            with tqdm(total=len(segments)) as progress:
+                for i, _ in enumerate(mp_pool.imap_unordered(self.process_segment, segments)):
+                    progress.update(i)
 
     def process_segment(self, segment):
         gps_start, gps_stop = segment
@@ -77,12 +77,7 @@ class Resampler:
         ds_data = None
 
         if self.method == 'mean':
-            n_target = self.f_target * self.FRAME_DURATION
-            padding = np.empty(math.ceil(data.size / n_target) * n_target - data.size)
-            padding.fill(np.nan)
-            padded_data = np.append(data, padding)
-            ds_ratio = len(padded_data) / n_target
-            ds_data = self._n_sample_average(padded_data, ratio=int(ds_ratio))
+            ds_data = self._resample_mean(data)
         elif self.method == 'filt':
             ds_data = self._decimate(data, f_sample).astype(np.float64)
         elif self.method == 'filtfilt':
@@ -91,6 +86,14 @@ class Resampler:
             LOG.error(f"No implementation found for resampling method '{self.method}'.")
 
         return ds_data
+
+    def _resample_mean(self, data):
+        n_target = self.f_target * self.FRAME_DURATION
+        padding = np.empty(math.ceil(data.size / n_target) * n_target - data.size)
+        padding.fill(np.nan)
+        padded_data = np.append(data, padding)
+        ds_ratio = len(padded_data) / n_target
+        return self._n_sample_average(padded_data, ratio=int(ds_ratio))
 
     @staticmethod
     def _n_sample_average(x: np.array, ratio):
