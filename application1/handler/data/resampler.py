@@ -23,9 +23,11 @@ class Resampler:
     FILE_TEMPLATE = 'excavator_f{f_target}_gs{t_start}_ge{t_stop}_{method}'
     FILTER_ORDER = 4
     FRAME_DURATION = 10
+    FRAMES_IN_FRAME_FILE = 10
 
     def __init__(self, f_target, reader: DataReader, method='mean'):
         self.f_target = f_target
+        self.n_target = f_target * self.FRAME_DURATION
         self.method = method
         self.resource_path = get_resource_path(depth=1)
         self.ds_path = self.resource_path + 'ds_data/'
@@ -58,17 +60,23 @@ class Resampler:
         file_path = self.ds_data_path + file_name
         with h5py.File(file_path + '.h5', 'w') as h5f:
             for t in np.arange(gps_start, gps_stop, self.FRAME_DURATION):
-                ds_data = []
-                channels = []
-                with FrameFile(self.source).get_frame(t) as ff:
-                    for adc in ff.iter_adc():
-                        f_sample = adc.contents.sampleRate
-                        if f_sample >= 50:
-                            ds_data.append(self.downsample_adc(adc, f_sample))
-                            channels.append(str(adc.contents.name))
-                print(channels)
-                h5f.create_dataset(name=f'data_gs{t}_ge{t+self.FRAME_DURATION}', data=ds_data)
-                h5f.create_dataset(name=f'channels_gs{t}_ge{t+self.FRAME_DURATION}', data=np.array(channels), dtype='S')
+                self._store_data(h5_file=h5f, t=t, gps_start=gps_start)
+
+    def _store_data(self, h5_file, t, gps_start):
+        with FrameFile(self.source).get_frame(t) as ff:
+            for adc in ff.iter_adc():
+                f_sample = adc.contents.sampleRate
+                if f_sample >= 50:
+                    channel = str(adc.contents.name)
+                    if t == gps_start:
+                        ds_data = np.zeros(self.n_target * self.FRAMES_IN_FRAME_FILE)
+                        ds_data[0:self.n_target] = self.downsample_adc(adc, f_sample)
+                        h5_file.create_dataset(name=channel, data=ds_data)
+                    else:
+                        i = (t - gps_start) / self.FRAME_DURATION
+                        j = i + self.n_target
+                        data = h5_file[channel]
+                        data[i:j] = self.downsample_adc(adc, f_sample)
 
     def downsample_adc(self, adc, f_sample):
         data = FrVect2array(adc.contents.data)
@@ -86,11 +94,10 @@ class Resampler:
         return ds_data
 
     def _resample_mean(self, data):
-        n_target = self.f_target * self.FRAME_DURATION
-        padding = np.empty(math.ceil(data.size / n_target) * n_target - data.size)
+        padding = np.empty(math.ceil(data.size / self.n_target) * self.n_target - data.size)
         padding.fill(np.nan)
         padded_data = np.append(data, padding)
-        ds_ratio = len(padded_data) / n_target
+        ds_ratio = len(padded_data) / self.n_target
         return self._n_sample_average(padded_data, ratio=int(ds_ratio))
 
     @staticmethod
@@ -114,4 +121,4 @@ class Resampler:
             return self._resample(data)
 
     def _resample(self, data):  # Fourier resampling
-        return sig.resample(data, self.f_target * self.FRAME_DURATION, window='hamming')
+        return sig.resample(data, self.n_target, window='hamming')
