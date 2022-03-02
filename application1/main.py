@@ -122,4 +122,4 @@ if __name__ == '__main__':
                           t_start=1263322818,
                           t_stop=1263326418)
     # excavator.run(n_iter=1)
-    cProfile.run("excavator.decimate_data()")
+    excavator.decimate_data()
