@@ -35,6 +35,7 @@ class Resampler:
         self.reader = reader
         self.channels = None
         self.source = None
+        self.filt_cache = {}
 
     def downsample_ffl(self, ffl_cache: FFLCache):
         segments = [(gs, ge) for (gs, ge) in ffl_cache.segments]
@@ -101,7 +102,8 @@ class Resampler:
             return data
 
         if ds_ratio.is_integer():  # decimate
-            filt = cheby1(N=self.FILTER_ORDER, rp=0.05, Wn=0.8 / ds_ratio, output='sos')
-            return sosfiltfilt(filt, data)[::int(ds_ratio)]
+            if ds_ratio not in self.filt_cache:
+                self.filt_cache[ds_ratio] = cheby1(N=self.FILTER_ORDER, rp=0.05, Wn=0.8 / ds_ratio, output='sos')
+            return sosfiltfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
         else:  # Fourier resampling
             return resample(data, len(data), window='hamming')
