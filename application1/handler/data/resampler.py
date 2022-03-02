@@ -50,7 +50,7 @@ class Resampler:
         with mp.Pool(n_cpu) as mp_pool:
             with tqdm(total=len(segments)) as progress:
                 for i, _ in enumerate(mp_pool.imap_unordered(self.process_segment, segments)):
-                    progress.update(i)
+                    progress.update()
 
     def process_segment(self, segment):
         gps_start, gps_stop = segment
