@@ -73,7 +73,7 @@ class Resampler:
                         ds_data[0:self.n_target] = self.downsample_adc(adc, f_sample)
                         h5_file.create_dataset(name=channel, data=ds_data)
                     else:
-                        i = (t - gps_start) / self.FRAME_DURATION
+                        i = int((t - gps_start) / self.FRAME_DURATION)
                         j = i + self.n_target
                         data = h5_file[channel]
                         data[i:j] = self.downsample_adc(adc, f_sample)
@@ -84,7 +84,7 @@ class Resampler:
 
         if self.method == 'mean':
             ds_data = self._resample_mean(data)
-        elif self.method == 'filt':
+        elif self.method == 'filt':  # todo: when ds_ratio >= 10-13 do it in steps to prevent numerical error
             ds_data = self._decimate(data, f_sample).astype(np.float64)
         elif self.method == 'filtfilt':
             ds_data = self._decimate(data, f_sample, filtfilt=True).astype(np.float64)
