@@ -42,11 +42,14 @@ class Resampler:
         self.channels = [c for c in channels if c.f_sample > self.f_target]
         self.source = ffl_cache.ffl_file
 
-        n_cpu = min(mp.cpu_count() - 1, len(segments))
-        with mp.Pool(n_cpu) as mp_pool:
-            with tqdm(len(segments)) as progress:
-                for i, _ in mp_pool.imap_unordered(self.process_segment, segments):
-                    progress.update()
+        for segment in tqdm(segments):
+            self.process_segment(segment)
+
+        # n_cpu = min(mp.cpu_count() - 1, len(segments))
+        # with mp.Pool(n_cpu) as mp_pool:
+        #     with tqdm(len(segments)) as progress:
+        #         for i, _ in mp_pool.imap_unordered(self.process_segment, segments):
+        #             progress.update()
 
     def process_segment(self, segment):
         gps_start, gps_stop = segment
@@ -58,7 +61,7 @@ class Resampler:
                 for adc in f.iter_adc():
                     f_sample = adc.contents.sampleRate
                     if f_sample >= 50:
-                        frame_data.append(self.downsample_segment(adc, f_sample))
+                        frame_data.append(self.downsample_adc(adc, f_sample))
             ds_data = np.hstack((ds_data, frame_data))
 
         file_name = self.FILE_TEMPLATE.format(f_target=self.f_target,
@@ -70,7 +73,7 @@ class Resampler:
             f.create_dataset(name='data', data=ds_data)
             f.create_dataset(name='channels', data=np.array([c.name for c in self.channels], dtype='S'))
 
-    def downsample_segment(self, adc, f_sample):
+    def downsample_adc(self, adc, f_sample):
         data = FrVect2array(adc.contents.data)
         ds_data = None
 
