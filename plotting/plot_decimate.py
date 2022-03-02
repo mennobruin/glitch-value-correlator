@@ -20,19 +20,19 @@ with h5py.File(data_path + f, 'r') as hf:
     frame = hf.get(channel)
 
     i = 5
-    channel_name = channel.decode('ASCII')
     data = np.array(frame[i])
 
+    print(channel)
     print(tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric()))
     f_sample, gs, ge, _ = tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric())
 
     with FrameFile(source) as ff:
-        unsampled_data = ff.getChannel(channel_name, gs, ge).data
-        plt.title(channel_name)
+        unsampled_data = ff.getChannel(channel, gs, ge).data
+        plt.title(channel)
         plt.plot(range(len(unsampled_data)), unsampled_data)
         plt.show()
 
-    plt.title(channel_name)
+    plt.title(channel)
     plt.plot(range(len(data)), data)
     plt.show()
 
