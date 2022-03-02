@@ -85,7 +85,7 @@ class Resampler:
             ds_ratio = len(padded_data) / n_target
             ds_data = self._n_sample_average(padded_data, ratio=int(ds_ratio))
         elif self.method == 'decimate':
-            ds_data = self._decimate(data, f_sample)
+            ds_data = self._decimate(data, f_sample).astype(np.float64)
         else:
             LOG.error(f"No implementation found for resampling method '{self.method}'.")
 
