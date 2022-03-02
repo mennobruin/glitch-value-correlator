@@ -41,10 +41,12 @@ class Resampler:
         self.source = ffl_cache.ffl_file
 
         n_cpu = min(mp.cpu_count() - 1, len(segments))
-        with mp.Pool(n_cpu) as mp_pool:
-            with tqdm(total=len(segments)) as progress:
-                for i, _ in enumerate(mp_pool.imap_unordered(self.process_segment, segments)):
-                    progress.update()
+        mp_pool = mp.Pool(n_cpu)
+        with tqdm(total=len(segments)) as progress:
+            for i, _ in enumerate(mp_pool.imap_unordered(self.process_segment, segments)):
+                progress.update()
+        mp_pool.close()
+        mp_pool.join()
 
     def process_segment(self, segment):
         gps_start, gps_stop = segment
