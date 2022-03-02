@@ -13,7 +13,8 @@ ds_path = resource_path + 'ds_data/'
 data_path = ds_path + 'data/'
 
 files = os.listdir(data_path)
-f = files[3]
+f = files[2]
+print(files)
 print(f)
 with h5py.File(data_path + f, 'r') as hf:
     all_channels = hf.get('channels')
