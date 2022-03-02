@@ -66,6 +66,7 @@ class Resampler:
                         if f_sample >= 50:
                             ds_data.append(self.downsample_adc(adc, f_sample))
                             channels.append(str(adc.contents.name))
+                print(channels)
                 h5f.create_dataset(name=f'data_gs{t}_ge{t+self.FRAME_DURATION}', data=ds_data)
                 h5f.create_dataset(name=f'channels_gs{t}_ge{t+self.FRAME_DURATION}', data=np.array(channels), dtype='S')
 
