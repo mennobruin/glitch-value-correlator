@@ -31,8 +31,7 @@ class Excavator:
         self.resource_path = get_resource_path(depth=0)
 
         bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
-        self.reader = DataReader()
-        self.reader.set_frame_file(ffl_source=source)
+        self.reader = DataReader(source)
         self.reader.set_patterns(patterns=bl_patterns)
         self.writer = DataWriter()
 

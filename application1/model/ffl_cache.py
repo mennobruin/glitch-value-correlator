@@ -19,7 +19,7 @@ class FFLCache:
         self.gps_start = gps_start
         self.gps_end = gps_end
         self.frames = self._get_frames()
-        self.reader = DataReader()
+        self.reader = DataReader(source=self.ffl_file)
 
         self.gwf_files = [str(f) for f in self.frames.gwf]
         self.segments = segments.segmentlist(
