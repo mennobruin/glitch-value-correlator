@@ -71,6 +71,8 @@ class Resampler:
                         f_sample = adc.contents.sampleRate
                         if f_sample >= 50:
                             ds_data.append(self.downsample_adc(adc, f_sample))
+                for row in ds_data:
+                    print(row.shape, row.dtype)
                 h5f.create_dataset(name=f'data_gs{t}_ge{t+self.FRAME_DURATION}', data=ds_data)
 
     def downsample_adc(self, adc, f_sample):
@@ -85,7 +87,7 @@ class Resampler:
             ds_ratio = len(padded_data) / n_target
             ds_data = self._n_sample_average(padded_data, ratio=int(ds_ratio))
         elif self.method == 'decimate':
-            ds_data = self._decimate(data, f_sample).astype(np.float64)
+            ds_data = self._decimate(data, f_sample)
         else:
             LOG.error(f"No implementation found for resampling method '{self.method}'.")
 
