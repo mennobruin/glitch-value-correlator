@@ -78,10 +78,11 @@ class Resampler:
         ds_data = None
 
         if self.method == 'mean':
-            padding = np.empty(math.ceil(data.size / self.f_target / self.FRAME_DURATION) * self.f_target - data.size)
+            n_target = self.f_target * self.FRAME_DURATION
+            padding = np.empty(math.ceil(data.size / n_target) * n_target - data.size)
             padding.fill(np.nan)
             padded_data = np.append(data, padding)
-            ds_ratio = len(padded_data) / (self.FRAME_DURATION * self.f_target)
+            ds_ratio = len(padded_data) / n_target
             try:
                 ds_data = self._n_sample_average(padded_data, ratio=int(ds_ratio))
             except ValueError as e:
