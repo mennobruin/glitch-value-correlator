@@ -34,12 +34,13 @@ class Resampler:
         print(self.ds_data_path)
         self.reader = reader
         self.channels = None
+        self.source = None
 
     def downsample_ffl(self, ffl_cache: FFLCache):
         segments = [(gs, ge) for (gs, ge) in ffl_cache.segments]
         channels = self.reader.get_available_channels(t0=ffl_cache.gps_start)
         self.channels = [c for c in channels if c.f_sample > self.f_target]
-        self.reader.set_frame_file(ffl_source=ffl_cache.ffl_file)
+        self.source = ffl_cache.ffl_file
 
         with mp.Pool(mp.cpu_count() - 1) as mp_pool:
             with tqdm(len(segments)) as progress:
@@ -50,9 +51,8 @@ class Resampler:
         gps_start, gps_stop = segment
         ds_data = []
 
-        ff = self.reader.frame_file
         for t in np.arange(gps_start, gps_stop, self.FRAME_DURATION):
-            with ff.get_frame(t) as f:
+            with FrameFile(self.source).get_frame(t) as f:
                 for adc in f.iter_adc():
                     f_sample = adc.contents.sampleRate
                     if f_sample >= 50:
