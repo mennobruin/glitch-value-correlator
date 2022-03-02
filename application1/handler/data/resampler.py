@@ -83,13 +83,7 @@ class Resampler:
             padding.fill(np.nan)
             padded_data = np.append(data, padding)
             ds_ratio = len(padded_data) / n_target
-            try:
-                ds_data = self._n_sample_average(padded_data, ratio=int(ds_ratio))
-            except ValueError as e:
-                print(data.size)
-                print(padding.size)
-                print(ds_ratio)
-                print(e)
+            ds_data = self._n_sample_average(padded_data, ratio=int(ds_ratio))
         elif self.method == 'decimate':
             ds_data = self._decimate(data, f_sample)
         else:
