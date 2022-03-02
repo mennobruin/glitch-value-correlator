@@ -17,14 +17,11 @@ f = files[3]
 with h5py.File(data_path + f, 'r') as hf:
     all_channels = hf.get('channels')
     frames = list(hf.keys())[1:]
-    all_data = np.array([])
-    for f in frames:
-        frame = hf.get(f)
-        all_data = np.hstack((all_data, frame))
+    frame = hf.get(frames[3])
 
     i = 5
     channel_name = all_channels[i].decode('ASCII')
-    data = np.array(all_data[i])
+    data = np.array(frame[i])
 
     print(tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric()))
     f_sample, gs, ge, _ = tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric())
