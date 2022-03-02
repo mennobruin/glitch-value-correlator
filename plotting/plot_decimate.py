@@ -13,16 +13,14 @@ ds_path = resource_path + 'ds_data/'
 data_path = ds_path + 'data/'
 
 files = os.listdir(data_path)
-f = files[int(len(files)/2) + 3]
-print(files[3])
-print(f)
+f = files[3]
 with h5py.File(data_path + f, 'r') as hf:
-    all_channels = hf.get('channels')
-    frames = list(hf.keys())[1:]
-    frame = hf.get(frames[0])
+    frames = list(hf.keys())
+    channel = frames[0]
+    frame = hf.get(channel)
 
     i = 5
-    channel_name = all_channels[i].decode('ASCII')
+    channel_name = channel.decode('ASCII')
     data = np.array(frame[i])
 
     print(tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric()))
