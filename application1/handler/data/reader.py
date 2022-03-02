@@ -23,7 +23,7 @@ class DataReader:
         self.frame_file = None
 
     def set_frame_file(self, ffl_source):
-        self.frame_file = ffl_source
+        self.frame_file = FrameFile(ffl_source)
 
     def set_patterns(self, patterns):
         self.exclude_patterns = patterns
@@ -35,7 +35,7 @@ class DataReader:
             segment = ChannelSegment(channel=channel, data=x, gps_time=None)
         else:
             if self.frame_file is None:
-                self.frame_file = FrameFile(self.source)
+                self.set_frame_file(self.source)
             frame = self.frame_file.getChannel(channel_name, t_start, t_stop)
             channel = Channel(name=channel_name, f_sample=frame.fsample, unit=frame.unit)
             segment = ChannelSegment(channel=channel, data=frame.data, gps_time=frame.gps)
