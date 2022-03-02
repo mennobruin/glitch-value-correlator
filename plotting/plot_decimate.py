@@ -16,23 +16,26 @@ files = os.listdir(data_path)
 f = files[3]
 with h5py.File(data_path + f, 'r') as hf:
     all_channels = hf.get('channels')
-    for frame in hf.keys():
-        print(frame)
+    frames = hf.keys()[1:]
+    all_data = np.array([])
+    for f in frames:
+        frame = hf.get(f)
+        all_data = np.hstack((all_data, frame))
 
-    # all_data = hf.get('data')
-    #
-    # i = 5
-    # channel_name = all_channels[i].decode('ASCII')
-    # data = np.array(all_data[i])
-    #
-    # print(tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric()))
-    # f_sample, gs, ge, _ = tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric())
-    #
-    # with FrameFile(source) as ff:
-    #     unsampled_data = ff.getChannel(channel_name, gs, ge).data
-    #     plt.plot(range(len(unsampled_data)), unsampled_data)
-    #     plt.show()
-    #
-    # plt.plot(range(len(data)), data)
-    # plt.show()
+    i = 5
+    channel_name = all_channels[i].decode('ASCII')
+    data = np.array(all_data[i])
+
+    print(tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric()))
+    f_sample, gs, ge, _ = tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric())
+
+    with FrameFile(source) as ff:
+        unsampled_data = ff.getChannel(channel_name, gs, ge).data
+        plt.title(channel_name)
+        plt.plot(range(len(unsampled_data)), unsampled_data)
+        plt.show()
+
+    plt.title(channel_name)
+    plt.plot(range(len(data)), data)
+    plt.show()
 
