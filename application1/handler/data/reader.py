@@ -20,10 +20,6 @@ class DataReader:
         self.default_path = get_resource_path(depth=2)
         self.exclude_patterns = None
         self.source = source
-        self.frame_file = None
-
-    def set_frame_file(self, ffl_source):
-        self.frame_file = FrameFile(ffl_source)
 
     def set_patterns(self, patterns):
         self.exclude_patterns = patterns
@@ -34,9 +30,8 @@ class DataReader:
             channel = Channel(name=channel_name, f_sample=None)
             segment = ChannelSegment(channel=channel, data=x, gps_time=None)
         else:
-            if self.frame_file is None:
-                self.set_frame_file(self.source)
-            frame = self.frame_file.getChannel(channel_name, t_start, t_stop)
+            with FrameFile(self.source) as ff:
+                frame = ff.getChannel(channel_name, t_start, t_stop)
             channel = Channel(name=channel_name, f_sample=frame.fsample, unit=frame.unit)
             segment = ChannelSegment(channel=channel, data=frame.data, gps_time=frame.gps)
         return segment
