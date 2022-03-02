@@ -42,7 +42,7 @@ class Resampler:
         self.channels = [c for c in channels if c.f_sample > self.f_target]
         self.source = ffl_cache.ffl_file
 
-        for segment in tqdm(segments):
+        for segment in segments:
             self.process_segment(segment)
 
         # n_cpu = min(mp.cpu_count() - 1, len(segments))
@@ -55,7 +55,7 @@ class Resampler:
         gps_start, gps_stop = segment
         ds_data = np.array([])
 
-        for t in np.arange(gps_start, gps_stop, self.FRAME_DURATION):
+        for t in tqdm(np.arange(gps_start, gps_stop, self.FRAME_DURATION)):
             frame_data = []
             with FrameFile(self.source).get_frame(t) as f:
                 for adc in f.iter_adc():
