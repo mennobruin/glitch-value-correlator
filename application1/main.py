@@ -76,7 +76,7 @@ class Excavator:
         # plt.show()
 
     def decimate_data(self):
-        decimator = Resampler(f_target=self.f_target, reader=self.reader, method='mean')
+        decimator = Resampler(f_target=self.f_target, reader=self.reader, method='decimate')
         aux_data = FFLCache(ffl_file=self.source, gps_start=self.t_start, gps_end=self.t_stop)
         decimator.downsample_ffl(ffl_cache=aux_data)
 

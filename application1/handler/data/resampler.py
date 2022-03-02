@@ -103,6 +103,6 @@ class Resampler:
         if ds_ratio.is_integer():  # decimate
             if ds_ratio not in self.filt_cache:
                 self.filt_cache[ds_ratio] = cheby1(N=self.FILTER_ORDER, rp=0.05, Wn=0.8 / ds_ratio, output='sos')
-            return sosfiltfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
+            return sosfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
         else:  # Fourier resampling
             return resample(data, self.f_target * self.FRAME_DURATION, window='hamming')
