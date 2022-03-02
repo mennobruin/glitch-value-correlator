@@ -33,18 +33,12 @@ class Resampler:
         os.makedirs(self.ds_data_path, exist_ok=True)
         print(self.ds_data_path)
         self.reader = reader
-        self.channels = None
         self.source = None
         self.filt_cache = {}
 
     def downsample_ffl(self, ffl_cache: FFLCache):
         segments = [(gs, ge) for (gs, ge) in ffl_cache.segments]
-        channels = self.reader.get_available_channels(t0=ffl_cache.gps_start)
-        self.channels = [c for c in channels if c.f_sample > self.f_target]
         self.source = ffl_cache.ffl_file
-
-        # for segment in segments:
-        #     self.process_segment(segment)
 
         n_cpu = min(mp.cpu_count() - 1, len(segments))
         with mp.Pool(n_cpu) as mp_pool:
@@ -61,16 +55,17 @@ class Resampler:
                                               method=self.method)
         file_path = self.ds_data_path + file_name
         with h5py.File(file_path + '.h5', 'w') as h5f:
-            h5f.create_dataset(name='channels', data=np.array([c.name for c in self.channels], dtype='S'))
-
             for t in np.arange(gps_start, gps_stop, self.FRAME_DURATION):
                 ds_data = []
+                channels = []
                 with FrameFile(self.source).get_frame(t) as ff:
                     for adc in ff.iter_adc():
                         f_sample = adc.contents.sampleRate
                         if f_sample >= 50:
                             ds_data.append(self.downsample_adc(adc, f_sample))
+                            channels.append(str(adc.contents.name))
                 h5f.create_dataset(name=f'data_gs{t}_ge{t+self.FRAME_DURATION}', data=ds_data)
+                h5f.create_dataset(name=f'channels_gs{t}_ge{t+self.FRAME_DURATION}', data=channels, dtype='S')
 
     def downsample_adc(self, adc, f_sample):
         data = FrVect2array(adc.contents.data)
