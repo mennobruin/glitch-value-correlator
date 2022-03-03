@@ -42,15 +42,12 @@ class Excavator:
         print(len(self.available_channels))
 
         # trigger_pipeline = Omicron(channel=available_channels[0])
-        trigger_pipeline = DefaultPipeline(trigger_file='gspy_O3b_c090_blip')
+        trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final')
         triggers = trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
         if triggers.size == 0:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
 
-        # segment: Segment = reader.get(channel_name, t_start, t_stop, source=source)
-        # segment_50hz: Segment = decimator.decimate(segment, target_frequency=50)
-        #
         aux_data = FFLCache(ffl_file=self.source, gps_start=self.t_start, gps_end=self.t_stop)
         h_aux_cum, h_trig_cum = self.construct_histograms(aux_data=aux_data,
                                                           segments=aux_data.segments,
@@ -121,5 +118,5 @@ if __name__ == '__main__':
                           channel_name='V1:Hrec_hoft_2_200Hz',
                           t_start=1263322818,
                           t_stop=1263326418)
-    # excavator.run(n_iter=1)
-    excavator.decimate_data()
+    excavator.run(n_iter=1)
+    # excavator.decimate_data()
