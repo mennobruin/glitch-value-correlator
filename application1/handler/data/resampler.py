@@ -73,7 +73,7 @@ class Resampler:
                         ds_data[0:self.n_target] = self.downsample_adc(adc, f_sample)
                         h5_file.create_dataset(name=channel, data=ds_data)
                     else:
-                        i = (t - gps_start) * self.f_target
+                        i = int((t - gps_start) * self.f_target)
                         j = i + self.n_target
                         h5_file[channel][i:j] = self.downsample_adc(adc, f_sample)
 
