@@ -73,10 +73,9 @@ class Resampler:
                         ds_data[0:self.n_target] = self.downsample_adc(adc, f_sample)
                         h5_file.create_dataset(name=channel, data=ds_data)
                     else:
-                        i = int((t - gps_start) / self.FRAME_DURATION)
+                        i = (t - gps_start) * self.f_target
                         j = i + self.n_target
-                        data = h5_file[channel]
-                        data[i:j] = self.downsample_adc(adc, f_sample)
+                        h5_file[channel][i:j] = self.downsample_adc(adc, f_sample)
 
     def downsample_adc(self, adc, f_sample):
         data = FrVect2array(adc.contents.data)
