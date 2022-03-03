@@ -16,7 +16,7 @@ files = os.listdir(data_path)
 f = files[3]
 with h5py.File(data_path + f, 'r') as hf:
     frames = list(hf.keys())
-    channel = frames[3]
+    channel = frames[300]
     frame = hf.get(channel)
     data = np.array(frame)
 
