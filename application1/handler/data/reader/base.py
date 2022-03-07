@@ -13,8 +13,8 @@ class BaseReader:
     def _check_path_exists(self, file_loc, file):
         LOG.info(f"Loading {file}")
         if not os.path.isfile(file):
-            csv_file = self.default_path + file_loc + file
-            if not os.path.isfile(csv_file):
+            file = self.default_path + file_loc + file
+            if not os.path.isfile(file):
                 LOG.error(f"Unable to load file: {file}, check if the file exists.")
                 raise FileNotFoundError
 
