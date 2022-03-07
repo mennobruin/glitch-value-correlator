@@ -30,7 +30,8 @@ def count_triggers_in_segment(triggers, gps_start, gps_end):
 
 
 def get_resource_path(depth: int):
-    return str(pathlib.Path(__file__).parents[depth].resolve()) + "/resources/"
+    return os.path.abspath(os.curdir)
+    # return str(pathlib.Path(__file__).parents[depth].resolve()) + "/resources/"
 
 
 def check_extension(file_name, extension):
