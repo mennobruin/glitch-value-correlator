@@ -18,8 +18,10 @@ class H5Reader(BaseReader):
 
     def load_h5(self, h5_file):
         h5_file = check_extension(h5_file, extension='.h5')
-        self._check_path_exists(file_loc=self.H5_DIR, file=h5_file)
-
-        file = h5py.File(h5_file, 'r')
+        h5_file = self._check_path_exists(file_loc=self.H5_DIR, file=h5_file)
+        h5_file = h5py.File(h5_file, 'r')
+        print(h5_file.name)
+        print(h5_file.file)
+        print(h5_file.filename)
 
 
