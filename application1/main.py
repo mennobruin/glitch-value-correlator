@@ -6,6 +6,7 @@ from application1.model.old_histogram import Hist
 from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov
 from application1.handler.data.reader.frame_file import FrameFileReader
+from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.data.writer import DataWriter
 from application1.handler.data.resampler import Resampler
 from application1.handler.triggers import DefaultPipeline
@@ -26,15 +27,17 @@ class Excavator:
         self.resource_path = get_resource_path(depth=0)
 
         bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
-        self.reader = FrameFileReader(source)
-        self.reader.set_patterns(patterns=bl_patterns)
+        self.h5_reader = H5Reader()
+        self.ff_reader = FrameFileReader(source)
+        self.ff_reader.set_patterns(patterns=bl_patterns)
         self.writer = DataWriter()
 
         self.available_channels = None  # self.reader.get_available_channels(t0=t_start)
 
-    def run(self, n_iter):
+    def run(self, n_iter=1):
 
-        print(len(self.available_channels))
+        self.h5_reader.load_h5(h5_file='excavator_f50_gs1263325300_ge1263325400_mean.h5')
+        return
 
         # trigger_pipeline = Omicron(channel=available_channels[0])
         trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final')
@@ -68,7 +71,7 @@ class Excavator:
         # plt.show()
 
     def decimate_data(self):
-        decimator = Resampler(f_target=self.f_target, reader=self.reader, method='mean')
+        decimator = Resampler(f_target=self.f_target, reader=self.ff_reader, method='mean')
         aux_data = FFLCache(ffl_file=self.source, gps_start=self.t_start, gps_end=self.t_stop)
         decimator.downsample_ffl(ffl_cache=aux_data)
 
@@ -113,5 +116,5 @@ if __name__ == '__main__':
                           channel_name='V1:Hrec_hoft_2_200Hz',
                           t_start=1263322818,
                           t_stop=1263326418)
-    excavator.run(n_iter=1)
+    excavator.run()
     # excavator.decimate_data()
