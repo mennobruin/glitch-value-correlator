@@ -5,7 +5,7 @@ from application1.utils import *
 from application1.model.old_histogram import Hist
 from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov
-from application1.handler.data.reader.reader import BaseReader
+from application1.handler.data.reader.frame_file import FrameFileReader
 from application1.handler.data.writer import DataWriter
 from application1.handler.data.resampler import Resampler
 from application1.handler.triggers import DefaultPipeline
@@ -26,7 +26,7 @@ class Excavator:
         self.resource_path = get_resource_path(depth=0)
 
         bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
-        self.reader = BaseReader(source)
+        self.reader = FrameFileReader(source)
         self.reader.set_patterns(patterns=bl_patterns)
         self.writer = DataWriter()
 

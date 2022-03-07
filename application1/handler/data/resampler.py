@@ -10,7 +10,6 @@ from tqdm import tqdm
 from core.config.configuration_manager import ConfigurationManager
 from application1.utils import get_resource_path
 from application1.model.ffl_cache import FFLCache
-from application1.handler.data.reader.reader import BaseReader
 
 from virgotools.frame_lib import FrameFile, FrVect2array
 
@@ -24,7 +23,7 @@ class Resampler:
     FRAME_DURATION = 10
     FRAMES_IN_FRAME_FILE = 10
 
-    def __init__(self, f_target, reader: BaseReader, method='mean'):
+    def __init__(self, f_target, method='mean'):
         self.f_target = f_target
         self.n_target = f_target * self.FRAME_DURATION
         self.method = method
@@ -33,7 +32,6 @@ class Resampler:
         self.ds_data_path = self.ds_path + 'data/'
         os.makedirs(self.ds_data_path, exist_ok=True)
         print(self.ds_data_path)
-        self.reader = reader
         self.source = None
         self.filt_cache = {}
 

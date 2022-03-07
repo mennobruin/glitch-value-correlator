@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .reader import BaseReader
+from .base import BaseReader
 from application1.utils import check_extension
 
 
