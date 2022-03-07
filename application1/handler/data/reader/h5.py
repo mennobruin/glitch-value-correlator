@@ -22,6 +22,7 @@ class H5Reader(BaseReader):
         h5_file = h5py.File(h5_file, 'r')
         print(h5_file.name)
         print(h5_file.file)
+        print(h5_file.file.name)
         print(h5_file.filename)
 
 
