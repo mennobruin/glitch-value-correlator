@@ -17,6 +17,8 @@ class BaseReader:
             if not os.path.isfile(file):
                 LOG.error(f"Unable to load file: {file}, check if the file exists.")
                 raise FileNotFoundError
+            else:
+                return file
 
 
 
