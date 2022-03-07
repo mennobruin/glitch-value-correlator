@@ -1,23 +1,17 @@
-import os
-
 from fnmatch import fnmatch
 
-import pandas as pd
 from gwpy.timeseries import TimeSeries
 from virgotools.frame_lib import FrameFile
 
+from .reader import BaseReader
 from application1.model.channel_segment import ChannelSegment
 from application1.model.channel import Channel
-from application1.utils import get_resource_path, check_extension
-from core.config.configuration_manager import ConfigurationManager
-
-LOG = ConfigurationManager.get_logger(__name__)
 
 
-class DataReader:
+class DataReader(BaseReader):
 
     def __init__(self, source=None):
-        self.default_path = get_resource_path(depth=2)
+        super(DataReader, self).__init__()
         self.exclude_patterns = None
         self.source = source
 
@@ -45,16 +39,3 @@ class DataReader:
                 return [c for c in channels if not any(fnmatch(c.name, p) for p in self.exclude_patterns)]
             else:
                 return channels
-
-    def load_csv(self, csv_file, usecols=None) -> pd.DataFrame:
-        csv_file = check_extension(csv_file, extension='.csv')
-
-        LOG.info(f"Loading {csv_file}")
-        if not os.path.isfile(csv_file):
-            csv_file = self.default_path + 'csv/' + csv_file
-            if not os.path.isfile(csv_file):
-                LOG.error(f"Unable to load csv_file: {csv_file}, check if the file exists.")
-                raise FileNotFoundError
-
-        return pd.read_csv(csv_file, usecols=usecols)
-

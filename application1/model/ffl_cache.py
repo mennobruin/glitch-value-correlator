@@ -5,7 +5,7 @@ from framel import frgetvect1d
 
 from .channel import Channel
 
-from application1.handler.data.reader import DataReader
+from application1.handler.data.reader.reader import BaseReader
 from application1.utils import check_extension
 
 
@@ -19,7 +19,7 @@ class FFLCache:
         self.gps_start = gps_start
         self.gps_end = gps_end
         self.frames = self._get_frames()
-        self.reader = DataReader(source=self.ffl_file)
+        self.reader = BaseReader(source=self.ffl_file)
 
         self.gwf_files = [str(f) for f in self.frames.gwf]
         self.segments = segments.segmentlist(
