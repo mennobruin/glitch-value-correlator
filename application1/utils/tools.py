@@ -1,7 +1,8 @@
 import numpy as np
-import pathlib
 import os
 import math
+
+from pathlib import Path
 
 from core.config import ConfigurationManager
 
@@ -30,7 +31,7 @@ def count_triggers_in_segment(triggers, gps_start, gps_end):
 
 
 def get_resource_path(depth: int):
-    return os.path.abspath(os.curdir)
+    return Path(__file__).parent.parent + "/resources/"
     # return str(pathlib.Path(__file__).parents[depth].resolve()) + "/resources/"
 
 
