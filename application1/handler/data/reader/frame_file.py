@@ -3,15 +3,15 @@ from fnmatch import fnmatch
 from gwpy.timeseries import TimeSeries
 from virgotools.frame_lib import FrameFile
 
-from .reader import BaseReader
+from .base import BaseReader
 from application1.model.channel_segment import ChannelSegment
 from application1.model.channel import Channel
 
 
-class DataReader(BaseReader):
+class FrameFileReader(BaseReader):
 
     def __init__(self, source=None):
-        super(DataReader, self).__init__()
+        super(FrameFileReader, self).__init__()
         self.exclude_patterns = None
         self.source = source
 
