@@ -1,19 +1,14 @@
-import matplotlib.pyplot as plt
-import numpy as np
 from tqdm import tqdm
 import sys
-import os
-import cProfile
 
 from application1.utils import *
-from application1.model.channel_segment import ChannelSegment
 from application1.model.old_histogram import Hist
 from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov
-from application1.handler.data.reader import DataReader
+from application1.handler.data.reader.reader import BaseReader
 from application1.handler.data.writer import DataWriter
 from application1.handler.data.resampler import Resampler
-from application1.handler.triggers import Omicron, DefaultPipeline
+from application1.handler.triggers import DefaultPipeline
 from core.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
@@ -31,7 +26,7 @@ class Excavator:
         self.resource_path = get_resource_path(depth=0)
 
         bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
-        self.reader = DataReader(source)
+        self.reader = BaseReader(source)
         self.reader.set_patterns(patterns=bl_patterns)
         self.writer = DataWriter()
 

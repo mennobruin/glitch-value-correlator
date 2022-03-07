@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..data.reader import DataReader
+from application1.handler.data.reader.reader import BaseReader
 from core.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
@@ -15,7 +15,7 @@ class DefaultPipeline:
         LOG.info(f'Found {self.triggers.shape[0]} triggers.')
 
     def load_triggers(self, path_to_csv):
-        sorted_triggers = DataReader().load_csv(path_to_csv, usecols=[self.GPS_TIME]).sort_values(self.GPS_TIME)
+        sorted_triggers = BaseReader().load_csv(path_to_csv, usecols=[self.GPS_TIME]).sort_values(self.GPS_TIME)
         return sorted_triggers.values.flatten()
 
     def get_segment(self, gps_start, gps_end) -> np.ndarray:
