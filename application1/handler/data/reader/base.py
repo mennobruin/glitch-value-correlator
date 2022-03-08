@@ -8,7 +8,7 @@ LOG = ConfigurationManager.get_logger(__name__)
 class BaseReader:
 
     def __init__(self):
-        self.default_path = get_resource_path(depth=1)
+        self.default_path = get_resource_path()
 
     def _check_path_exists(self, file_loc, file):
         LOG.info(f"Loading {file}")
