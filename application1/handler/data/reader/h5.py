@@ -55,5 +55,5 @@ class H5Reader(BaseReader):
             i_segment = self.segments.find(seg)
             segment = self.segments[i_segment]
             h5_file = self.h5_files[i_segment]
-            # print(segment)
-            # print(h5_file)
+            print(segment)
+            print(h5_file)
