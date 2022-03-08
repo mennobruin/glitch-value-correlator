@@ -5,13 +5,13 @@ from ligo import segments
 
 from .base import BaseReader
 
-from application1.utils import check_extension, split_file_name
+from application1.utils import check_extension, split_file_name, RESOURCE_PATH
 
 
 class H5Reader(BaseReader):
 
     RECORD_STRUCTURE = [('gps_start', float), ('gps_end', float)]
-    H5_DIR = 'ds_data/data/'
+    H5_DIR = RESOURCE_PATH + 'ds_data/data/'
     H5 = '.h5'
 
     def __init__(self, gps_start, gps_end):
