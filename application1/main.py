@@ -36,7 +36,8 @@ class Excavator:
 
     def run(self, n_iter=1):
 
-        self.h5_reader.load_h5(h5_file='excavator_f50_gs1263325300_ge1263325400_mean.h5')
+        for segment in self.h5_reader.segments:
+            self.h5_reader.get_data_from_segments(request_segments=segment)
         return
 
         # trigger_pipeline = Omicron(channel=available_channels[0])

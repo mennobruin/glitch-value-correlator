@@ -8,7 +8,7 @@ import scipy.signal as sig
 from tqdm import tqdm
 
 from core.config.configuration_manager import ConfigurationManager
-from application1.utils import get_resource_path
+from application1.utils import RESOURCE_PATH
 from application1.model.ffl_cache import FFLCache
 
 from virgotools.frame_lib import FrameFile, FrVect2array
@@ -27,8 +27,7 @@ class Resampler:
         self.f_target = f_target
         self.n_target = f_target * self.FRAME_DURATION
         self.method = method
-        self.resource_path = get_resource_path(depth=1)
-        self.ds_path = self.resource_path + 'ds_data/'
+        self.ds_path = RESOURCE_PATH + 'ds_data/'
         self.ds_data_path = self.ds_path + 'data/'
         os.makedirs(self.ds_data_path, exist_ok=True)
         print(self.ds_data_path)
@@ -48,15 +47,15 @@ class Resampler:
         mp_pool.join()
 
     def process_segment(self, segment):
-        gps_start, gps_stop = segment
+        gps_start, gps_end = segment
 
         file_name = self.FILE_TEMPLATE.format(f_target=self.f_target,
                                               t_start=int(gps_start),
-                                              t_stop=int(gps_stop),
+                                              t_stop=int(gps_end),
                                               method=self.method)
         file_path = self.ds_data_path + file_name
         with h5py.File(file_path + '.h5', 'w') as h5f:
-            for t in np.arange(gps_start, gps_stop, self.FRAME_DURATION):
+            for t in np.arange(gps_start, gps_end, self.FRAME_DURATION):
                 self._store_data(h5_file=h5f, t=t, gps_start=gps_start)
 
     def _store_data(self, h5_file, t, gps_start):

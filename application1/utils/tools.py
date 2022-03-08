@@ -1,12 +1,13 @@
 import numpy as np
 import os
-import math
+import re
 
 from pathlib import Path
 
 from core.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
+RESOURCE_PATH = Path(__file__).parent.parent.name + "/resources/"
 
 
 def iter_segments(subsegs):
@@ -30,10 +31,6 @@ def count_triggers_in_segment(triggers, gps_start, gps_end):
     return i_end - i_start
 
 
-def get_resource_path(depth: int):
-    return Path(__file__).parent.parent.name + "/resources/"
-
-
 def check_extension(file_name, extension):
     root, ext = os.path.splitext(file_name)
     if not ext:
@@ -41,3 +38,8 @@ def check_extension(file_name, extension):
     if ext != extension:
         LOG.warning(f'Unexpected extension {ext} in {file_name}. Expected {extension}.')
     return file_name
+
+
+def split_file_name(file_name):
+    f_sample, gps_start, gps_end, _ = tuple(int(s) for s in re.split('(\d+)', file_name) if s.isnumeric())
+    return f_sample, gps_start, gps_end
