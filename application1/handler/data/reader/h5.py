@@ -10,7 +10,7 @@ from application1.utils import check_extension, split_file_name, RESOURCE_PATH
 
 class H5Reader(BaseReader):
 
-    RECORD_STRUCTURE = np.dtype([('h5_file', str), ('gps_start', int), ('gps_end', int)])
+    RECORD_STRUCTURE = [('h5_file', str, 100), ('gps_start', int), ('gps_end', int)]
     H5_DIR = RESOURCE_PATH + 'ds_data/data/'
     H5 = '.h5'
 
