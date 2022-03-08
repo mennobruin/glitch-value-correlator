@@ -10,7 +10,7 @@ from application1.utils import check_extension, split_file_name, RESOURCE_PATH
 
 class H5Reader(BaseReader):
 
-    RECORD_STRUCTURE = [('gps_start', float), ('gps_end', float)]
+    RECORD_STRUCTURE = [('h5_file', str), ('gps_start', float), ('gps_end', float)]
     H5_DIR = RESOURCE_PATH + 'ds_data/data/'
     H5 = '.h5'
 
@@ -24,8 +24,6 @@ class H5Reader(BaseReader):
             segments.segment(gs, ge) for gs, ge in
             zip(self.h5_files.gps_start, self.h5_files.gps_end)
         )
-        print(self.segments)
-        print("------------------------")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.h5_file.close()
@@ -35,7 +33,7 @@ class H5Reader(BaseReader):
         records = []
         for file in h5_files:
             _, gps_start, gps_end = split_file_name(file)
-            records.append((gps_start, gps_end))
+            records.append((file, gps_start, gps_end))
         records = np.array(records, dtype=self.RECORD_STRUCTURE)
         records = records.view(dtype=(np.record, records.dtype), type=np.recarray)
         return records
