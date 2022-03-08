@@ -24,10 +24,9 @@ class Excavator:
         self.t_start = t_start
         self.t_stop = t_stop
         self.f_target = f_target
-        self.resource_path = get_resource_path(depth=0)
 
         bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
-        self.h5_reader = H5Reader()
+        self.h5_reader = H5Reader(gps_start=t_start, gps_end=t_stop)
         self.ff_reader = FrameFileReader(source)
         self.ff_reader.set_patterns(patterns=bl_patterns)
         self.writer = DataWriter()
@@ -72,7 +71,7 @@ class Excavator:
         # plt.show()
 
     def decimate_data(self):
-        decimator = Resampler(f_target=self.f_target, reader=self.ff_reader, method='mean')
+        decimator = Resampler(f_target=self.f_target, method='mean')
         aux_data = FFLCache(ffl_file=self.source, gps_start=self.t_start, gps_end=self.t_stop)
         decimator.downsample_ffl(ffl_cache=aux_data)
 

@@ -1,5 +1,5 @@
 import os
-from application1.utils import get_resource_path
+from application1.utils import RESOURCE_PATH
 from core.config.configuration_manager import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
@@ -8,7 +8,7 @@ LOG = ConfigurationManager.get_logger(__name__)
 class BaseReader:
 
     def __init__(self):
-        self.default_path = get_resource_path()
+        self.default_path = RESOURCE_PATH
 
     def _check_path_exists(self, file_loc, file):
         LOG.info(f"Loading {file}")
