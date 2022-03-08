@@ -34,8 +34,10 @@ class H5Reader(BaseReader):
         for file in h5_files:
             _, gps_start, gps_end = split_file_name(file)
             records.append((file, gps_start, gps_end))
+        print(records)
         records = np.array(records, dtype=self.RECORD_STRUCTURE)
         records = records.view(dtype=(np.record, records.dtype), type=np.recarray)
+        print(records)
         return records
 
     def load_h5(self, h5_file):
@@ -55,5 +57,5 @@ class H5Reader(BaseReader):
             i_segment = self.segments.find(seg)
             segment = self.segments[i_segment]
             h5_file = self.h5_files[i_segment]
-            print(segment)
-            print(h5_file)
+            # print(segment)
+            # print(h5_file)
