@@ -39,11 +39,12 @@ class FFLCache:
         request_segment = segments.segmentlist([request_segment]) & self.segments
         print(request_segment)
 
-        blocks = []
-        for seg in request_segment:
-            i_segment = self.segments.find(seg)
-            segment = self.segments[i_segment]
-            gwf_file = self.gwf_files[i_segment]
-            block = frgetvect1d(gwf_file, channel, segment[0], abs(segment))[0].astype(float)
-            blocks.append(block)
-        return np.concatenate(blocks)
+        # blocks = []
+        # for seg in request_segment:
+        #     i_segment = self.segments.find(seg)
+        #     segment = self.segments[i_segment]
+        #     gwf_file = self.gwf_files[i_segment]
+        #     block = frgetvect1d(gwf_file, channel, segment[0], abs(segment))[0].astype(float)
+        #     blocks.append(block)
+        # return np.concatenate(blocks)
+        return None
