@@ -15,7 +15,7 @@ LOG = ConfigurationManager.get_logger(__name__)
 class H5Reader(BaseReader):
 
     RECORD_STRUCTURE = [('file', str, 100), ('gps_start', int), ('gps_end', int)]
-    H5_DIR = RESOURCE_PATH + 'ds_data/data/'
+    H5_DIR = 'ds_data/data/'
     H5 = '.h5'
 
     def __init__(self, gps_start, gps_end):
@@ -31,7 +31,7 @@ class H5Reader(BaseReader):
         )
 
     def _get_records(self):
-        h5_files = [f for f in os.listdir(self.H5_DIR) if f.endswith(self.H5)]
+        h5_files = [f for f in os.listdir(RESOURCE_PATH + self.H5_DIR) if f.endswith(self.H5)]
         records = []
         for file in h5_files:
             _, gps_start, gps_end = split_file_name(file)
