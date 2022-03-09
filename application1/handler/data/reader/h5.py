@@ -32,6 +32,8 @@ class H5Reader(BaseReader):
 
     def _get_records(self):
         h5_files = [f for f in os.listdir(RESOURCE_PATH + self.H5_DIR) if f.endswith(self.H5)]
+        print(h5_files)
+        print(sorted(h5_files))
         records = []
         for file in h5_files:
             _, gps_start, gps_end = split_file_name(file)
