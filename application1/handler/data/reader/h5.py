@@ -58,7 +58,7 @@ class H5Reader(BaseReader):
     def get_available_channels(self, file=None):
         file = file if file is not None else self.h5_files[0]
         self.load_h5(file)
-        return self.h5_cache.keys()
+        return list(self.h5_cache.keys())
 
     def get_data_from_segments(self, request_segment, channel: Channel):
         request_segments = segments.segmentlist([request_segment]) & self.segments
