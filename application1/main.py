@@ -90,6 +90,10 @@ class Excavator:
 
             for channel in tqdm(self.available_channels, position=0, leave=True):
                 x_aux = self.h5_reader.get_data_from_segments(request_segment=segment, channel_name=channel)
+                if x_aux is None:
+                    LOG.info(f'{channel} discarded.')
+                    self.available_channels.remove(channel)
+                    continue
                 x_trig = x_aux[i_trigger]
                 # todo: handle non-finite values. Either discard channel or replace values.
 
