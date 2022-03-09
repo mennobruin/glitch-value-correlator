@@ -51,7 +51,8 @@ class H5Reader(BaseReader):
             LOG.info(f'loading {h5_file}')
             self.h5_cache = h5py.File(h5_file, 'r')
 
-    def get_channel(self, channel_name):
+    def get_channel_from_file(self, file, channel_name):
+        self.load_h5(file)
         return self.h5_cache[channel_name]
 
     def get_data_from_segments(self, request_segments, channel: Channel):
@@ -61,8 +62,7 @@ class H5Reader(BaseReader):
         for seg in request_segments:
             i_segment = self.segments.find(seg)
             h5_file = self.h5_files[i_segment]
-            self.load_h5(h5_file)
-            all_data.append(self.h5_cache[channel.name])
+            all_data.append(self.get_channel_from_file(h5_file, channel.name))
         return all_data
 
 
