@@ -37,7 +37,7 @@ class Excavator:
     def run(self, n_iter=1):
 
         # trigger_pipeline = Omicron(channel=available_channels[0])
-        trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final')
+        trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final')#, trigger_type="Fast_Scattering")
         triggers = trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
         if triggers.size == 0:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
@@ -54,7 +54,7 @@ class Excavator:
 
             fom_ks.calculate(channel, h_aux=h_aux, h_trig=h_trig)
 
-        for k, v in sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True):
+        for k, v in sorted(fom_ks.scores.items()[0:10], key=lambda f: f[1], reverse=True):
             print(k, v)
 
         # h = Hist(segment_50hz.x)
