@@ -21,7 +21,7 @@ class DefaultPipeline:
         if trigger_type:
             triggers = triggers.loc[triggers[self.LABEL] == trigger_type]
         sorted_triggers = triggers.sort_values(self.GPS_TIME)
-        return sorted_triggers.values.flatten()
+        return sorted_triggers[self.GPS_TIME].values.flatten()
 
     def get_segment(self, gps_start, gps_end) -> np.ndarray:
         i_start, i_end = np.searchsorted(self.triggers, (gps_start, gps_end))
