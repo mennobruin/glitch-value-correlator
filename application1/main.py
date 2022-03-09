@@ -46,16 +46,13 @@ class Excavator:
         h_aux_cum, h_trig_cum = self.construct_histograms(segments=self.h5_reader.segments,
                                                           triggers=triggers)
 
-        print(h_aux_cum)
-        print(h_trig_cum)
-
         fom_ks = KolgomorovSmirnov()
         for channel in self.available_channels:
-            h_aux = h_aux_cum[channel.name]
-            h_trig = h_trig_cum[channel.name]
+            h_aux = h_aux_cum[channel]
+            h_trig = h_trig_cum[channel]
             h_aux.align(h_trig)
 
-            fom_ks.calculate(channel.name, h_aux=h_aux, h_trig=h_trig)
+            fom_ks.calculate(channel, h_aux=h_aux, h_trig=h_trig)
 
         for k, v in sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True):
             print(k, v)
@@ -91,7 +88,6 @@ class Excavator:
             for channel in tqdm(self.available_channels, position=0, leave=True):
                 x_aux = self.h5_reader.get_data_from_segments(request_segment=segment, channel_name=channel)
                 if x_aux is None:
-                    LOG.info(f'{channel} discarded.')
                     self.available_channels.remove(channel)
                     continue
                 x_trig = x_aux[i_trigger]
