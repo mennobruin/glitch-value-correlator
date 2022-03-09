@@ -33,8 +33,7 @@ class Excavator:
         self.writer = DataWriter()
 
         self.available_channels = self.h5_reader.get_available_channels()
-        print(len(self.available_channels))
-        print(self.available_channels[0:10])
+        LOG.info(f'Found {len(self.available_channels)} available channels.')
 
     def run(self, n_iter=1):
 
@@ -73,8 +72,8 @@ class Excavator:
         decimator.downsample_ffl(ffl_cache=aux_data)
 
     def construct_histograms(self, segments, triggers) -> ({str, Hist}):
-        h_aux_cum = dict((c.name, Hist([])) for c in self.available_channels)
-        h_trig_cum = dict((c.name, Hist([])) for c in self.available_channels)
+        h_aux_cum = dict((c, Hist([])) for c in self.available_channels)
+        h_trig_cum = dict((c, Hist([])) for c in self.available_channels)
 
         cum_aux_veto = [np.zeros(int(round(abs(segment) * self.f_target)), dtype=bool) for segment in segments]
         cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in segments]
@@ -91,7 +90,7 @@ class Excavator:
             i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
 
             for channel in tqdm(self.available_channels, position=0, leave=True):
-                x_aux = self.h5_reader.get_data_from_segments(request_segment=segment, channel=channel)
+                x_aux = self.h5_reader.get_data_from_segments(request_segment=segment, channel_name=channel)
                 x_trig = x_aux[i_trigger]
                 # todo: handle non-finite values. Either discard channel or replace values.
 
@@ -100,10 +99,10 @@ class Excavator:
                 x_aux_veto = x_aux[~cum_aux_veto[i]]
                 x_trig_veto = x_trig[~cum_trig_veto[i]]
 
-                h_aux = Hist(x_aux_veto, spanlike=h_aux_cum[channel.name])
+                h_aux = Hist(x_aux_veto, spanlike=h_aux_cum[channel])
                 h_trig = Hist(x_trig_veto, spanlike=h_aux)
-                h_aux_cum[channel.name] += h_aux
-                h_trig_cum[channel.name] += h_trig
+                h_aux_cum[channel] += h_aux
+                h_trig_cum[channel] += h_trig
             self.h5_reader.reset_cache()
 
         return h_aux_cum, h_trig_cum
