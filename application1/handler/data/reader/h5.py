@@ -34,7 +34,7 @@ class H5Reader(BaseReader):
         records = []
         for file in h5_files:
             _, gps_start, gps_end = split_file_name(file)
-            records.append((file, gps_start, gps_end))
+            records.append((file, float(gps_start), float(gps_end)))
         records = np.array(records, dtype=self.RECORD_STRUCTURE)
         records = records.view(dtype=(np.record, records.dtype), type=np.recarray)
         return records[(records.gps_end > self.gps_start) & (records.gps_start < self.gps_end)]
