@@ -67,6 +67,6 @@ class H5Reader(BaseReader):
             i_segment = self.segments.find(seg)
             h5_file = self.h5_files[i_segment]
             all_data.append(self.get_channel_from_file(h5_file, channel_name))
-        return all_data
+        return np.concatenate(all_data)
 
 
