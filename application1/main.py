@@ -32,7 +32,9 @@ class Excavator:
         self.ff_reader.set_patterns(patterns=bl_patterns)
         self.writer = DataWriter()
 
-        self.available_channels = None  # self.reader.get_available_channels(t0=t_start)
+        self.available_channels = self.h5_reader.get_available_channels()
+        print(len(self.available_channels))
+        print(self.available_channels[0:10])
 
     def run(self, n_iter=1):
 
