@@ -46,7 +46,6 @@ class H5Reader(BaseReader):
     def load_h5(self, h5_file):
         if self.h5_cache is None:
             h5_file = check_extension(h5_file, extension=self.H5)
-            LOG.info(f'loading {h5_file}')
             h5_file = self._check_path_exists(file_loc=self.H5_DIR, file=h5_file)
             self.h5_cache = h5py.File(h5_file, 'r')
 
