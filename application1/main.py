@@ -25,6 +25,7 @@ class Excavator:
         self.t_stop = t_stop
         self.f_target = f_target
 
+        LOG.info("Initializing application...")
         bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
         self.h5_reader = H5Reader(gps_start=t_start, gps_end=t_stop)
         self.ff_reader = FrameFileReader(source)
