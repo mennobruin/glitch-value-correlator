@@ -30,9 +30,6 @@ class H5Reader(BaseReader):
             zip(self.h5_records.gps_start, self.h5_records.gps_end)
         )
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.h5_cache.close()
-
     def _get_records(self):
         h5_files = [f for f in os.listdir(self.H5_DIR) if f.endswith(self.H5)]
         records = []
@@ -43,12 +40,15 @@ class H5Reader(BaseReader):
         records = records.view(dtype=(np.record, records.dtype), type=np.recarray)
         return records
 
-    def load_h5(self, h5_file):
-        h5_file = check_extension(h5_file, extension=self.H5)
+    def reset_cache(self):
+        self.h5_cache.close()
+        self.h5_cache = None
 
-        if self.h5_cache is None or os.path.dirname(self.h5_cache.filename) is not h5_file:
-            h5_file = self._check_path_exists(file_loc=self.H5_DIR, file=h5_file)
+    def load_h5(self, h5_file):
+        if self.h5_cache is None:
+            h5_file = check_extension(h5_file, extension=self.H5)
             LOG.info(f'loading {h5_file}')
+            h5_file = self._check_path_exists(file_loc=self.H5_DIR, file=h5_file)
             self.h5_cache = h5py.File(h5_file, 'r')
 
     def get_channel_from_file(self, file, channel_name):

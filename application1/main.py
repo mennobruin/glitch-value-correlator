@@ -104,6 +104,7 @@ class Excavator:
                 h_trig = Hist(x_trig_veto, spanlike=h_aux)
                 h_aux_cum[channel.name] += h_aux
                 h_trig_cum[channel.name] += h_trig
+            self.h5_reader.reset_cache()
 
         return h_aux_cum, h_trig_cum
 
