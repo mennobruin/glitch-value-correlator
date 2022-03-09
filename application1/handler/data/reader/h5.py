@@ -3,7 +3,6 @@ import h5py
 import os
 from ligo import segments
 
-from application1.model.channel import Channel
 from .base import BaseReader
 
 from application1.utils import check_extension, split_file_name, RESOURCE_PATH
@@ -60,14 +59,14 @@ class H5Reader(BaseReader):
         self.load_h5(file)
         return list(self.h5_cache.keys())
 
-    def get_data_from_segments(self, request_segment, channel: Channel):
+    def get_data_from_segments(self, request_segment, channel_name):
         request_segments = segments.segmentlist([request_segment]) & self.segments
 
         all_data = []
         for seg in request_segments:
             i_segment = self.segments.find(seg)
             h5_file = self.h5_files[i_segment]
-            all_data.append(self.get_channel_from_file(h5_file, channel.name))
+            all_data.append(self.get_channel_from_file(h5_file, channel_name))
         return all_data
 
 
