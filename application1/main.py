@@ -43,7 +43,6 @@ class Excavator:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
 
-        self.test_aux = FFLCache(ffl_file=self.source, gps_start=self.t_start, gps_end=self.t_stop)
         h_aux_cum, h_trig_cum = self.construct_histograms(segments=self.h5_reader.segments,
                                                           triggers=triggers)
 
@@ -90,7 +89,6 @@ class Excavator:
             i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
 
             for channel in tqdm(self.available_channels, position=0, leave=True):
-                x_test = self.test_aux.get_data_from_segment(request_segment=segment, channel=channel)
                 x_aux = self.h5_reader.get_data_from_segments(request_segment=segment, channel_name=channel)
                 x_trig = x_aux[i_trigger]
                 # todo: handle non-finite values. Either discard channel or replace values.
