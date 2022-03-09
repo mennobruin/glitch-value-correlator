@@ -26,7 +26,6 @@ class FFLCache:
             segments.segment(gs, ge) for gs, ge in
             zip(self.frames.gps_start, self.frames.gps_start + self.frames.duration)
         )
-        print(self.segments)
         self.lookup = dict(zip(self.segments, self.gwf_files))
 
     def _get_frames(self):
@@ -36,16 +35,13 @@ class FFLCache:
         return frames[(end_times > self.gps_start) & (frames.gps_start < self.gps_end)]
 
     def get_data_from_segment(self, request_segment, channel):
-        print(request_segment)
         request_segment = segments.segmentlist([request_segment]) & self.segments
-        print(request_segment)
 
-        # blocks = []
-        # for seg in request_segment:
-        #     i_segment = self.segments.find(seg)
-        #     segment = self.segments[i_segment]
-        #     gwf_file = self.gwf_files[i_segment]
-        #     block = frgetvect1d(gwf_file, channel, segment[0], abs(segment))[0].astype(float)
-        #     blocks.append(block)
-        # return np.concatenate(blocks)
-        return None
+        blocks = []
+        for seg in request_segment:
+            i_segment = self.segments.find(seg)
+            segment = self.segments[i_segment]
+            gwf_file = self.gwf_files[i_segment]
+            block = frgetvect1d(gwf_file, channel, segment[0], abs(segment))[0].astype(float)
+            blocks.append(block)
+        return np.concatenate(blocks)

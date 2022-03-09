@@ -28,7 +28,6 @@ class H5Reader(BaseReader):
             segments.segment(gs, ge) for gs, ge in
             zip(self.h5_records.gps_start, self.h5_records.gps_end)
         )
-        print(self.segments)
 
     def _get_records(self):
         h5_files = sorted([f for f in os.listdir(RESOURCE_PATH + self.H5_DIR) if f.endswith(self.H5)])
@@ -62,8 +61,6 @@ class H5Reader(BaseReader):
 
     def get_data_from_segments(self, request_segment, channel_name):
         request_segments = segments.segmentlist([request_segment]) & self.segments
-        print(request_segment)
-        print(request_segments)
 
         all_data = []
         for seg in request_segments:
