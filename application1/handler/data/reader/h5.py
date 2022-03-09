@@ -13,7 +13,7 @@ LOG = ConfigurationManager.get_logger(__name__)
 
 class H5Reader(BaseReader):
 
-    RECORD_STRUCTURE = [('file', str, 100), ('gps_start', int), ('gps_stop', int)]
+    RECORD_STRUCTURE = [('file', str, 100), ('gps_start', int), ('gps_end', int)]
     H5_DIR = 'ds_data/data/'
     H5 = '.h5'
 
@@ -37,7 +37,7 @@ class H5Reader(BaseReader):
             records.append((file, gps_start, gps_end))
         records = np.array(records, dtype=self.RECORD_STRUCTURE)
         records = records.view(dtype=(np.record, records.dtype), type=np.recarray)
-        return records[(records.gps_stop > self.gps_start) & (records.gps_start < self.gps_end)]
+        return records[(records.gps_end > self.gps_start) & (records.gps_start < self.gps_end)]
 
     def reset_cache(self):
         self.h5_cache.close()
