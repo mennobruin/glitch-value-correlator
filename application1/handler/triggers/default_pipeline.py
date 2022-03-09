@@ -17,9 +17,9 @@ class DefaultPipeline:
         LOG.info(f'Found {self.triggers.shape[0]} triggers of type {trigger_type if trigger_type else "[all]"}.')
 
     def load_triggers(self, path_to_csv, trigger_type):
-        triggers = self.reader.load_csv(path_to_csv, usecols=[self.GPS_TIME])
+        triggers = self.reader.load_csv(path_to_csv, usecols=[self.GPS_TIME, self.LABEL])
         if trigger_type:
-            triggers = triggers.loc[triggers['label'] == trigger_type]
+            triggers = triggers.loc[triggers[self.LABEL] == trigger_type]
         sorted_triggers = triggers.sort_values(self.GPS_TIME)
         return sorted_triggers.values.flatten()
 
