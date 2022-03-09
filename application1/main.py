@@ -54,7 +54,7 @@ class Excavator:
 
             fom_ks.calculate(channel, h_aux=h_aux, h_trig=h_trig)
 
-        for k, v in sorted(fom_ks.scores.items()[0:10], key=lambda f: f[1], reverse=True):
+        for k, v in sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)[0:10]:
             print(k, v)
 
         # h = Hist(segment_50hz.x)
