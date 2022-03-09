@@ -11,8 +11,8 @@ class DefaultPipeline:
     GPS_TIME = 'GPStime'
 
     def __init__(self, trigger_file):
-        self.triggers = self.load_triggers(trigger_file)
         self.reader = CSVReader()
+        self.triggers = self.load_triggers(trigger_file)
         LOG.info(f'Found {self.triggers.shape[0]} triggers.')
 
     def load_triggers(self, path_to_csv):
