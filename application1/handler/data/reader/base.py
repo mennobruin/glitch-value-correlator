@@ -11,7 +11,6 @@ class BaseReader:
         self.default_path = RESOURCE_PATH
 
     def _check_path_exists(self, file_loc, file):
-        LOG.info(f"Loading {file}")
         if not os.path.isfile(file):
             file = self.default_path + file_loc + file
             if not os.path.isfile(file):

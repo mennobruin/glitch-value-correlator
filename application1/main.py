@@ -110,7 +110,7 @@ class Excavator:
 if __name__ == '__main__':
     excavator = Excavator(source='/virgoData/ffl/raw_O3b_arch',
                           channel_name='V1:Hrec_hoft_2_200Hz',
-                          t_start=1263322818,
-                          t_stop=1263326418)
+                          t_start=1263323000,
+                          t_stop=1263324000)
     excavator.run()
     # excavator.decimate_data()
