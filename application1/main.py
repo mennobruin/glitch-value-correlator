@@ -35,10 +35,6 @@ class Excavator:
 
     def run(self, n_iter=1):
 
-        for segment in self.h5_reader.segments:
-            self.h5_reader.get_data_from_segments(request_segments=segment)
-        return
-
         # trigger_pipeline = Omicron(channel=available_channels[0])
         trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final')
         triggers = trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
@@ -46,9 +42,7 @@ class Excavator:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
 
-        aux_data = FFLCache(ffl_file=self.source, gps_start=self.t_start, gps_end=self.t_stop)
-        h_aux_cum, h_trig_cum = self.construct_histograms(aux_data=aux_data,
-                                                          segments=aux_data.segments,
+        h_aux_cum, h_trig_cum = self.construct_histograms(segments=self.h5_reader.segments,
                                                           triggers=triggers)
 
         print(h_aux_cum)
@@ -75,7 +69,7 @@ class Excavator:
         aux_data = FFLCache(ffl_file=self.source, gps_start=self.t_start, gps_end=self.t_stop)
         decimator.downsample_ffl(ffl_cache=aux_data)
 
-    def construct_histograms(self, aux_data, segments, triggers) -> ({str, Hist}):
+    def construct_histograms(self, segments, triggers) -> ({str, Hist}):
         h_aux_cum = dict((c.name, Hist([])) for c in self.available_channels)
         h_trig_cum = dict((c.name, Hist([])) for c in self.available_channels)
 
@@ -94,7 +88,7 @@ class Excavator:
             i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
 
             for channel in tqdm(self.available_channels, position=0, leave=True):
-                x_aux = aux_data.get_data_from_segment(request_segment=segment, channel=channel)
+                x_aux = self.h5_reader.get_data_from_segments(request_segment=segment, channel=channel)
                 x_trig = x_aux[i_trigger]
                 # todo: handle non-finite values. Either discard channel or replace values.
 
