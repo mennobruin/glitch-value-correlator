@@ -26,6 +26,7 @@ class FFLCache:
             segments.segment(gs, ge) for gs, ge in
             zip(self.frames.gps_start, self.frames.gps_start + self.frames.duration)
         )
+        print(self.segments)
         self.lookup = dict(zip(self.segments, self.gwf_files))
 
     def _get_frames(self):

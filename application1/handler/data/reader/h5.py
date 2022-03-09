@@ -28,6 +28,7 @@ class H5Reader(BaseReader):
             segments.segment(gs, ge) for gs, ge in
             zip(self.h5_records.gps_start, self.h5_records.gps_end)
         )
+        print(self.segments)
 
     def _get_records(self):
         h5_files = [f for f in os.listdir(RESOURCE_PATH + self.H5_DIR) if f.endswith(self.H5)]
