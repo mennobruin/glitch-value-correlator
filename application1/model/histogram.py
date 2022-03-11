@@ -21,9 +21,9 @@ can be merged efficiently
 
 import numpy as np
 
-from application1.config import ConfigurationManager
+from application1.config import config_manager
 
-LOG = ConfigurationManager.get_logger(__name__)
+LOG = config_manager.get_logger(__name__)
 
 flintmax = 2 ** 53  # largest consecutive integer in float64
 

@@ -1,8 +1,9 @@
 import os
 from resources.constants import RESOURCE_PATH
-from application1.config import ConfigurationManager
 
-LOG = ConfigurationManager.get_logger(__name__)
+from application1.config import config_manager
+
+LOG = config_manager.get_logger(__name__)
 
 
 class BaseReader:

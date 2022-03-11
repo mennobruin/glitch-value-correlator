@@ -7,13 +7,13 @@ import scipy.signal as sig
 
 from tqdm import tqdm
 
-from application1.config import ConfigurationManager
 from resources.constants import RESOURCE_PATH
 from application1.model.ffl_cache import FFLCache
+from application1.config import config_manager
 
 from virgotools.frame_lib import FrameFile, FrVect2array
 
-LOG = ConfigurationManager.get_logger(__name__)
+LOG = config_manager.get_logger(__name__)
 
 
 class Resampler:

@@ -7,9 +7,10 @@ from .base import BaseReader
 
 from application1.utils import check_extension, split_file_name
 from resources.constants import RESOURCE_PATH
-from application1.config import ConfigurationManager
 
-LOG = ConfigurationManager.get_logger(__name__)
+from application1.config import config_manager
+
+LOG = config_manager.get_logger(__name__)
 
 
 class H5Reader(BaseReader):
