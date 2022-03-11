@@ -15,6 +15,7 @@ class DefaultPipeline:
         self.reader = CSVReader()
         self.trigger_type = trigger_type
         self.triggers = self.load_triggers(trigger_file)
+        print(len(self.triggers))
 
     def load_triggers(self, path_to_csv):
         triggers = self.reader.load_csv(path_to_csv, usecols=[self.GPS_TIME, self.LABEL])
@@ -25,6 +26,8 @@ class DefaultPipeline:
 
     def get_segment(self, gps_start, gps_end) -> np.ndarray:
         i_start, i_end = np.searchsorted(self.triggers, (gps_start, gps_end))
-        LOG.info(f'Found {self.triggers.shape[0]} triggers of type {self.trigger_type if self.trigger_type else "[all]"}'
+        LOG.info(f'Found {i_end - i_start} triggers of type {self.trigger_type if self.trigger_type else "[all]"} '
                  f'from {gps_start} to {gps_end}.')
+        print(i_start, i_end)
+        print(i_end - i_start)
         return self.triggers[i_start:i_end]
