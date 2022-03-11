@@ -1,1 +1,3 @@
-from .configuration_manager import config_manager
+from .configuration_manager import ConfigurationManager
+
+config_manager = ConfigurationManager()
