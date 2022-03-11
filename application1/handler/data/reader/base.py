@@ -1,5 +1,5 @@
 import os
-from application1.utils import RESOURCE_PATH
+from resources.constants import RESOURCE_PATH
 from application1.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
