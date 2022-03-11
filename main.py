@@ -90,6 +90,7 @@ class Excavator:
                 x_aux = self.h5_reader.get_data_from_segments(request_segment=segment, channel_name=channel)
                 if x_aux is None:
                     self.available_channels.remove(channel)
+                    LOG.debug(f'Discarded {channel} due to disappearance.')
                     continue
                 x_trig = x_aux[i_trigger]
                 # todo: handle non-finite values. Either discard channel or replace values.
@@ -109,9 +110,11 @@ class Excavator:
 
 
 if __name__ == '__main__':
+    LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
     excavator = Excavator(source='/virgoData/ffl/raw_O3b_arch',
                           channel_name='V1:Hrec_hoft_2_200Hz',
                           t_start=1263323000,
                           t_stop=1263324000)
     excavator.run()
     # excavator.decimate_data()
+    LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")

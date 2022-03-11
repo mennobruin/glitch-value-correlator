@@ -24,7 +24,7 @@ class ConfigurationManager:
         formatter = logging.Formatter('%(asctime)s - %(levelname)s  - %(name)s - %(message)s')
 
         stdout_handler = logging.StreamHandler(sys.stdout)
-        stdout_handler.setLevel(logging.DEBUG)
+        stdout_handler.setLevel(logging.INFO)
         stdout_handler.setFormatter(formatter)
 
         file_handler = logging.FileHandler(self.LOG_DIRECTORY + '{:%Y-%m-%d}.log'.format(datetime.now()))
