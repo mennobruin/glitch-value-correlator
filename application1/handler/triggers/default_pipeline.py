@@ -1,7 +1,7 @@
 import numpy as np
 
 from application1.handler.data.reader.csv import CSVReader
-from core.config import ConfigurationManager
+from application1.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
 

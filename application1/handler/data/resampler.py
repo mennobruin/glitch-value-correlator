@@ -7,7 +7,7 @@ import scipy.signal as sig
 
 from tqdm import tqdm
 
-from core.config.configuration_manager import ConfigurationManager
+from application1.config import ConfigurationManager
 from application1.utils import RESOURCE_PATH
 from application1.model.ffl_cache import FFLCache
 
@@ -105,6 +105,8 @@ class Resampler:
         if math.isclose(ds_ratio, 1):  # f_sample ~= f_target
             return data
 
+        ratios = self._split_downsample_ratios(ds_ratio)
+
         if ds_ratio.is_integer():  # decimate
             if ds_ratio not in self.filt_cache:
                 self.filt_cache[ds_ratio] = sig.cheby1(N=self.FILTER_ORDER, rp=0.05, Wn=0.8 / ds_ratio, output='sos')
@@ -114,6 +116,13 @@ class Resampler:
                 return sig.sosfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
         else:
             return self._resample(data)
+
+    def _split_downsample_ratios(self, ds_ratio):
+        ds_ratios = []
+        if ds_ratio > 10:
+            a, b = ds_ratio // 10, ds_ratio % 10
+        else:
+            return [ds_ratio]
 
     def _resample(self, data):  # Fourier resampling
         return sig.resample(data, self.n_target, window='hamming')

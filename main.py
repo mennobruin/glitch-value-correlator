@@ -2,7 +2,7 @@ from tqdm import tqdm
 import sys
 
 from application1.utils import *
-from application1.model.old_histogram import Hist
+from application1.model.histogram import Hist
 from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov
 from application1.handler.data.reader.frame_file import FrameFileReader
@@ -10,7 +10,7 @@ from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.data.writer import DataWriter
 from application1.handler.data.resampler import Resampler
 from application1.handler.triggers import DefaultPipeline
-from core.config import ConfigurationManager
+from application1.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
 
@@ -81,6 +81,7 @@ class Excavator:
                 pass  # todo: when transformations are implemented -> reset
 
             if count_triggers_in_segment(triggers, gps_start, gps_end) == 0:
+                LOG.info(f'No triggers found from {gps_start} to {gps_end}')
                 continue
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
             i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
