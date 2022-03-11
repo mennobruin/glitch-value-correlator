@@ -2,12 +2,9 @@ import numpy as np
 import os
 import re
 
-from pathlib import Path
-
 from application1.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
-RESOURCE_PATH = Path(__file__).parent.parent.name + "/resources/"
 
 
 def iter_segments(subsegs):

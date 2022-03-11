@@ -8,7 +8,7 @@ import scipy.signal as sig
 from tqdm import tqdm
 
 from application1.config import ConfigurationManager
-from application1.utils import RESOURCE_PATH
+from resources.constants import RESOURCE_PATH
 from application1.model.ffl_cache import FFLCache
 
 from virgotools.frame_lib import FrameFile, FrVect2array
@@ -20,6 +20,7 @@ class Resampler:
 
     FILE_TEMPLATE = 'excavator_f{f_target}_gs{t_start}_ge{t_stop}_{method}'
     FILTER_ORDER = 4
+    MAX_DS_RATIO = 10
     FRAME_DURATION = 10
     FRAMES_IN_FRAME_FILE = 10
 
@@ -79,7 +80,7 @@ class Resampler:
 
         if self.method == 'mean':
             ds_data = self._resample_mean(data)
-        elif self.method == 'filt':  # todo: when ds_ratio >= 10-13 do it in steps to prevent numerical error
+        elif self.method == 'filt':
             ds_data = self._decimate(data, f_sample).astype(np.float64)
         elif self.method == 'filtfilt':
             ds_data = self._decimate(data, f_sample, filtfilt=True).astype(np.float64)
@@ -91,12 +92,15 @@ class Resampler:
     def _resample_mean(self, data):
         padding = np.empty(math.ceil(data.size / self.n_target) * self.n_target - data.size)
         padding.fill(np.nan)
-        padded_data = np.append(data, padding)
-        ds_ratio = len(padded_data) / self.n_target
-        return self._n_sample_average(padded_data, ratio=int(ds_ratio))
+        data = np.append(data, padding)
+        ds_ratio = len(data) // self.n_target
+        ratios = self._split_downsample_ratio(ds_ratio)
+        for ds_ratio in ratios:
+            data = self._n_sample_average(data, ratio=ds_ratio)
+        return data
 
     @staticmethod
-    def _n_sample_average(x: np.array, ratio):
+    def _n_sample_average(x: np.array, ratio: int):
         return np.nanmean(x.reshape(-1, ratio), axis=1)
 
     def _decimate(self, data, f_sample, filtfilt=False):
@@ -105,22 +109,22 @@ class Resampler:
         if math.isclose(ds_ratio, 1):  # f_sample ~= f_target
             return data
 
-        ratios = self._split_downsample_ratios(ds_ratio)
-
         if ds_ratio.is_integer():  # decimate
-            if ds_ratio not in self.filt_cache:
-                self.filt_cache[ds_ratio] = sig.cheby1(N=self.FILTER_ORDER, rp=0.05, Wn=0.8 / ds_ratio, output='sos')
-            if filtfilt:
-                return sig.sosfiltfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
-            else:
-                return sig.sosfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
+            ratios = self._split_downsample_ratio(ds_ratio)
+            for ds_ratio in ratios:
+                if ds_ratio not in self.filt_cache:
+                    self.filt_cache[ds_ratio] = sig.cheby1(N=self.FILTER_ORDER, rp=0.05, Wn=0.8 / ds_ratio, output='sos')
+                if filtfilt:
+                    return sig.sosfiltfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
+                else:
+                    return sig.sosfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
         else:
             return self._resample(data)
 
-    def _split_downsample_ratios(self, ds_ratio):
-        ds_ratios = []
-        if ds_ratio > 10:
-            a, b = ds_ratio // 10, ds_ratio % 10
+    def _split_downsample_ratio(self, ds_ratio):
+        if ds_ratio > self.MAX_DS_RATIO:
+            factor, remainder = ds_ratio // self.MAX_DS_RATIO, ds_ratio % self.MAX_DS_RATIO
+            return [factor] * self.MAX_DS_RATIO + [remainder]
         else:
             return [ds_ratio]
 
