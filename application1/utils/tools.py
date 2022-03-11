@@ -2,9 +2,9 @@ import numpy as np
 import os
 import re
 
-from application1.config import ConfigurationManager
+from application1.config import config_manager
 
-LOG = ConfigurationManager.get_logger(__name__)
+LOG = config_manager.get_logger(__name__)
 
 
 def iter_segments(subsegs):

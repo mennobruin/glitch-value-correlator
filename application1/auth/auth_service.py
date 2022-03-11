@@ -3,9 +3,9 @@ import pathlib
 from gwpy.detector import Channel
 from gwpy.io import kerberos, nds2
 
-from application1.config import ConfigurationManager
+from application1.config import config_manager
 
-LOG = ConfigurationManager.get_logger(__name__)
+LOG = config_manager.get_logger(__name__)
 
 
 class AuthenticationService:
@@ -15,7 +15,7 @@ class AuthenticationService:
 
     def __init__(self):
         self._path = str(pathlib.Path(__file__).parents[1].resolve()) + "/resources/"
-        self.config = ConfigurationManager(self._path + "config.yaml").load_config()
+        self.config = ConfigurationManager().load_config()
         self._user = self.config[self.KERBEROS_CONFIG.format(self.USERNAME)]
 
         try:

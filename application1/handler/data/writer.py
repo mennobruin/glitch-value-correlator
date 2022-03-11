@@ -1,11 +1,11 @@
 import csv
 import os
 
-from application1.utils import check_extension
 from resources.constants import RESOURCE_PATH
-from application1.config import ConfigurationManager
+from application1.utils import check_extension
+from application1.config import config_manager
 
-LOG = ConfigurationManager.get_logger(__name__)
+LOG = config_manager.get_logger(__name__)
 
 
 class DataWriter:

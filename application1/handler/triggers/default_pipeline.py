@@ -1,9 +1,9 @@
 import numpy as np
 
 from application1.handler.data.reader.csv import CSVReader
-from application1.config import ConfigurationManager
+from application1.config import config_manager
 
-LOG = ConfigurationManager.get_logger(__name__)
+LOG = config_manager.get_logger(__name__)
 
 
 class DefaultPipeline:

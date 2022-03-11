@@ -1,17 +1,23 @@
 import yaml
 import logging
 import sys
+import os
+
+from datetime import datetime
+
+from resources.constants import RESOURCE_PATH
 
 
 class ConfigurationManager:
 
-    def __init__(self, path):
-        self.path = path
-        self.config = None
+    CONFIG_PATH = RESOURCE_PATH + 'config.yaml'
+    LOG_DIRECTORY = RESOURCE_PATH + 'logs/'
+
+    def __init__(self):
+        os.makedirs(self.LOG_DIRECTORY, exist_ok=True)
         self.LOG = self.get_logger(__name__)
 
-    @staticmethod
-    def get_logger(name) -> logging.Logger:
+    def get_logger(self, name) -> logging.Logger:
         logger = logging.getLogger(name)
         logger.setLevel(logging.INFO)
 
@@ -21,7 +27,7 @@ class ConfigurationManager:
         stdout_handler.setLevel(logging.DEBUG)
         stdout_handler.setFormatter(formatter)
 
-        file_handler = logging.FileHandler(sys.stdout)
+        file_handler = logging.FileHandler(self.LOG_DIRECTORY + '{:%Y-%m-%d}.log'.format(datetime.now()))
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(formatter)
 
@@ -31,15 +37,12 @@ class ConfigurationManager:
         return logger
 
     def load_config(self):
-
         try:
-            with open(self.path, 'r') as f:
-                self.config = yaml.safe_load(f)
-                return self.config
+            with open(self.CONFIG_PATH, 'r') as f:
+                return yaml.safe_load(f)
         except IOError as e:
-            self.LOG.error(f"No configuration found at location {self.path}")
+            self.LOG.error(f"No configuration found at location {self.CONFIG_PATH}")
             raise e
 
-    @classmethod
-    def getLogger(cls, __name__):
-        pass
+
+config_manager = ConfigurationManager()

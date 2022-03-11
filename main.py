@@ -10,9 +10,9 @@ from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.data.writer import DataWriter
 from application1.handler.data.resampler import Resampler
 from application1.handler.triggers import DefaultPipeline
-from application1.config import ConfigurationManager
+from application1.config import config_manager
 
-LOG = ConfigurationManager.get_logger(__name__)
+LOG = config_manager.get_logger(__name__)
 
 
 class Excavator:
