@@ -32,6 +32,7 @@ class H5Reader(BaseReader):
         )
 
     def _get_records(self):
+        print(os.listdir())
         h5_files = sorted([f for f in os.listdir(RESOURCE_PATH + self.H5_DIR) if f.endswith(self.H5)])
         records = []
         for file in h5_files:
