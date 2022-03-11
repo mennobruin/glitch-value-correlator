@@ -6,7 +6,7 @@ from ligo import segments
 from .base import BaseReader
 
 from application1.utils import check_extension, split_file_name, RESOURCE_PATH
-from core.config import ConfigurationManager
+from application1.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
 

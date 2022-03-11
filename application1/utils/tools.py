@@ -4,7 +4,7 @@ import re
 
 from pathlib import Path
 
-from core.config import ConfigurationManager
+from application1.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
 RESOURCE_PATH = Path(__file__).parent.parent.name + "/resources/"

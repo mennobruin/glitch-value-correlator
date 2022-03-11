@@ -2,7 +2,7 @@ import csv
 import os
 
 from application1.utils import check_extension, RESOURCE_PATH
-from core.config.configuration_manager import ConfigurationManager
+from application1.config import ConfigurationManager
 
 LOG = ConfigurationManager.get_logger(__name__)
 

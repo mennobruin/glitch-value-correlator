@@ -1,7 +1,7 @@
 # Project-related files
 *.keytab
 .idea/
-/application1/resources/ds_data/
+/resources/ds_data/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

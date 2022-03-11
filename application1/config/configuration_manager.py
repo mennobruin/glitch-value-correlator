@@ -13,13 +13,21 @@ class ConfigurationManager:
     @staticmethod
     def get_logger(name) -> logging.Logger:
         logger = logging.getLogger(name)
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
 
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setLevel(logging.DEBUG)
         formatter = logging.Formatter('%(asctime)s - %(levelname)s  - %(name)s - %(message)s')
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
+
+        stdout_handler = logging.StreamHandler(sys.stdout)
+        stdout_handler.setLevel(logging.DEBUG)
+        stdout_handler.setFormatter(formatter)
+
+        file_handler = logging.FileHandler(sys.stdout)
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+
+        logger.addHandler(stdout_handler)
+        logger.addHandler(file_handler)
+
         return logger
 
     def load_config(self):
