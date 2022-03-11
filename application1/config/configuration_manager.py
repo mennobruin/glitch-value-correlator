@@ -19,7 +19,7 @@ class ConfigurationManager:
 
     def get_logger(self, name) -> logging.Logger:
         logger = logging.getLogger(name)
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)
 
         formatter = logging.Formatter('%(asctime)s - %(levelname)s  - %(name)s - %(message)s')
 
