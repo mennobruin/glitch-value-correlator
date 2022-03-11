@@ -43,6 +43,3 @@ class ConfigurationManager:
         except IOError as e:
             self.LOG.error(f"No configuration found at location {self.CONFIG_PATH}")
             raise e
-
-
-config_manager = ConfigurationManager()
