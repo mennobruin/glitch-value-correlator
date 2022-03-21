@@ -4,8 +4,7 @@ from gwpy.timeseries import TimeSeries
 from virgotools.frame_lib import FrameFile
 
 from .base import BaseReader
-from application1.model.channel_segment import ChannelSegment
-from application1.model.channel import Channel
+from application1.model.channel import Channel, ChannelSegment
 
 
 class FrameFileReader(BaseReader):
