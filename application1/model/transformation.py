@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.signal as sig
 import matplotlib.pyplot as plt
 
 from application1.utils import abs_norm
@@ -41,9 +42,37 @@ class GaussianDifferentiator:
         return np.convolve(x, self.kernel, mode='same')
 
 
+class SavitzkyGolayDifferentiator:
+
+    POLYNOMIAL_ORDER = 3
+    PADDING_MODE = 'wrap'
+
+    def __init__(self, window_length, order, dx):
+        """
+
+        :param window_length: length of the filter window
+        :param order: nd derivative order
+        :param dx: spacing between samples
+        """
+        self.window_length = window_length
+        self.order = order
+        self.dx = dx
+
+    def calculate(self, x):
+        return sig.savgol_filter(x, self.window_length,
+                                 polyorder=self.POLYNOMIAL_ORDER,
+                                 deriv=self.order,
+                                 delta=self.dx,
+                                 mode=self.PADDING_MODE)
+
+
 class AbsMean:
 
     def __init__(self, mean=None):
+        """
+
+        :param mean: value to use as offset for the input signal
+        """
         self.mean = mean
         self.means = []
 
@@ -57,3 +86,29 @@ class AbsMean:
 
     def reset(self):
         self.mean = None
+
+
+class LowPass:
+
+    def __init__(self):
+        pass
+
+
+class HighPass:
+
+    def __init__(self):
+        pass
+
+
+if __name__ == '__main__':
+    n = 100
+    xdata = np.linspace(-np.pi, np.pi, n)
+    ydata = np.sin(xdata)
+
+    trans = SavitzkyGolayDifferentiator(window_length=21, order=1, dx=xdata[1]-xdata[0])
+    ytrans = trans.calculate(ydata)
+
+    plt.plot(xdata, ydata)
+    plt.plot(xdata, ytrans)
+    plt.show()
+
