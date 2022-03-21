@@ -15,6 +15,15 @@ from application1.config import config_manager
 LOG = config_manager.get_logger(__name__)
 
 
+"""
+todo:
+ - implement transformations
+ - implement parallel processing for histograms
+ - think about potential new transformations
+ - create argument parser + default values file which remembers previous inputs
+"""
+
+
 class Excavator:
     EXCLUDE_PATTERNS = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms', '*_DS']
 

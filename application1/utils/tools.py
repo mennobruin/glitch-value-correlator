@@ -40,3 +40,13 @@ def check_extension(file_name, extension):
 def split_file_name(file_name):
     f_sample, gps_start, gps_end, _ = tuple(int(s) for s in re.split('(\d+)', file_name) if s.isnumeric())
     return f_sample, gps_start, gps_end
+
+
+def abs_norm(x):
+    """
+    normalization for data that contains negative values
+
+    :param x: input vector
+    :return: normalized input vector
+    """
+    return x / np.sum(np.abs(x))
