@@ -9,21 +9,30 @@ LOG = config_manager.get_logger(__name__)
 
 class GaussianDifferentiator:
 
-    def __init__(self, kernel_width=3, sigma=1, order=1):
+    def __init__(self, n_points, kernel_n_sigma=2, sigma=1, order=1):
+        """
+
+        :param n_points: number of data points in the input signal
+        :param kernel_n_sigma: width of the kernel expressed in number of standard diviations
+        :param sigma: gaussian standard deviation
+        :param order: nd derivative order
+        """
+
         super(GaussianDifferentiator, self).__init__()
-        self.kernel_width = kernel_width
+        self.n_points = n_points
+        self.kernel_width = kernel_n_sigma * sigma
         self.sigma = sigma
         self.kernel = self._get_kernel(order=order)
 
     def _get_kernel(self, order):
-        x = np.linspace(-3 * self.sigma, 3 * self.sigma, self.kernel_width)
+        x = np.linspace(-self.kernel_width, self.kernel_width, self.n_points)
         gauss = np.exp(-0.5 * np.square(x) / np.square(self.sigma))
-        gauss_derivative = -x / np.square(self.sigma) * gauss
-        gauss_second_derivative = (np.square(x) - np.square(self.sigma)) / np.power(self.sigma, 4) * gauss
         if order == 1:
-            return abs_norm(gauss_derivative)[::-1]  # reverse because convolution, not cross-correlation
+            gauss_derivative = -x / np.square(self.sigma) * gauss
+            return abs_norm(gauss_derivative)
         elif order == 2:
-            return abs_norm(gauss_second_derivative)[::-1]
+            gauss_second_derivative = (np.square(x) - np.square(self.sigma)) / np.power(self.sigma, 4) * gauss
+            return abs_norm(gauss_second_derivative)
         else:
             LOG.error(f'Gaussian filter order {order} not implemented. Available options: [1, 2]')
             raise ValueError
@@ -31,19 +40,14 @@ class GaussianDifferentiator:
     def calculate(self, x):
         return np.convolve(x, self.kernel, mode='same')
 
-    def reset(self):
+
+class AbsMean:
+
+    def __init__(self):
+        self.mean = None
+
+    def calculate(self, x):
         pass
 
-
-if __name__ == '__main__':
-    n = 100
-    diff = GaussianDifferentiator(kernel_width=n, order=1)
-
-
-    xdata = np.linspace(0, 2*np.pi, n)
-    sinewave = np.sin(xdata)
-    sinediff = diff.calculate(x=sinewave)
-
-    plt.plot(xdata, sinewave, 'r-')
-    plt.plot(xdata, sinediff, 'g-')
-    plt.show()
+    def reset(self):
+        self.mean = None
