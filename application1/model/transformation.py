@@ -43,11 +43,15 @@ class GaussianDifferentiator:
 
 class AbsMean:
 
-    def __init__(self):
-        self.mean = None
+    def __init__(self, mean=None):
+        self.mean = mean
+        self.means = []
 
     def calculate(self, x):
-        pass
+        if not self.mean:
+            mean = np.mean(x)
+            self.means.append(mean)
+        return np.abs(x - mean)
 
     def reset(self):
         self.mean = None
