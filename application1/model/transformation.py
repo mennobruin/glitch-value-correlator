@@ -51,7 +51,9 @@ class AbsMean:
         if not self.mean:
             mean = np.mean(x)
             self.means.append(mean)
-        return np.abs(x - mean)
+            return np.abs(x - mean)
+        else:
+            return np.abs(x - self.mean)
 
     def reset(self):
         self.mean = None
