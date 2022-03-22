@@ -88,24 +88,35 @@ class AbsMean:
         self.mean = None
 
 
-class LowPass:
-
-    def __init__(self):
-        pass
-
-
 class HighPass:
 
-    def __init__(self):
-        pass
+    FILTER_ORDER = 1
+    FREQUENCY_CUTOFF = 2
+
+    def __init__(self, f_target):
+        f_nyquist = f_target / 2
+        self.B, self.A = sig.butter(self.FILTER_ORDER, self.FREQUENCY_CUTOFF / f_nyquist, btype='highpass')
+
+        self.zi = None
+
+    def calculate(self, x):
+        if self.zi is None:
+            self.zi = sig.lfiltic(self.B, self.A, [self.B[0] * (x[1] - x[0])], [2 * x[0] - x[1]])
+        x_trans, self.zi = sig.lfilter(self.B, self.A, x, zi=self.zi)
+        return x_trans
+
+    def reset(self):
+        self.zi = None
 
 
 if __name__ == '__main__':
-    n = 100
+    n = 5000
     xdata = np.linspace(-np.pi, np.pi, n)
     ydata = np.sin(xdata)
 
-    trans = SavitzkyGolayDifferentiator(window_length=21, order=1, dx=xdata[1]-xdata[0])
+    # trans = SavitzkyGolayDifferentiator(window_length=int(n/2), order=1, dx=xdata[1]-xdata[0])
+    # trans = HighPass(f_target=50)
+    trans = GaussianDifferentiator(n_points=n)
     ytrans = trans.calculate(ydata)
 
     plt.plot(xdata, ydata)
