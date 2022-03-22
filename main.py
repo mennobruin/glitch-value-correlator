@@ -5,6 +5,7 @@ from application1.utils import *
 from application1.model.histogram import Hist
 from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov
+from application1.model.transformation import GaussianDifferentiator, SavitzkyGolayDifferentiator, HighPass, AbsMean
 from application1.handler.data.reader.frame_file import FrameFileReader
 from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.data.writer import DataWriter
@@ -14,18 +15,16 @@ from application1.config import config_manager
 
 LOG = config_manager.get_logger(__name__)
 
-
 """
-todo:
- - implement transformations
- - implement parallel processing for histograms
- - think about potential new transformations
- - create argument parser + default values file which remembers previous inputs
+ - done: implement transformations
+ - todo: implement parallel processing for histograms
+ - done: think about potential new transformations
+ - todo: create argument parser + default values file which remembers previous inputs
 """
 
 
 class Excavator:
-    EXCLUDE_PATTERNS = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms', '*_DS']
+    EXCLUDE_PATTERNS = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms', '*_DS', '*_unsafe']
 
     def __init__(self, source, channel_name, t_start, t_stop, f_target=50, channel_bl_patterns=None):
         self.source = source
@@ -80,8 +79,26 @@ class Excavator:
         h_aux_cum = dict((c, Hist([])) for c in self.available_channels)
         h_trig_cum = dict((c, Hist([])) for c in self.available_channels)
 
-        cum_aux_veto = [np.zeros(int(round(abs(segment) * self.f_target)), dtype=bool) for segment in segments]
+        n_points = int(round(abs(segments[0]) * self.f_target))
+        cum_aux_veto = [np.zeros(n_points, dtype=bool) for _ in segments]
         cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in segments]
+
+        savitzky_golay = SavitzkyGolayDifferentiator(window_length=n_points / 2, dx=1 / n_points)
+        gauss = GaussianDifferentiator(n_points=n_points)
+        abs_mean = AbsMean()
+        highpass = HighPass(f_target=self.f_target)
+
+        transformation_combinations = [
+            [savitzky_golay],
+            [gauss],
+            [abs_mean],
+            [highpass]
+        ]
+
+        transformed_data = {c: {'_'.join(t.NAME for t in combination): [] for combination in transformation_combinations}
+                            for c in self.available_channels}
+        print(transformed_data[self.available_channels[10]])
+        return
 
         LOG.info('Constructing histograms...')
         for i, segment, gap in iter_segments(segments):
