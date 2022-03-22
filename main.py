@@ -90,7 +90,9 @@ class Excavator:
 
         transformation_combinations = [
             [savitzky_golay],
+            [savitzky_golay, abs_mean],
             [gauss],
+            [gauss, abs_mean],
             [abs_mean],
             [highpass]
         ]
