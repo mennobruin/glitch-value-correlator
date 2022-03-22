@@ -1,4 +1,4 @@
 
 from pathlib import Path
 
-RESOURCE_PATH = Path(__file__).parent.name + '/'
+RESOURCE_PATH = Path(__file__).parent.__str__() + '/'
