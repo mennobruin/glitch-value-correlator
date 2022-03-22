@@ -9,6 +9,7 @@ LOG = config_manager.get_logger(__name__)
 
 
 class GaussianDifferentiator:
+    NAME = 'gauss'
 
     def __init__(self, n_points, kernel_n_sigma=2, sigma=1, order=1):
         """
@@ -43,11 +44,12 @@ class GaussianDifferentiator:
 
 
 class SavitzkyGolayDifferentiator:
+    NAME = 'savitzkygolay'
 
     POLYNOMIAL_ORDER = 3
     PADDING_MODE = 'wrap'
 
-    def __init__(self, window_length, order, dx):
+    def __init__(self, window_length, dx, order=1):
         """
 
         :param window_length: length of the filter window
@@ -67,6 +69,7 @@ class SavitzkyGolayDifferentiator:
 
 
 class AbsMean:
+    NAME = 'absmean'
 
     def __init__(self, mean=None):
         """
@@ -89,6 +92,7 @@ class AbsMean:
 
 
 class HighPass:
+    NAME = 'highpass'
 
     FILTER_ORDER = 1
     FREQUENCY_CUTOFF = 2
