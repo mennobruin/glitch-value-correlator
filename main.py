@@ -99,11 +99,13 @@ class Excavator:
                             for c in self.available_channels}
         for channel in self.available_channels:
             for name, transformations in transformed_data[channel].items():
-                for transformation in transformations:
+                for i, transformation in enumerate(transformations):
                     if isinstance(transformation, type):
-                        transformed_data[channel][name] = transformation(f_target=self.f_target)
+                        transformed_data[channel][name][i] = transformation(f_target=self.f_target)
 
-        print(transformed_data[self.available_channels[10]])
+        for row in transformed_data[self.available_channels[10]]:
+            print(row)
+
         return
         LOG.info('Constructing histograms...')
         for i, segment, gap in iter_segments(segments):
