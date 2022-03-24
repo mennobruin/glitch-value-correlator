@@ -128,7 +128,7 @@ class Excavator:
                     LOG.debug(f'Discarded {channel} due to disappearance.')
                     continue
                 for transformation_name in transformation_names:
-                    x_transform = do_transformations(transformations=transformation_states[channel, transformation_name],
+                    x_transform = do_transformations(transformations=transformation_states[channel][transformation_name],
                                                      data=x_aux)
                     aux_hist = self.update_histogram(data=x_transform,
                                                      cumulative_veto=cum_aux_veto[i],
