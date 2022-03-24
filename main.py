@@ -100,9 +100,12 @@ class Excavator:
         for channel in self.available_channels:
             for name, transformations in transformed_data[channel].items():
                 for transformation in transformations:
-                    if isinstance(transformation, type):
-                        print(transformation, type(transformation))
+                    if isinstance(transformation, type(HighPass)):
                         transformed_data[channel][name] = transformation(f_target=self.f_target)
+                    elif isinstance(transformation, type(AbsMean)):
+                        transformed_data[channel][name] = transformation()
+                    else:
+                        pass
 
         print(transformed_data[self.available_channels[10]])
         return
