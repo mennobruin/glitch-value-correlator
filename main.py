@@ -132,7 +132,7 @@ class Excavator:
                                                      data=x_aux)
                     aux_hist = self.update_histogram(data=x_transform,
                                                      cumulative_veto=cum_aux_veto[i],
-                                                     spanlike=h_aux_cum[channel])
+                                                     spanlike=h_aux_cum[channel, transformation_name])
                     trig_hist = self.update_histogram(data=x_transform[i_trigger],
                                                       cumulative_veto=cum_trig_veto[i],
                                                       spanlike=aux_hist)
