@@ -84,7 +84,7 @@ class Excavator:
         gauss = GaussianDifferentiator(n_points=n_points)
 
         transformation_combinations = [
-            [],
+            [],  # also do a run untransformed
             [savitzky_golay],
             [savitzky_golay, AbsMean],
             [gauss],
@@ -106,10 +106,6 @@ class Excavator:
 
         h_aux_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in transformation_names)
         h_trig_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in transformation_names)
-
-        for name in transformation_names:
-            print(name, h_aux_cum[self.available_channels[10], name])
-        return
 
         LOG.info('Constructing histograms...')
         for i, segment, gap in iter_segments(segments):
@@ -147,7 +143,8 @@ class Excavator:
 
         return h_aux_cum, h_trig_cum
 
-    def update_histogram(self, data, cumulative_veto, spanlike):
+    @staticmethod
+    def update_histogram(data, cumulative_veto, spanlike):
         x_veto = data[~cumulative_veto]
         return Hist(x_veto, spanlike=spanlike)
 
