@@ -24,7 +24,7 @@ LOG = config_manager.get_logger(__name__)
 
 
 class Excavator:
-    EXCLUDE_PATTERNS = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms', '*_DS', '*_unsafe']
+    EXCLUDE_PATTERNS = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms', '*_DS', '*_notsafe']
 
     def __init__(self, source, channel_name, t_start, t_stop, f_target=50, channel_bl_patterns=None):
         self.source = source
@@ -103,7 +103,7 @@ class Excavator:
                     if isinstance(transformation, type):
                         transformed_data[channel][name][i] = transformation(f_target=self.f_target)
 
-        for row in transformed_data[self.available_channels[10]]:
+        for row in transformed_data[self.available_channels[10]].values():
             print(row)
 
         return
