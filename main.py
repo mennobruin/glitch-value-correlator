@@ -95,7 +95,7 @@ class Excavator:
             [HighPass]
         ]
 
-        transformed_data = {c: {'_'.join(t.NAME for t in combination): [] for combination in transformation_combinations}
+        transformed_data = {c: {'_'.join(t.NAME for t in combination): combination for combination in transformation_combinations}
                             for c in self.available_channels}
         for channel in self.available_channels:
             for name, transformations in transformed_data[channel].items():
