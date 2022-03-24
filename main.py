@@ -80,7 +80,8 @@ class Excavator:
         cum_aux_veto = [np.zeros(n_points, dtype=bool) for _ in segments]
         cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in segments]
 
-        savitzky_golay = SavitzkyGolayDifferentiator(window_length=n_points / 2, dx=1 / n_points)
+        window_length = n_points / 2 if n_points / 2 % 2 == 1 else n_points / 2 + 1  # must be odd
+        savitzky_golay = SavitzkyGolayDifferentiator(window_length=window_length, dx=1 / n_points)
         gauss = GaussianDifferentiator(n_points=n_points)
 
         transformation_combinations = [
