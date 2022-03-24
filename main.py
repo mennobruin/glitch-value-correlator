@@ -51,16 +51,17 @@ class Excavator:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
 
-        h_aux_cum, h_trig_cum = self.construct_histograms(segments=self.h5_reader.segments,
-                                                          triggers=triggers)
+        transformation_names, h_aux_cum, h_trig_cum = self.construct_histograms(segments=self.h5_reader.segments,
+                                                                                triggers=triggers)
 
         fom_ks = KolgomorovSmirnov()
         for channel in self.available_channels:
-            h_aux = h_aux_cum[channel]
-            h_trig = h_trig_cum[channel]
-            h_aux.align(h_trig)
+            for transformation_name in transformation_names:
+                h_aux = h_aux_cum[channel, transformation_name]
+                h_trig = h_trig_cum[channel, transformation_name]
+                h_aux.align(h_trig)
 
-            fom_ks.calculate(channel, h_aux=h_aux, h_trig=h_trig)
+                fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
 
         for k, v in sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)[0:10]:
             print(k, v)
@@ -96,8 +97,9 @@ class Excavator:
 
         join_names = lambda c: '_'.join(t.NAME for t in c)
         transformation_names = [join_names(t) for t in transformation_combinations]
-        transformation_states = {channel: {transformation_names[i]: t for i, t in enumerate(transformation_combinations)}
-                                 for channel in self.available_channels}
+        transformation_states = {
+            channel: {transformation_names[i]: t for i, t in enumerate(transformation_combinations)}
+            for channel in self.available_channels}
 
         for channel in self.available_channels:
             for name, transformations in transformation_states[channel].items():
@@ -129,8 +131,9 @@ class Excavator:
                     LOG.debug(f'Discarded {channel} due to disappearance.')
                     continue
                 for transformation_name in transformation_names:
-                    x_transform = do_transformations(transformations=transformation_states[channel][transformation_name],
-                                                     data=x_aux)
+                    x_transform = do_transformations(
+                        transformations=transformation_states[channel][transformation_name],
+                        data=x_aux)
                     aux_hist = self.update_histogram(data=x_transform,
                                                      cumulative_veto=cum_aux_veto[i],
                                                      spanlike=h_aux_cum[channel, transformation_name])
@@ -142,7 +145,7 @@ class Excavator:
 
             self.h5_reader.reset_cache()
 
-        return h_aux_cum, h_trig_cum
+        return transformation_names, h_aux_cum, h_trig_cum
 
     @staticmethod
     def update_histogram(data, cumulative_veto, spanlike):

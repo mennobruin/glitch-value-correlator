@@ -9,8 +9,8 @@ class KolgomorovSmirnov(BaseFOM):
         super(KolgomorovSmirnov, self).__init__()
         self.scores = {}
 
-    def calculate(self, channel, h_aux, h_trig):
+    def calculate(self, channel, transformation, h_aux, h_trig):
         try:
-            self.scores[channel] = np.amax(np.abs(h_aux.cdf - h_trig.cdf))
+            self.scores[channel, transformation] = np.amax(np.abs(h_aux.cdf - h_trig.cdf))
         except AssertionError:
-            self.scores[channel] = 0
+            self.scores[channel, transformation] = 0
