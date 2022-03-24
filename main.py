@@ -101,12 +101,12 @@ class Excavator:
                             for c in self.available_channels}
         print(transformed_data[self.available_channels[10]])
         return
-
         LOG.info('Constructing histograms...')
         for i, segment, gap in iter_segments(segments):
             gps_start, gps_end = segment
             if gap:
-                pass  # todo: when transformations are implemented -> reset
+                for combination in transformation_combinations:
+                    pass
 
             if count_triggers_in_segment(triggers, gps_start, gps_end) == 0:
                 LOG.info(f'No triggers found from {gps_start} to {gps_end}')
