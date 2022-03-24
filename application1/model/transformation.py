@@ -80,12 +80,12 @@ class SavitzkyGolayDifferentiator(Transformation):
 class AbsMean(Transformation):
     NAME = 'absmean'
 
-    def __init__(self, mean=None):
+    def __init__(self, **kwargs):
         """
 
         :param mean: value to use as offset for the input signal
         """
-        self.mean = mean
+        self.mean = kwargs.pop("mean", None)
         self.means = []
 
     def calculate(self, x):
