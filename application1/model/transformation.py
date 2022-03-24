@@ -8,7 +8,16 @@ from application1.config import config_manager
 LOG = config_manager.get_logger(__name__)
 
 
-class GaussianDifferentiator:
+class Transformation:
+
+    def calculate(self, x):
+        raise NotImplementedError
+
+    def reset(self):
+        pass
+
+
+class GaussianDifferentiator(Transformation):
     NAME = 'gauss'
 
     def __init__(self, n_points, kernel_n_sigma=2, sigma=1, order=1):
@@ -43,7 +52,7 @@ class GaussianDifferentiator:
         return np.convolve(x, self.kernel, mode='same')
 
 
-class SavitzkyGolayDifferentiator:
+class SavitzkyGolayDifferentiator(Transformation):
     NAME = 'savitzkygolay'
 
     POLYNOMIAL_ORDER = 3
@@ -68,7 +77,7 @@ class SavitzkyGolayDifferentiator:
                                  mode=self.PADDING_MODE)
 
 
-class AbsMean:
+class AbsMean(Transformation):
     NAME = 'absmean'
 
     def __init__(self, mean=None):
@@ -91,7 +100,7 @@ class AbsMean:
         self.mean = None
 
 
-class HighPass:
+class HighPass(Transformation):
     NAME = 'highpass'
 
     FILTER_ORDER = 1
