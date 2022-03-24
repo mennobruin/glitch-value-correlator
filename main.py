@@ -5,7 +5,7 @@ from application1.utils import *
 from application1.model.histogram import Hist
 from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov
-from application1.model.transformation import GaussianDifferentiator, SavitzkyGolayDifferentiator, HighPass, AbsMean
+from application1.model.transformation import *
 from application1.handler.data.reader.frame_file import FrameFileReader
 from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.data.writer import DataWriter
@@ -76,9 +76,6 @@ class Excavator:
         decimator.downsample_ffl(ffl_cache=aux_data)
 
     def construct_histograms(self, segments, triggers) -> ({str, Hist}):
-        h_aux_cum = dict((c, Hist([])) for c in self.available_channels)
-        h_trig_cum = dict((c, Hist([])) for c in self.available_channels)
-
         n_points = int(round(abs(segments[0]) * self.f_target))
         cum_aux_veto = [np.zeros(n_points, dtype=bool) for _ in segments]
         cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in segments]
@@ -87,6 +84,7 @@ class Excavator:
         gauss = GaussianDifferentiator(n_points=n_points)
 
         transformation_combinations = [
+            [],
             [savitzky_golay],
             [savitzky_golay, AbsMean],
             [gauss],
@@ -95,18 +93,24 @@ class Excavator:
             [HighPass]
         ]
 
-        transformed_data = {c: {'_'.join(t.NAME for t in combination): combination for combination in transformation_combinations}
-                            for c in self.available_channels}
+        join_names = lambda c: '_'.join(t.NAME for t in c)
+        transformation_names = [join_names(t) for t in transformation_combinations]
+        transformation_states = {channel: {transformation_names[i]: t for i, t in enumerate(transformation_combinations)}
+                                 for channel in self.available_channels}
+
         for channel in self.available_channels:
-            for name, transformations in transformed_data[channel].items():
+            for name, transformations in transformation_states[channel].items():
                 for i, transformation in enumerate(transformations):
                     if isinstance(transformation, type):
-                        transformed_data[channel][name][i] = transformation(f_target=self.f_target)
+                        transformation_states[channel][name][i] = transformation(f_target=self.f_target)
 
-        for row in transformed_data[self.available_channels[10]].values():
-            print(row)
+        h_aux_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in transformation_names)
+        h_trig_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in transformation_names)
 
+        for name in transformation_names:
+            print(h_aux_cum[self.available_channels[10], name])
         return
+
         LOG.info('Constructing histograms...')
         for i, segment, gap in iter_segments(segments):
             gps_start, gps_end = segment
@@ -127,21 +131,25 @@ class Excavator:
                     self.available_channels.remove(channel)
                     LOG.debug(f'Discarded {channel} due to disappearance.')
                     continue
-                x_trig = x_aux[i_trigger]
-                # todo: handle non-finite values. Either discard channel or replace values.
+                for transformation_name in transformation_names:
+                    x_transform = do_transformations(transformations=transformation_states[channel, transformation_name],
+                                                     data=x_aux)
+                    aux_hist = self.update_histogram(data=x_transform,
+                                                     cumulative_veto=cum_aux_veto[i],
+                                                     spanlike=h_aux_cum[channel])
+                    trig_hist = self.update_histogram(data=x_transform[i_trigger],
+                                                      cumulative_veto=cum_trig_veto[i],
+                                                      spanlike=aux_hist)
+                    h_aux_cum[channel, transformation_name] += aux_hist
+                    h_trig_cum[channel, transformation_name] += trig_hist
 
-                # todo: apply transformations to the data
-                # for transform in transformations do ...
-                x_aux_veto = x_aux[~cum_aux_veto[i]]
-                x_trig_veto = x_trig[~cum_trig_veto[i]]
-
-                h_aux = Hist(x_aux_veto, spanlike=h_aux_cum[channel])
-                h_trig = Hist(x_trig_veto, spanlike=h_aux)
-                h_aux_cum[channel] += h_aux
-                h_trig_cum[channel] += h_trig
             self.h5_reader.reset_cache()
 
         return h_aux_cum, h_trig_cum
+
+    def update_histogram(self, data, cumulative_veto, spanlike):
+        x_veto = data[~cumulative_veto]
+        return Hist(x_veto, spanlike=spanlike)
 
 
 if __name__ == '__main__':
