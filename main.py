@@ -108,7 +108,7 @@ class Excavator:
         h_trig_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in transformation_names)
 
         for name in transformation_names:
-            print(h_aux_cum[self.available_channels[10], name])
+            print(name, h_aux_cum[self.available_channels[10], name])
         return
 
         LOG.info('Constructing histograms...')
