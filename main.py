@@ -101,6 +101,7 @@ class Excavator:
             for name, transformations in transformed_data[channel].items():
                 for transformation in transformations:
                     if isinstance(transformation, type):
+                        print(transformation, type(transformation))
                         transformed_data[channel][name] = transformation(f_target=self.f_target)
 
         print(transformed_data[self.available_channels[10]])
