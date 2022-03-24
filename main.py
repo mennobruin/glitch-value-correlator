@@ -85,20 +85,22 @@ class Excavator:
 
         savitzky_golay = SavitzkyGolayDifferentiator(window_length=n_points / 2, dx=1 / n_points)
         gauss = GaussianDifferentiator(n_points=n_points)
-        abs_mean = AbsMean()
-        highpass = HighPass(f_target=self.f_target)
 
         transformation_combinations = [
             [savitzky_golay],
-            [savitzky_golay, abs_mean],
+            [savitzky_golay, AbsMean],
             [gauss],
-            [gauss, abs_mean],
-            [abs_mean],
-            [highpass]
+            [gauss, AbsMean],
+            [AbsMean],
+            [HighPass]
         ]
 
         transformed_data = {c: {'_'.join(t.NAME for t in combination): [] for combination in transformation_combinations}
                             for c in self.available_channels}
+        transformed_data = {c: {transformed_data[c][k](f_target=self.f_target) for k, v in transformed_data[c].items()
+                                if isinstance(v, type)}
+                            for c in self.available_channels}
+
         print(transformed_data[self.available_channels[10]])
         return
         LOG.info('Constructing histograms...')
@@ -106,7 +108,8 @@ class Excavator:
             gps_start, gps_end = segment
             if gap:
                 for combination in transformation_combinations:
-                    pass
+                    for transformation in combination:
+                        transformation.reset()
 
             if count_triggers_in_segment(triggers, gps_start, gps_end) == 0:
                 LOG.info(f'No triggers found from {gps_start} to {gps_end}')

@@ -122,6 +122,13 @@ class HighPass(Transformation):
         self.zi = None
 
 
+def do_transformations(transformations: [Transformation], data):
+    transformed_data = data
+    for transformation in transformations:
+        transformed_data = transformation.calculate(x=transformed_data)
+    return transformed_data
+
+
 if __name__ == '__main__':
     n = 5000
     xdata = np.linspace(-np.pi, np.pi, n)
