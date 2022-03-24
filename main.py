@@ -97,9 +97,11 @@ class Excavator:
 
         transformed_data = {c: {'_'.join(t.NAME for t in combination): [] for combination in transformation_combinations}
                             for c in self.available_channels}
-        transformed_data = {c: {transformed_data[c][k](f_target=self.f_target) for k, v in transformed_data[c].items()
-                                if isinstance(v, type)}
-                            for c in self.available_channels}
+        for channel in self.available_channels:
+            for name, transformations in transformed_data[channel].items():
+                for transformation in transformations:
+                    if isinstance(transformation, type):
+                        transformed_data[channel][name] = transformation(f_target=self.f_target)
 
         print(transformed_data[self.available_channels[10]])
         return
