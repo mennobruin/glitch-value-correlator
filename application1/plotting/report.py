@@ -5,7 +5,7 @@ from resources.constants import REPORT_INDEX
 
 
 def run_html(filename=REPORT_INDEX):
-    webbrowser.open('file://' + os.path.realpath(filename))
+    webbrowser.get('mozilla &').open('file://' + os.path.realpath(filename))
 
 
 class HTMLReport:
