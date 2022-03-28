@@ -18,6 +18,4 @@ class HTMLReport:
 
 
 if __name__ == '__main__':
-    print('1')
     run_html()
-    print('2')
