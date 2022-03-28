@@ -87,11 +87,11 @@ class Excavator:
 
         transformation_combinations = [
             [],  # also do a run untransformed
-            [savitzky_golay],
-            [savitzky_golay, AbsMean],
+            # [savitzky_golay],
+            # [savitzky_golay, AbsMean],
             [gauss],
-            [gauss, AbsMean],
-            [AbsMean],
+            # [gauss, Abs],
+            # [AbsMean],
             [HighPass]
         ]
 
