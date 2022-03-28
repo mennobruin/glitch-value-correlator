@@ -1,5 +1,6 @@
 from tqdm import tqdm
 import sys
+import multiprocessing as mp
 
 from application1.utils import *
 from application1.model.histogram import Hist
@@ -110,6 +111,9 @@ class Excavator:
         h_aux_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in transformation_names)
         h_trig_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in transformation_names)
 
+        n_cpu = min(mp.cpu_count() - 1, len(segments))
+        mp_pool = mp.Pool(n_cpu)
+
         LOG.info('Constructing histograms...')
         for i, segment, gap in iter_segments(segments):
             gps_start, gps_end = segment
@@ -140,8 +144,15 @@ class Excavator:
                     trig_hist = self.update_histogram(data=x_transform[i_trigger],
                                                       cumulative_veto=cum_trig_veto[i],
                                                       spanlike=aux_hist)
-                    h_aux_cum[channel, transformation_name] += aux_hist
-                    h_trig_cum[channel, transformation_name] += trig_hist
+                    try:
+                        h_aux_cum[channel, transformation_name] += aux_hist
+                        h_trig_cum[channel, transformation_name] += trig_hist
+                    except OverflowError as e:
+                        print(e)
+                        print(np.isfinite(x_aux).all())
+                        print(np.isfinite(x_transform).all())
+                        print(np.sum(~np.isfinite(x_aux)))
+                        print(np.sum(~np.isfinite(x_transform)))
 
             self.h5_reader.reset_cache()
 
