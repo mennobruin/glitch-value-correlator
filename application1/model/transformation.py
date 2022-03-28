@@ -77,6 +77,13 @@ class SavitzkyGolayDifferentiator(Transformation):
                                  mode=self.PADDING_MODE)
 
 
+class Abs(Transformation):
+    NAME = 'abs'
+
+    def calculate(self, x):
+        return np.abs(x)
+
+
 class AbsMean(Transformation):
     NAME = 'absmean'
 
@@ -136,7 +143,8 @@ if __name__ == '__main__':
 
     # trans = SavitzkyGolayDifferentiator(window_length=int(n/2), order=1, dx=xdata[1]-xdata[0])
     # trans = HighPass(f_target=50)
-    trans = GaussianDifferentiator(n_points=n)
+    # trans = GaussianDifferentiator(n_points=n)
+    trans = Abs()
     ytrans = trans.calculate(ydata)
 
     plt.plot(xdata, ydata)
