@@ -119,8 +119,6 @@ class Excavator:
         self.h_aux_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in self.transformation_names)
         self.h_trig_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in self.transformation_names)
 
-        n_cpu = min(mp.cpu_count() - 1, len(segments))
-        mp_pool = mp.Pool(n_cpu)
         LOG.info('Constructing histograms...')
         for i, segment, gap in iter_segments(segments):
             gps_start, gps_end = segment
@@ -134,13 +132,9 @@ class Excavator:
                 continue
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
             self.i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
-            with tqdm(total=len(self.available_channels)) as progress:
-                func = partial(self.update_channel_histogram, i, segment)
-                for _, _ in enumerate(mp_pool.imap_unordered(func, self.available_channels)):
-                    progress.update()
+            for channel in tqdm(self.available_channels, position=0, leave=True):
+                self.update_channel_histogram(i, segment, channel)
             self.h5_reader.reset_cache()
-        mp_pool.close()
-        mp_pool.join()
 
     def update_channel_histogram(self, i, segment, channel):
         x_aux = self.h5_reader.get_data_from_segments(request_segment=segment, channel_name=channel)
@@ -152,22 +146,22 @@ class Excavator:
             x_transform = do_transformations(
                 transformations=self.transformation_states[channel][transformation_name],
                 data=x_aux)
-            aux_hist = self.update_histogram(data=x_transform,
-                                             cumulative_veto=self.cum_aux_veto[i],
-                                             spanlike=self.h_aux_cum[channel, transformation_name])
-            trig_hist = self.update_histogram(data=x_transform[self.i_trigger],
-                                              cumulative_veto=self.cum_trig_veto[i],
-                                              spanlike=aux_hist)
+            aux_hist = self.get_histogram(data=x_transform,
+                                          cumulative_veto=self.cum_aux_veto[i],
+                                          spanlike=self.h_aux_cum[channel, transformation_name])
+            trig_hist = self.get_histogram(data=x_transform[self.i_trigger],
+                                           cumulative_veto=self.cum_trig_veto[i],
+                                           spanlike=aux_hist)
             try:
                 self.h_aux_cum[channel, transformation_name] += aux_hist
                 self.h_trig_cum[channel, transformation_name] += trig_hist
             except OverflowError as e:
                 LOG.debug(f'OverflowError for channel {channel}: {e}, discarding.')
                 self.available_channels.remove(channel)
-                break
+                return
 
     @staticmethod
-    def update_histogram(data, cumulative_veto, spanlike):
+    def get_histogram(data, cumulative_veto, spanlike):
         x_veto = data[~cumulative_veto]
         return Hist(x_veto, spanlike=spanlike)
 
