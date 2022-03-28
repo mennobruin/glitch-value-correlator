@@ -6,7 +6,6 @@ from resources.constants import REPORT_INDEX
 
 def run_html(filename=REPORT_INDEX):
     webbrowser.open('file://' + os.path.realpath(filename))
-    webbrowser.close()
 
 
 class HTMLReport:
@@ -19,4 +18,6 @@ class HTMLReport:
 
 
 if __name__ == '__main__':
+    print('1')
     run_html()
+    print('2')
