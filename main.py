@@ -1,4 +1,5 @@
 from tqdm import tqdm
+from functools import partial
 import sys
 import multiprocessing as mp
 
@@ -43,6 +44,14 @@ class Excavator:
         self.available_channels = self.h5_reader.get_available_channels()
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
+        self.cum_aux_veto = None
+        self.cum_trig_veto = None
+        self.transformation_names = None
+        self.transformation_states = None
+        self.h_aux_cum = None
+        self.h_trig_cum = None
+        self.i_trigger = None
+
     def run(self, n_iter=1):
 
         # trigger_pipeline = Omicron(channel=available_channels[0])
@@ -52,14 +61,13 @@ class Excavator:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
 
-        transformation_names, h_aux_cum, h_trig_cum = self.construct_histograms(segments=self.h5_reader.segments,
-                                                                                triggers=triggers)
+        self.construct_histograms(segments=self.h5_reader.segments, triggers=triggers)
 
         fom_ks = KolgomorovSmirnov()
         for channel in self.available_channels:
-            for transformation_name in transformation_names:
-                h_aux = h_aux_cum[channel, transformation_name]
-                h_trig = h_trig_cum[channel, transformation_name]
+            for transformation_name in self.transformation_names:
+                h_aux = self.h_aux_cum[channel, transformation_name]
+                h_trig = self.h_trig_cum[channel, transformation_name]
                 h_aux.align(h_trig)
 
                 fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
@@ -79,8 +87,8 @@ class Excavator:
 
     def construct_histograms(self, segments, triggers) -> ({str, Hist}):
         n_points = int(round(abs(segments[0]) * self.f_target))
-        cum_aux_veto = [np.zeros(n_points, dtype=bool) for _ in segments]
-        cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in segments]
+        self.cum_aux_veto = [np.zeros(n_points, dtype=bool) for _ in segments]
+        self.cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in segments]
 
         window_length = n_points / 2 if n_points / 2 % 2 == 1 else n_points / 2 + 1  # must be odd
         savitzky_golay = SavitzkyGolayDifferentiator(window_length=window_length, dx=1 / n_points)
@@ -97,23 +105,22 @@ class Excavator:
         ]
 
         join_names = lambda c: '_'.join(t.NAME for t in c)
-        transformation_names = [join_names(t) for t in transformation_combinations]
-        transformation_states = {
-            channel: {transformation_names[i]: t for i, t in enumerate(transformation_combinations)}
+        self.transformation_names = [join_names(t) for t in transformation_combinations]
+        self.transformation_states = {
+            channel: {self.transformation_names[i]: t for i, t in enumerate(transformation_combinations)}
             for channel in self.available_channels}
 
         for channel in self.available_channels:
-            for name, transformations in transformation_states[channel].items():
+            for name, transformations in self.transformation_states[channel].items():
                 for i, transformation in enumerate(transformations):
                     if isinstance(transformation, type):
-                        transformation_states[channel][name][i] = transformation(f_target=self.f_target)
+                        self.transformation_states[channel][name][i] = transformation(f_target=self.f_target)
 
-        h_aux_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in transformation_names)
-        h_trig_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in transformation_names)
+        self.h_aux_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in self.transformation_names)
+        self.h_trig_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in self.transformation_names)
 
         n_cpu = min(mp.cpu_count() - 1, len(segments))
         mp_pool = mp.Pool(n_cpu)
-
         LOG.info('Constructing histograms...')
         for i, segment, gap in iter_segments(segments):
             gps_start, gps_end = segment
@@ -126,37 +133,38 @@ class Excavator:
                 LOG.info(f'No triggers found from {gps_start} to {gps_end}')
                 continue
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
-            i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
-
-            for channel in tqdm(self.available_channels, position=0, leave=True):
-                x_aux = self.h5_reader.get_data_from_segments(request_segment=segment, channel_name=channel)
-                if x_aux is None:
-                    self.available_channels.remove(channel)
-                    LOG.debug(f'Discarded {channel} due to disappearance.')
-                    continue
-                for transformation_name in transformation_names:
-                    x_transform = do_transformations(
-                        transformations=transformation_states[channel][transformation_name],
-                        data=x_aux)
-                    aux_hist = self.update_histogram(data=x_transform,
-                                                     cumulative_veto=cum_aux_veto[i],
-                                                     spanlike=h_aux_cum[channel, transformation_name])
-                    trig_hist = self.update_histogram(data=x_transform[i_trigger],
-                                                      cumulative_veto=cum_trig_veto[i],
-                                                      spanlike=aux_hist)
-                    try:
-                        h_aux_cum[channel, transformation_name] += aux_hist
-                        h_trig_cum[channel, transformation_name] += trig_hist
-                    except OverflowError as e:
-                        print(e)
-                        print(np.isfinite(x_aux).all())
-                        print(np.isfinite(x_transform).all())
-                        print(np.sum(~np.isfinite(x_aux)))
-                        print(np.sum(~np.isfinite(x_transform)))
-
+            self.i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
+            with tqdm(total=len(self.available_channels)) as progress:
+                func = partial(self.update_channel_histogram, i, segment)
+                for _, _ in enumerate(mp_pool.imap_unordered(func, self.available_channels)):
+                    progress.update()
             self.h5_reader.reset_cache()
+        mp_pool.close()
+        mp_pool.join()
 
-        return transformation_names, h_aux_cum, h_trig_cum
+    def update_channel_histogram(self, i, segment, channel):
+        x_aux = self.h5_reader.get_data_from_segments(request_segment=segment, channel_name=channel)
+        if x_aux is None:
+            self.available_channels.remove(channel)
+            LOG.debug(f'Discarded {channel} due to disappearance.')
+            return
+        for transformation_name in self.transformation_names:
+            x_transform = do_transformations(
+                transformations=self.transformation_states[channel][transformation_name],
+                data=x_aux)
+            aux_hist = self.update_histogram(data=x_transform,
+                                             cumulative_veto=self.cum_aux_veto[i],
+                                             spanlike=self.h_aux_cum[channel, transformation_name])
+            trig_hist = self.update_histogram(data=x_transform[self.i_trigger],
+                                              cumulative_veto=self.cum_trig_veto[i],
+                                              spanlike=aux_hist)
+            try:
+                self.h_aux_cum[channel, transformation_name] += aux_hist
+                self.h_trig_cum[channel, transformation_name] += trig_hist
+            except OverflowError as e:
+                LOG.debug(f'OverflowError for channel {channel}: {e}, discarding.')
+                self.available_channels.remove(channel)
+                break
 
     @staticmethod
     def update_histogram(data, cumulative_veto, spanlike):
