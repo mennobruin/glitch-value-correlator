@@ -11,6 +11,7 @@ def plot_histogram(data, save=False):
 
 
 def plot_channel(channel, transformation, data, data_type, save=False, score=None):
+    transformation = transformation if transformation is not '' else 'none'
     f_name = f'{score}_{channel}_{transformation}+{data_type}'
     LOG.info(f'Plotting {f_name}...')
 
