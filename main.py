@@ -71,7 +71,7 @@ class Excavator:
 
                 fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
 
-        for i, (k, v) in enumerate(sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)[0:10]):
+        for i, (k, v) in enumerate(sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)[0:3]):
             print(k, v)
             channel, transformation = k
             plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, transformation], data_type='aux', save=True, score=i+1)
