@@ -21,7 +21,8 @@ def plot_channel(channel, data, data_type, save=False, score=None):
     plt.xlim([data.offset, data.offset + data.span])
 
     if save:
-        fig.savefig(PLOT_DIR + f_name + '.png', dpi=fig.dpi)
+        save_name = f'{score}_{data_type}'
+        fig.savefig(PLOT_DIR + {save_name} + '.png', dpi=fig.dpi)
     else:
         plt.show()
     plt.clf()

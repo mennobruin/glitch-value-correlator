@@ -75,9 +75,9 @@ class Excavator:
             print(k, v)
             channel, transformation = k
             plot_channel(channel=channel, data=self.h_aux_cum[channel, transformation], data_type='aux', save=True, score=i+1)
-            plot_channel(channel=channel, data=self.h_aux_cum[channel, []], data_type='aux', save=True, score=i+1)
+            plot_channel(channel=channel, data=self.h_aux_cum[channel, ''], data_type='aux', save=True, score=i+1)
             plot_channel(channel=channel, data=self.h_trig_cum[channel, transformation], data_type='trig', save=True, score=i+1)
-            plot_channel(channel=channel, data=self.h_trig_cum[channel, []], data_type='trig', save=True, score=i+1)
+            plot_channel(channel=channel, data=self.h_trig_cum[channel, ''], data_type='trig', save=True, score=i+1)
 
         # h = Hist(segment_50hz.x)
         # plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
