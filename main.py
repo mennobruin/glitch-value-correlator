@@ -76,7 +76,7 @@ class Excavator:
             channel, transformation = k
             plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, transformation], data_type='aux', save=True, score=i+1)
             plot_channel(channel=channel, transformation=transformation, data=self.h_trig_cum[channel, transformation], data_type='trig', save=True, score=i+1)
-            if transformation is not '':  # also plot raw data
+            if transformation != '':  # also plot raw data
                 plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, ''], data_type='aux', save=True, score=i+1)
                 plot_channel(channel=channel, transformation=transformation, data=self.h_trig_cum[channel, ''], data_type='trig', save=True, score=i+1)
 
