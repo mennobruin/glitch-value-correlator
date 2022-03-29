@@ -22,7 +22,7 @@ def plot_channel(channel, data, data_type, save=False, score=None):
 
     if save:
         save_name = f'{score}_{data_type}'
-        fig.savefig(PLOT_DIR + {save_name} + '.png', dpi=fig.dpi)
+        fig.savefig(PLOT_DIR + save_name + '.png', dpi=fig.dpi)
     else:
         plt.show()
     plt.clf()
