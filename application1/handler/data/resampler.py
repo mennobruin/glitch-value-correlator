@@ -7,7 +7,7 @@ import scipy.signal as sig
 
 from tqdm import tqdm
 
-from resources.constants import RESOURCE_PATH
+from resources.constants import RESOURCE_DIR
 from application1.model.ffl_cache import FFLCache
 from application1.config import config_manager
 
@@ -28,7 +28,7 @@ class Resampler:
         self.f_target = f_target
         self.n_target = f_target * self.FRAME_DURATION
         self.method = method
-        self.ds_path = RESOURCE_PATH + 'ds_data/'
+        self.ds_path = RESOURCE_DIR + 'ds_data/'
         self.ds_data_path = self.ds_path + 'data/'
         os.makedirs(self.ds_data_path, exist_ok=True)
         print(self.ds_data_path)

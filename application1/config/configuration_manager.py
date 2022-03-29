@@ -5,13 +5,13 @@ import os
 
 from datetime import datetime
 
-from resources.constants import RESOURCE_PATH
+from resources.constants import RESOURCE_DIR
 
 
 class ConfigurationManager:
 
-    CONFIG_PATH = RESOURCE_PATH + 'config.yaml'
-    LOG_DIRECTORY = RESOURCE_PATH + 'logs/'
+    CONFIG_PATH = RESOURCE_DIR + 'config.yaml'
+    LOG_DIRECTORY = RESOURCE_DIR + 'logs/'
 
     def __init__(self):
         os.makedirs(self.LOG_DIRECTORY, exist_ok=True)

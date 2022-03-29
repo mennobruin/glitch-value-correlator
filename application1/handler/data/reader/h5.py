@@ -6,7 +6,7 @@ from ligo import segments
 from .base import BaseReader
 
 from application1.utils import check_extension, split_file_name
-from resources.constants import RESOURCE_PATH
+from resources.constants import RESOURCE_DIR
 
 from application1.config import config_manager
 
@@ -33,7 +33,7 @@ class H5Reader(BaseReader):
 
     def _get_records(self):
         print(os.listdir())
-        h5_files = sorted([f for f in os.listdir(RESOURCE_PATH + self.H5_DIR) if f.endswith(self.H5)])
+        h5_files = sorted([f for f in os.listdir(RESOURCE_DIR + self.H5_DIR) if f.endswith(self.H5)])
         records = []
         for file in h5_files:
             _, gps_start, gps_end = split_file_name(file)

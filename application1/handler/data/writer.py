@@ -1,7 +1,7 @@
 import csv
 import os
 
-from resources.constants import RESOURCE_PATH
+from resources.constants import RESOURCE_DIR
 from application1.utils import check_extension
 from application1.config import config_manager
 
@@ -11,7 +11,7 @@ LOG = config_manager.get_logger(__name__)
 class DataWriter:
 
     def __init__(self):
-        self.default_path = RESOURCE_PATH
+        self.default_path = RESOURCE_DIR
 
     def write_csv(self, data, file_name, file_path=None):
         file_path = file_path if file_path else self.default_path

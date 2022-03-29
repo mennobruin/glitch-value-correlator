@@ -1,7 +1,5 @@
 from tqdm import tqdm
-from functools import partial
 import sys
-import multiprocessing as mp
 
 from application1.utils import *
 from application1.model.histogram import Hist
@@ -14,6 +12,7 @@ from application1.handler.data.writer import DataWriter
 from application1.handler.data.resampler import Resampler
 from application1.handler.triggers import DefaultPipeline
 from application1.config import config_manager
+from application1.plotting.plot import plot_channel
 
 LOG = config_manager.get_logger(__name__)
 
@@ -72,8 +71,13 @@ class Excavator:
 
                 fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
 
-        for k, v in sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)[0:10]:
+        for i, (k, v) in enumerate(sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)[0:10]):
             print(k, v)
+            channel, transformation = k
+            plot_channel(channel=channel, data=self.h_aux_cum[channel, transformation], data_type='aux', save=True, score=i+1)
+            plot_channel(channel=channel, data=self.h_aux_cum[channel, []], data_type='aux', save=True, score=i+1)
+            plot_channel(channel=channel, data=self.h_trig_cum[channel, transformation], data_type='trig', save=True, score=i+1)
+            plot_channel(channel=channel, data=self.h_trig_cum[channel, []], data_type='trig', save=True, score=i+1)
 
         # h = Hist(segment_50hz.x)
         # plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
