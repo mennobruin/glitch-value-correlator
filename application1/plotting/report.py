@@ -4,14 +4,16 @@ import os
 from resources.constants import REPORT_INDEX
 
 
-def run_html(filename=REPORT_INDEX):
-    webbrowser.open('file://' + os.path.realpath(filename))
-
-
 class HTMLReport:
+
+    DEFAULT_INDEX = REPORT_INDEX
 
     def __init__(self):
         pass
+
+    @staticmethod
+    def run_html(filename=REPORT_INDEX):
+        webbrowser.open('file://' + os.path.realpath(filename))
 
     def generate_report(self):
         pass
