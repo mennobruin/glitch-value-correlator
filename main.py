@@ -81,11 +81,11 @@ class Excavator:
         for i, (k, v) in enumerate(sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)[0:3]):
             print(k, v)
             channel, transformation = k
-            plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, transformation], data_type='aux', save=True, score=i+1)
-            plot_channel(channel=channel, transformation=transformation, data=self.h_trig_cum[channel, transformation], data_type='trig', save=True, score=i+1)
-            if transformation != '':  # also plot raw data
-                plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, ''], data_type='aux', save=True, score=i+1)
-                plot_channel(channel=channel, transformation=transformation, data=self.h_trig_cum[channel, ''], data_type='trig', save=True, score=i+1)
+            # plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, transformation], data_type='aux', save=True, score=i+1)
+            # plot_channel(channel=channel, transformation=transformation, data=self.h_trig_cum[channel, transformation], data_type='trig', save=True, score=i+1)
+            # if transformation != '':  # also plot raw data
+            #     plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, ''], data_type='aux', save=True, score=i+1)
+            #     plot_channel(channel=channel, transformation=transformation, data=self.h_trig_cum[channel, ''], data_type='trig', save=True, score=i+1)
             table.append(f'<tr><td>{channel}</td><td>{transformation}</td><td>{v}</td></tr>')
 
     def generate_report(self):
