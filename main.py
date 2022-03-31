@@ -1,5 +1,6 @@
 from tqdm import tqdm
 import sys
+import bs4
 
 from application1.utils import *
 from application1.model.histogram import Hist
@@ -13,6 +14,7 @@ from application1.handler.data.resampler import Resampler
 from application1.handler.triggers import DefaultPipeline
 from application1.config import config_manager
 from application1.plotting.plot import plot_channel
+from resources.constants import *
 
 LOG = config_manager.get_logger(__name__)
 
@@ -71,6 +73,10 @@ class Excavator:
 
                 fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
 
+        with open(REPORT_INDEX) as f:
+            html = bs4.BeautifulSoup(f.read())
+            table = html.find('table', class_='KS')
+
         for i, (k, v) in enumerate(sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)[0:3]):
             print(k, v)
             channel, transformation = k
@@ -79,6 +85,7 @@ class Excavator:
             if transformation != '':  # also plot raw data
                 plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, ''], data_type='aux', save=True, score=i+1)
                 plot_channel(channel=channel, transformation=transformation, data=self.h_trig_cum[channel, ''], data_type='trig', save=True, score=i+1)
+            table.append(f'<tr><td>{channel}</td><td>{transformation}</td><td>{v}</td></tr>')
 
     def decimate_data(self):
         decimator = Resampler(f_target=self.f_target, method='mean')
