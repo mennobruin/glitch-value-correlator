@@ -14,6 +14,7 @@ from application1.handler.data.resampler import Resampler
 from application1.handler.triggers import DefaultPipeline
 from application1.config import config_manager
 from application1.plotting.plot import plot_channel
+from application1.plotting.report import HTMLReport
 from resources.constants import *
 
 LOG = config_manager.get_logger(__name__)
@@ -86,6 +87,10 @@ class Excavator:
                 plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, ''], data_type='aux', save=True, score=i+1)
                 plot_channel(channel=channel, transformation=transformation, data=self.h_trig_cum[channel, ''], data_type='trig', save=True, score=i+1)
             table.append(f'<tr><td>{channel}</td><td>{transformation}</td><td>{v}</td></tr>')
+
+    def generate_report(self):
+        report = HTMLReport()
+        report.run_html()
 
     def decimate_data(self):
         decimator = Resampler(f_target=self.f_target, method='mean')
@@ -178,7 +183,8 @@ if __name__ == '__main__':
     excavator = Excavator(source='/virgoData/ffl/raw_O3b_arch',
                           channel_name='V1:Hrec_hoft_2_200Hz',
                           t_start=1263323000,
-                          t_stop=1263324000)
+                          t_stop=1263323200)
     excavator.run()
+    excavator.generate_report()
     # excavator.decimate_data()
     LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")
