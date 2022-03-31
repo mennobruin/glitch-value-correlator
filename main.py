@@ -42,6 +42,7 @@ class Excavator:
         self.ff_reader = FrameFileReader(source)
         self.ff_reader.set_patterns(patterns=bl_patterns)
         self.writer = DataWriter()
+        self.report = HTMLReport()
 
         self.available_channels = self.h5_reader.get_available_channels()
         LOG.info(f'Found {len(self.available_channels)} available channels.')
@@ -74,10 +75,7 @@ class Excavator:
 
                 fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
 
-        with open(REPORT_INDEX) as f:
-            html = bs4.BeautifulSoup(f.read())
-            table = html.find('table', class_='KS')
-            table.append(f'<tr><th>Channel</th><th>Transformation</th><th>KS statistic</th></tr>')
+        self.report.add_row_to_table(content=['Channel', 'Transformation', 'KS Statistic'], tag='th')
 
         for i, (k, v) in enumerate(sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)[0:3]):
             print(k, v)
@@ -87,16 +85,11 @@ class Excavator:
             # if transformation != '':  # also plot raw data
             #     plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, ''], data_type='aux', save=True, score=i+1)
             #     plot_channel(channel=channel, transformation=transformation, data=self.h_trig_cum[channel, ''], data_type='trig', save=True, score=i+1)
-            table.append(f'<tr><td>{channel}</td><td>{transformation}</td><td>{v:.3f}</td></tr>')
-        print(table.prettify())
-
-        with open(REPORT_INDEX, 'w') as f:
-            f.write(str(html))
+            self.report.add_row_to_table(content=[channel, transformation, v])
 
     def generate_report(self):
         LOG.info("Generating HTML Report...")
-        report = HTMLReport()
-        report.run_html()
+        self.report.run_html()
 
     def decimate_data(self):
         decimator = Resampler(f_target=self.f_target, method='mean')
