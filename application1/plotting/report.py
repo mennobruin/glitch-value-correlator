@@ -16,6 +16,7 @@ class HTMLReport:
 
     def run_html(self):
         print(self.html.prettify())
+        self.update_html()
         webbrowser.open('file://' + os.path.realpath(self.TEMP_FILE))
 
     def update_html(self):
