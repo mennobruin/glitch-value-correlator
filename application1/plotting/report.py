@@ -11,7 +11,7 @@ class HTMLReport:
     def __init__(self, filename=REPORT_INDEX):
         self.filename = filename
         with open(REPORT_INDEX) as f:
-            self.html = bs4.BeautifulSoup(f.read())
+            self.html = bs4.BeautifulSoup(f.read(), features='lxml')
 
     def run_html(self):
         # webbrowser.open('file://' + os.path.realpath(self.filename))
