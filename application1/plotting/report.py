@@ -1,14 +1,13 @@
 import webbrowser
 import os
 import bs4
-import base64
 
-from resources.constants import REPORT_INDEX
+from resources.constants import *
 
 
 class HTMLReport:
 
-    TEMP_FILE = 'resources/report/temp.html'
+    TEMP_FILE = RESOURCE_DIR + 'report/temp.html'
 
     def __init__(self, filename=REPORT_INDEX):
         self.filename = filename
