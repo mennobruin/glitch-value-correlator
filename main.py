@@ -77,6 +77,7 @@ class Excavator:
         with open(REPORT_INDEX) as f:
             html = bs4.BeautifulSoup(f.read())
             table = html.find('table', class_='KS')
+            table.append(f'<tr><th>Channel</th><th>Transformation</th><th>KS statistic</th></tr>')
 
         for i, (k, v) in enumerate(sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)[0:3]):
             print(k, v)
@@ -86,9 +87,14 @@ class Excavator:
             # if transformation != '':  # also plot raw data
             #     plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, ''], data_type='aux', save=True, score=i+1)
             #     plot_channel(channel=channel, transformation=transformation, data=self.h_trig_cum[channel, ''], data_type='trig', save=True, score=i+1)
-            table.append(f'<tr><td>{channel}</td><td>{transformation}</td><td>{v}</td></tr>')
+            table.append(f'<tr><td>{channel}</td><td>{transformation}</td><td>{v:.3f}</td></tr>')
+        print(table.prettify())
+
+        with open(REPORT_INDEX, 'w') as f:
+            f.write(str(html))
 
     def generate_report(self):
+        LOG.info("Generating HTML Report...")
         report = HTMLReport()
         report.run_html()
 

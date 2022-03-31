@@ -31,7 +31,6 @@ class Resampler:
         self.ds_path = RESOURCE_DIR + 'ds_data/'
         self.ds_data_path = self.ds_path + 'data/'
         os.makedirs(self.ds_data_path, exist_ok=True)
-        print(self.ds_data_path)
         self.source = None
         self.filt_cache = {}
 
