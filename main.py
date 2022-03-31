@@ -182,7 +182,7 @@ if __name__ == '__main__':
     excavator = Excavator(source='/virgoData/ffl/raw_O3b_arch',
                           channel_name='V1:Hrec_hoft_2_200Hz',
                           t_start=1263323000,
-                          t_stop=1263323200)
+                          t_stop=1263323100)
     excavator.run()
     excavator.generate_report()
     # excavator.decimate_data()

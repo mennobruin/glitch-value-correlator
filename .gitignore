@@ -2,6 +2,7 @@
 *.keytab
 .idea/
 /resources/ds_data/
+/resources/report/*temp*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
