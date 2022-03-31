@@ -25,7 +25,7 @@ class HTMLReport:
 
         for val in content:
             new_tag = self.html.new_tag(tag)
-            new_tag.append(val)
+            new_tag.string = str(val)
             table.append(new_tag)
 
     def generate_report(self):
