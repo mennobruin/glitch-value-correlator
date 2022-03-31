@@ -23,10 +23,13 @@ class HTMLReport:
     def add_row_to_table(self, content: list, tag='td', table_class=None):
         table = self.html.find('table', class_=table_class)
 
+        row = self.html.new_tag('tr')
         for val in content:
             new_tag = self.html.new_tag(tag)
             new_tag.string = str(val)
-            table.append(new_tag)
+            row.append(new_tag)
+
+        table.append(row)
 
     def generate_report(self):
         pass
