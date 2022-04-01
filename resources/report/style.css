@@ -2,27 +2,27 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-#KS {
+.KS {
   border-collapse: collapse;
   width: 100%;
 }
 
-#KS td, #customers th {
+.KS td, .KS th {
   border: 1px solid #ddd;
   padding: 8px;
 }
 
-#KS tr:nth-child(even){
+.KS tr:nth-child(even){
   background-color: #f2f2f2;
 }
 
-#KS tr:hover {
+.KS tr:hover {
   color: #8844aa;
   font-weight: bold;
   text-decoration: none;
 }
 
-#KS th {
+.KS th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
