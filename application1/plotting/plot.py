@@ -39,6 +39,7 @@ def plot_histogram_cdf(histogram, channel, transformation, data_type, save=False
 
     plt.plot(histogram.xgrid, histogram.cdf, label=data_type)
     plt.legend(loc='upper left')
+    plt.title(channel)
 
     if return_fig:
         return fig
