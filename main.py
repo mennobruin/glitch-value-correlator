@@ -28,18 +28,18 @@ LOG = config_manager.get_logger(__name__)
 
 
 class Excavator:
-    EXCLUDE_PATTERNS = ['*max', '*min', 'V1:VAC*', 'V1:Daq*', '*rms', '*_DS', '*_notsafe']
 
-    def __init__(self, source, channel_name, t_start, t_stop, f_target=50, channel_bl_patterns=None):
-        self.source = source
-        self.channel_name = channel_name
-        self.t_start = t_start
-        self.t_stop = t_stop
-        self.f_target = f_target
+    def __init__(self):
+        self.config = config_manager.load_config()
+        self.source = self.config['project.source']
+        self.t_start = self.config['project.start_time']
+        self.t_stop = self.config['project.end_time']
+        self.f_target = self.config['project.target_frequency']
+        with open(self.config['project.blacklist_patterns'], 'r') as f:
+            bl_patterns: list = f.readlines()
 
-        bl_patterns = channel_bl_patterns if channel_bl_patterns else self.EXCLUDE_PATTERNS
-        self.h5_reader = H5Reader(gps_start=t_start, gps_end=t_stop)
-        self.ff_reader = FrameFileReader(source)
+        self.h5_reader = H5Reader(gps_start=self.t_start, gps_end=self.t_stop)
+        self.ff_reader = FrameFileReader(self.source)
         self.ff_reader.set_patterns(patterns=bl_patterns)
         self.writer = DataWriter()
         self.report = HTMLReport()
