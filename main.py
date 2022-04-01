@@ -13,7 +13,7 @@ from application1.handler.data.writer import DataWriter
 from application1.handler.data.resampler import Resampler
 from application1.handler.triggers import DefaultPipeline
 from application1.config import config_manager
-from application1.plotting.plot import plot_channel
+from application1.plotting.plot import *
 from application1.plotting.report import HTMLReport
 from resources.constants import *
 
@@ -80,6 +80,19 @@ class Excavator:
         for i, (k, v) in enumerate(sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)[0:3]):
             print(k, v)
             channel, transformation = k
+            fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
+                                     channel=channel,
+                                     transformation=transformation,
+                                     data_type='aux',
+                                     return_fig=True,
+                                     score=i)
+            plot_histogram_cdf(histogram=self.h_trig_cum[channel, transformation],
+                               channel=channel,
+                               transformation=transformation,
+                               data_type='trig',
+                               fig=fig,
+                               save=True,
+                               score=i)
             # plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, transformation], data_type='aux', save=True, score=i+1)
             # plot_channel(channel=channel, transformation=transformation, data=self.h_trig_cum[channel, transformation], data_type='trig', save=True, score=i+1)
             # if transformation != '':  # also plot raw data
@@ -131,7 +144,7 @@ class Excavator:
         self.h_trig_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in self.transformation_names)
 
         LOG.info('Constructing histograms...')
-        for i, segment, gap in iter_segments(segments):
+        for i_segment, segment, gap in iter_segments(segments):
             gps_start, gps_end = segment
             if gap:
                 for combination in transformation_combinations:
@@ -144,7 +157,7 @@ class Excavator:
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
             self.i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
             for channel in tqdm(self.available_channels, position=0, leave=True):
-                self.update_channel_histogram(i, segment, channel)
+                self.update_channel_histogram(i_segment, segment, channel)
             self.h5_reader.reset_cache()
 
     def update_channel_histogram(self, i, segment, channel):
