@@ -86,19 +86,15 @@ class Excavator:
                                      data_type='aux',
                                      return_fig=True,
                                      score=i)
-            plot_histogram_cdf(histogram=self.h_trig_cum[channel, transformation],
-                               channel=channel,
-                               transformation=transformation,
-                               data_type='trig',
-                               fig=fig,
-                               save=True,
-                               score=i)
-            # plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, transformation], data_type='aux', save=True, score=i+1)
-            # plot_channel(channel=channel, transformation=transformation, data=self.h_trig_cum[channel, transformation], data_type='trig', save=True, score=i+1)
-            # if transformation != '':  # also plot raw data
-            #     plot_channel(channel=channel, transformation=transformation, data=self.h_aux_cum[channel, ''], data_type='aux', save=True, score=i+1)
-            #     plot_channel(channel=channel, transformation=transformation, data=self.h_trig_cum[channel, ''], data_type='trig', save=True, score=i+1)
+            fname = plot_histogram_cdf(histogram=self.h_trig_cum[channel, transformation],
+                                       channel=channel,
+                                       transformation=transformation,
+                                       data_type='trig',
+                                       fig=fig,
+                                       save=True,
+                                       score=i)
             self.report.add_row_to_table(content=[channel, transformation, v], table_class='KS')
+            self.report.add_image(img=fname, div_class='images')
 
     def generate_report(self):
         LOG.info("Generating HTML Report...")
