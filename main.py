@@ -1,27 +1,28 @@
 from tqdm import tqdm
 import sys
-import bs4
+import argparse
+import numpy as np
 
-from application1.utils import *
+from application1.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments
 from application1.model.histogram import Hist
 from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov
-from application1.model.transformation import *
+from application1.model.transformation import Abs, do_transformations, GaussianDifferentiator, SavitzkyGolayDifferentiator, HighPass
 from application1.handler.data.reader.frame_file import FrameFileReader
 from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.data.writer import DataWriter
 from application1.handler.data.resampler import Resampler
 from application1.handler.triggers import DefaultPipeline
 from application1.config import config_manager
-from application1.plotting.plot import *
+from application1.plotting.plot import plot_histogram_cdf
 from application1.plotting.report import HTMLReport
-from resources.constants import *
+from resources.constants import CONFIG_FILE
 
 LOG = config_manager.get_logger(__name__)
 
 """
  - done: implement transformations
- - todo: implement parallel processing for histograms
+ - blocked: implement parallel processing for histograms
  - done: think about potential new transformations
  - todo: create argument parser + default values file which remembers previous inputs
 """
@@ -30,6 +31,7 @@ LOG = config_manager.get_logger(__name__)
 class Excavator:
 
     def __init__(self):
+        LOG.info(f"Loading configuration from {CONFIG_FILE}...")
         self.config = config_manager.load_config()
         self.source = self.config['project.source']
         self.t_start = self.config['project.start_time']
@@ -188,10 +190,7 @@ class Excavator:
 
 if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
-    excavator = Excavator(source='/virgoData/ffl/raw_O3b_arch',
-                          channel_name='V1:Hrec_hoft_2_200Hz',
-                          t_start=1263323000,
-                          t_stop=1263323100)
+    excavator = Excavator()
     excavator.run()
     excavator.generate_report()
     # excavator.decimate_data()
