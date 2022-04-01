@@ -40,9 +40,6 @@ class HTMLReport:
         new_img['height'] = 360
         div.append(new_img)
 
-    def generate_report(self):
-        pass
-
 
 if __name__ == '__main__':
     HTMLReport().run_html()
