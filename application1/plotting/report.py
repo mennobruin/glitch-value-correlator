@@ -36,6 +36,8 @@ class HTMLReport:
     def add_image(self, img, div_class=None):
         div = self.html.find('div', class_=div_class)
         new_img = self.html.new_tag('img', src=PLOT_DIR + img)
+        new_img['width'] = 300
+        new_img['height'] = 240
         div.append(new_img)
 
     def generate_report(self):

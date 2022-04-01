@@ -1,6 +1,5 @@
 from tqdm import tqdm
 import sys
-import argparse
 import numpy as np
 
 from application1.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments
@@ -24,14 +23,14 @@ LOG = config_manager.get_logger(__name__)
  - done: implement transformations
  - blocked: implement parallel processing for histograms
  - done: think about potential new transformations
- - todo: create argument parser + default values file which remembers previous inputs
+ - done: create argument parser + default values file which remembers previous inputs
 """
 
 
 class Excavator:
 
     def __init__(self):
-        LOG.info(f"Loading configuration from {CONFIG_FILE}...")
+        LOG.info(f"Loading configuration from {CONFIG_FILE}.")
         self.config = config_manager.load_config()
         self.source = self.config['project.source']
         self.t_start = self.config['project.start_time']
