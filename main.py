@@ -153,10 +153,8 @@ class Excavator:
                 continue
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
             self.i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
-            progress_bar = tqdm(self.available_channels, position=0, leave=True)
-            for channel in progress_bar:
+            for channel in tqdm(self.available_channels, position=0, leave=True, desc=f'{segment[0]} -> {segment[1]}'):
                 self.update_channel_histogram(i_segment, segment, channel)
-                progress_bar.set_description(f'{segment[0]} -> {segment[1]}')
             self.h5_reader.reset_cache()
 
     def update_channel_histogram(self, i, segment, channel):
