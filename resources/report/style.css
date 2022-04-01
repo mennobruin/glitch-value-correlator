@@ -16,16 +16,10 @@ body {
   background-color: #f2f2f2;
 }
 
-.KS tr:hover {
-  color: #8844aa;
-  font-weight: bold;
-  text-decoration: none;
-}
-
 .KS th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: #04AA6D;
+  background-color: #008AE7;
   color: white;
 }
