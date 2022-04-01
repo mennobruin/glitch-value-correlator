@@ -1,0 +1,7 @@
+*max
+*min
+V1:VAC*
+V1:Daq*
+*rms
+*_DS
+*_notsafe
