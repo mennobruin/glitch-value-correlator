@@ -11,7 +11,7 @@ def plot_histogram(data, save=False):
 
 
 def plot_histogram(channel, transformation, histogram, data_type, save=False, score=None):
-    transformation = transformation if transformation is not '' else 'none'
+    transformation = transformation if transformation != '' else 'none'
     f_name = f'{score}_{channel}_{transformation}+{data_type}'
     LOG.info(f'Plotting {f_name}...')
 
@@ -30,7 +30,7 @@ def plot_histogram(channel, transformation, histogram, data_type, save=False, sc
 
 
 def plot_histogram_cdf(histogram, channel, transformation, data_type, save=False, score=None, fig=None, return_fig=False):
-    transformation = transformation if transformation is not '' else 'none'
+    transformation = transformation if transformation != '' else 'none'
     f_name = f'{score}_{channel}_{transformation}_cdf+{data_type}'
     LOG.info(f'Plotting {f_name}...')
 
@@ -44,8 +44,10 @@ def plot_histogram_cdf(histogram, channel, transformation, data_type, save=False
         return fig
 
     if save:
-        save_name = f'{score}_{transformation}_{data_type}_cdf'
-        fig.savefig(PLOT_DIR + save_name + '.png', dpi=fig.dpi)
+        save_name = f'{score}_{transformation}_{data_type}_cdf.png'
+        fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+        return save_name
     else:
         plt.show()
     plt.clf()
+    return None
