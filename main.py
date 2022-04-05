@@ -78,7 +78,7 @@ class Excavator:
 
         self.report.add_row_to_table(content=['Channel', 'Transformation', 'KS Statistic'], tag='th', table_class='KS')
 
-        for i, (k, v) in enumerate(sorted(fom_ks.scores.items(), key=lambda f: f[1])[0:3]):
+        for i, (k, v) in enumerate(sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)[0:3]):
             print(k, v)
             channel, transformation = k
             fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
