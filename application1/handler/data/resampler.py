@@ -68,6 +68,8 @@ class Resampler:
                         ds_data = np.zeros(self.n_target * self.FRAMES_IN_FRAME_FILE)
                         ds_adc = self.downsample_adc(adc, f_sample)
                         if ds_adc is None:
+                            ds_data[ds_data == 0] = np.nan
+                            h5_file.create_dataset(name=channel, data=ds_data)
                             break
                         ds_data[0:self.n_target] = ds_adc
                         h5_file.create_dataset(name=channel, data=ds_data)
