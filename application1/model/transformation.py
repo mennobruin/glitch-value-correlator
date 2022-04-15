@@ -2,7 +2,6 @@ import numpy as np
 import scipy.signal as sig
 import matplotlib.pyplot as plt
 
-from application1.utils import abs_norm
 from application1.config import config_manager
 
 LOG = config_manager.get_logger(__name__)
@@ -15,6 +14,16 @@ class Transformation:
 
     def reset(self):
         pass
+
+
+def abs_norm(x):
+    """
+    normalization for data that contains negative values
+
+    :param x: input vector
+    :return: normalized input vector
+    """
+    return x / np.sum(np.abs(x))
 
 
 class GaussianDifferentiator(Transformation):

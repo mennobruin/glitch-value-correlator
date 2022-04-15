@@ -1,7 +1,7 @@
 # Inputs
 project.source: '/virgoData/ffl/raw_O3b_arch'
-project.start_time: 1265997618
-project.end_time: 1266037218
+project.start_time: 1265655618
+project.end_time: 1265673618
 project.target_frequency: 50
 project.blacklist_patterns: './resources/blacklist_patterns.txt'
 

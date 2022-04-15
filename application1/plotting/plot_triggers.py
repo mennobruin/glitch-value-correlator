@@ -5,10 +5,13 @@ from application1.handler.triggers import DefaultPipeline
 
 file = RESOURCE_DIR + 'csv/GSpy_ALLIFO_O3b_0921_final.csv'
 
+# min_start = 1262228200
+# max_end = 1265825600
+
 
 def plot_trigger_density(trigger):
     pipeline = DefaultPipeline(trigger_file=file, trigger_type=trigger)
-    triggers = pipeline.get_segment(gps_start=1265997618, gps_end=1266037218)
+    triggers = pipeline.get_segment(gps_start=1265655618, gps_end=1265673618)
     # triggers = pipeline.triggers
     print(f'{triggers.size} triggers found')
     plt.hist(triggers, bins=100)
