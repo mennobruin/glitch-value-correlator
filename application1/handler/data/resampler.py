@@ -66,7 +66,10 @@ class Resampler:
                     channel = str(adc.contents.name)
                     if t == gps_start:
                         ds_data = np.zeros(self.n_target * self.FRAMES_IN_FRAME_FILE)
-                        ds_data[0:self.n_target] = self.downsample_adc(adc, f_sample)
+                        ds_adc = self.downsample_adc(adc, f_sample)
+                        if not ds_adc:
+                            break
+                        ds_data[0:self.n_target] = ds_adc
                         h5_file.create_dataset(name=channel, data=ds_data)
                     else:
                         i = int((t - gps_start) * self.f_target)
@@ -75,6 +78,8 @@ class Resampler:
 
     def downsample_adc(self, adc, f_sample):
         data = FrVect2array(adc.contents.data)
+        if data.size < self.n_target * self.f_target:
+            return None
         ds_data = None
 
         if self.method == 'mean':
