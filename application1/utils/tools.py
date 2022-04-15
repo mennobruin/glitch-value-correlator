@@ -43,15 +43,5 @@ def split_file_name(file_name):
     return f_sample, gps_start, gps_end
 
 
-def abs_norm(x):
-    """
-    normalization for data that contains negative values
-
-    :param x: input vector
-    :return: normalized input vector
-    """
-    return x / np.sum(np.abs(x))
-
-
 def exit_on_error():
     sys.exit(1)
