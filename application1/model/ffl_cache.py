@@ -3,10 +3,11 @@ import numpy as np
 from ligo import segments
 from framel import frgetvect1d
 
-from .channel import Channel
-
 from application1.handler.data.reader.frame_file import FrameFileReader
 from application1.utils import check_extension
+from application1.config import config_manager
+
+LOG = config_manager.get_logger(__name__)
 
 
 class FFLCache:
@@ -19,6 +20,9 @@ class FFLCache:
         self.gps_start = gps_start
         self.gps_end = gps_end
         self.frames = self._get_frames()
+        if not self.frames:
+            LOG.error(f'No data found from {gps_start} to {gps_end} in {ffl_file}.')
+            raise FileNotFoundError
         self.reader = FrameFileReader(source=self.ffl_file)
 
         self.gwf_files = [str(f) for f in self.frames.gwf]
