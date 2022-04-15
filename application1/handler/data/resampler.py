@@ -94,9 +94,15 @@ class Resampler:
         data = np.append(data, padding)
         ds_ratio = len(data) // self.n_target
         ratios = self._split_downsample_ratio(ds_ratio)
-        for ds_ratio in ratios:
-            data = self._n_sample_average(data, ratio=ds_ratio)
-        return data
+        try:
+            for ds_ratio in ratios:
+                data = self._n_sample_average(data, ratio=ds_ratio)
+            return data
+        except ValueError:
+            print(ratios)
+            print(ds_ratio)
+            print(data.shape)
+            print(padding.shape)
 
     def _split_downsample_ratio(self, ds_ratio):
         if ds_ratio > self.MAX_DS_RATIO:
