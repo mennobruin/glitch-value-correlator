@@ -33,6 +33,7 @@ class Resampler:
         os.makedirs(self.ds_data_path, exist_ok=True)
         self.source = None
         self.filt_cache = {}
+        self.ignored_channels = set()
 
     def downsample_ffl(self, ffl_cache: FFLCache):
         segments = [(gs, ge) for (gs, ge) in ffl_cache.segments]
@@ -45,6 +46,7 @@ class Resampler:
                 progress.update()
         mp_pool.close()
         mp_pool.join()
+        print(f'number of ignored channels: {len(self.ignored_channels)=}')
 
     def process_segment(self, segment):
         gps_start, gps_end = segment
@@ -64,12 +66,13 @@ class Resampler:
                 f_sample = adc.contents.sampleRate
                 if f_sample >= 50:
                     channel = str(adc.contents.name)
+                    if channel in self.ignored_channels:
+                        break
                     if t == gps_start:
                         ds_data = np.zeros(self.n_target * self.FRAMES_IN_FRAME_FILE)
                         ds_adc = self.downsample_adc(adc, f_sample)
                         if ds_adc is None:
-                            ds_data[ds_data == 0] = np.nan
-                            h5_file.create_dataset(name=channel, data=ds_data)
+                            self.ignored_channels.add(channel)
                             break
                         ds_data[0:self.n_target] = ds_adc
                         h5_file.create_dataset(name=channel, data=ds_data)
