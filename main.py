@@ -45,9 +45,7 @@ class Excavator:
         self.writer = DataWriter()
         self.report = HTMLReport()
 
-        self.available_channels = self.h5_reader.get_available_channels()
-        LOG.info(f'Found {len(self.available_channels)} available channels.')
-
+        self.available_channels = None
         self.cum_aux_veto = None
         self.cum_trig_veto = None
         self.transformation_names = None
@@ -57,6 +55,9 @@ class Excavator:
         self.i_trigger = None
 
     def run(self, n_iter=1):
+
+        self.available_channels = self.h5_reader.get_available_channels()
+        LOG.info(f'Found {len(self.available_channels)} available channels.')
 
         # trigger_pipeline = Omicron(channel=available_channels[0])
         trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final', trigger_type="Scattered_Light")
