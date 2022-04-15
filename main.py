@@ -137,8 +137,8 @@ class Excavator:
                     if isinstance(transformation, type):
                         self.transformation_states[channel][name][i] = transformation(f_target=self.f_target)
 
-        self.h_aux_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in self.transformation_names)
-        self.h_trig_cum = dict(((c, t), Hist([])) for c in self.available_channels for t in self.transformation_names)
+        self.h_aux_cum = dict(((c, t), Hist(np.array([]))) for c in self.available_channels for t in self.transformation_names)
+        self.h_trig_cum = dict(((c, t), Hist(np.array([]))) for c in self.available_channels for t in self.transformation_names)
 
         LOG.info('Constructing histograms...')
         for i_segment, segment, gap in iter_segments(segments):
@@ -190,7 +190,7 @@ class Excavator:
 if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
     excavator = Excavator()
-    excavator.run()
-    excavator.generate_report()
-    # excavator.decimate_data()
+    # excavator.run()
+    # excavator.generate_report()
+    excavator.decimate_data()
     LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")
