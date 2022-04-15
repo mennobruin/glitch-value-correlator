@@ -93,13 +93,7 @@ class Resampler:
         padding.fill(np.nan)
         data = np.append(data, padding)
         ds_ratio = len(data) // self.n_target
-        print(len(data))
-        print(len(padding))
-        print(self.n_target)
-        print(ds_ratio)
         ratios = self._split_downsample_ratio(ds_ratio)
-        print(ratios)
-        raise ValueError
         for ds_ratio in ratios:
             data = self._n_sample_average(data, ratio=ds_ratio)
         return data
