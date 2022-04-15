@@ -11,12 +11,12 @@ class DefaultPipeline:
     GPS_TIME = 'GPStime'
     LABEL = 'label'
 
-    def __init__(self, trigger_file, trigger_type):
+    def __init__(self, trigger_file, trigger_type=None):
         self.reader = CSVReader()
         self.trigger_type = trigger_type
-        self.triggers = self.load_triggers(trigger_file)
+        self.triggers = self._load_triggers(trigger_file)
 
-    def load_triggers(self, path_to_csv):
+    def _load_triggers(self, path_to_csv):
         triggers = self.reader.load_csv(path_to_csv, usecols=[self.GPS_TIME, self.LABEL])
         if self.trigger_type:
             triggers = triggers.loc[triggers[self.LABEL] == self.trigger_type]
