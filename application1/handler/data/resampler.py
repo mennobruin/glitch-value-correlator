@@ -94,9 +94,18 @@ class Resampler:
         data = np.append(data, padding)
         ds_ratio = len(data) // self.n_target
         ratios = self._split_downsample_ratio(ds_ratio)
+        print(ratios)
+        raise ValueError
         for ds_ratio in ratios:
             data = self._n_sample_average(data, ratio=ds_ratio)
         return data
+
+    def _split_downsample_ratio(self, ds_ratio):
+        if ds_ratio > self.MAX_DS_RATIO:
+            factor, remainder = ds_ratio // self.MAX_DS_RATIO, ds_ratio % self.MAX_DS_RATIO
+            return [self.MAX_DS_RATIO] * factor + [remainder]
+        else:
+            return [ds_ratio]
 
     @staticmethod
     def _n_sample_average(x: np.array, ratio: int):
@@ -119,13 +128,6 @@ class Resampler:
                     return sig.sosfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
         else:
             return self._resample(data)
-
-    def _split_downsample_ratio(self, ds_ratio):
-        if ds_ratio > self.MAX_DS_RATIO:
-            factor, remainder = ds_ratio // self.MAX_DS_RATIO, ds_ratio % self.MAX_DS_RATIO
-            return [factor] * self.MAX_DS_RATIO + [remainder]
-        else:
-            return [ds_ratio]
 
     def _resample(self, data):  # Fourier resampling
         return sig.resample(data, self.n_target, window='hamming')
