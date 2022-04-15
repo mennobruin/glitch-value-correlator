@@ -23,7 +23,7 @@ class FFLCache:
         print(self.frames, not self.frames)
         if not self.frames:
             LOG.error(f'No data found from {gps_start} to {gps_end} in {ffl_file}.')
-            raise FileNotFoundError
+            raise FileNotFoundError from None
         self.reader = FrameFileReader(source=self.ffl_file)
 
         self.gwf_files = [str(f) for f in self.frames.gwf]
