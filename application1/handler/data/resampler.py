@@ -75,7 +75,11 @@ class Resampler:
                             self.ignored_channels.add(channel)
                             break
                         ds_data[0:self.n_target] = ds_adc
+
                         h5_file.create_dataset(name=channel, data=ds_data)
+                        if channel == "V1:SBE_SNEB_ACT_F0H0_raw_500Hz":
+                            print(f'{channel=}')
+                            print(h5_file[channel])
                     else:
                         i = int((t - gps_start) * self.f_target)
                         j = i + self.n_target
