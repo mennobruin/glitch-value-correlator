@@ -99,10 +99,13 @@ class Resampler:
                 data = self._n_sample_average(data, ratio=ds_ratio)
             return data
         except ValueError:
-            print(ratios)
-            print(ds_ratio)
-            print(data.shape)
-            print(padding.shape)
+            print(f'{ratios=}')
+            print(f'{ds_ratio=}')
+            print(f'{data.shape=}')
+            print(f'{data=}')
+            print(f'{len(data)=}')
+            print(f'{self.n_target=}')
+            print(f'{len(data) // self.n_target=}')
 
     def _split_downsample_ratio(self, ds_ratio):
         if ds_ratio > self.MAX_DS_RATIO:
