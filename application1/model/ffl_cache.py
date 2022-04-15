@@ -21,7 +21,7 @@ class FFLCache:
         self.gps_start = gps_start
         self.gps_end = gps_end
         self.frames = self._get_frames()
-        if not self.frames:
+        if self.frames.size == 0:
             LOG.error(f'No data found from {gps_start} to {gps_end} in {ffl_file}.')
             exit_on_error()
         self.reader = FrameFileReader(source=self.ffl_file)
