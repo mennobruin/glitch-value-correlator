@@ -67,7 +67,7 @@ class Resampler:
                     if t == gps_start:
                         ds_data = np.zeros(self.n_target * self.FRAMES_IN_FRAME_FILE)
                         ds_adc = self.downsample_adc(adc, f_sample)
-                        if not ds_adc:
+                        if ds_adc is None:
                             break
                         ds_data[0:self.n_target] = ds_adc
                         h5_file.create_dataset(name=channel, data=ds_data)
