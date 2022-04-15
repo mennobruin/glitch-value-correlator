@@ -25,9 +25,6 @@ class H5Reader(BaseReader):
         self.gps_start = gps_start
         self.gps_end = gps_end
         self.h5_records = self._get_records()
-        if not self.h5_records:
-            LOG.error(f'No data found from {gps_start} to {gps_end} in {RESOURCE_DIR + self.H5_DIR}')
-            raise FileNotFoundError
         self.h5_files = self.h5_records.file
         self.segments = segments.segmentlist(
             segments.segment(gs, ge) for gs, ge in
@@ -49,7 +46,10 @@ class H5Reader(BaseReader):
         self.h5_cache = None
 
     def load_h5(self, h5_file):
-        if self.h5_cache is None:
+        if not self.h5_records:
+            LOG.error(f'No data found from {self.gps_start} to {self.gps_end} in {RESOURCE_DIR + self.H5_DIR}')
+            raise FileNotFoundError
+        if not self.h5_cache:
             h5_file = check_extension(h5_file, extension=self.H5)
             h5_file = self._check_path_exists(file_loc=self.H5_DIR, file=h5_file)
             self.h5_cache = h5py.File(h5_file, 'r')
