@@ -67,19 +67,16 @@ class Resampler:
                 if f_sample >= 50:
                     channel = str(adc.contents.name)
                     if channel in self.ignored_channels:
-                        break
+                        continue
                     if t == gps_start:
                         ds_data = np.zeros(self.n_target * self.FRAMES_IN_FRAME_FILE)
                         ds_adc = self.downsample_adc(adc, f_sample)
                         if ds_adc is None:
                             self.ignored_channels.add(channel)
-                            break
+                            continue
                         ds_data[0:self.n_target] = ds_adc
 
                         h5_file.create_dataset(name=channel, data=ds_data)
-                        if channel == "V1:SBE_SNEB_ACT_F0H0_raw_500Hz":
-                            print(f'{channel=}')
-                            print(h5_file[channel])
                     else:
                         i = int((t - gps_start) * self.f_target)
                         j = i + self.n_target
