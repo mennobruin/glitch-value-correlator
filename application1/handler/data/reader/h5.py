@@ -47,7 +47,7 @@ class H5Reader(BaseReader):
         self.h5_cache = None
 
     def load_h5(self, h5_file):
-        if not self.h5_records:
+        if self.h5_records.size == 0:
             LOG.error(f'No data found from {self.gps_start} to {self.gps_end} in {RESOURCE_DIR + self.H5_DIR}')
             exit_on_error()
         if not self.h5_cache:
