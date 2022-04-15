@@ -108,7 +108,11 @@ class Resampler:
             print(f'{len(data) // self.n_target=}')
 
     def _split_downsample_ratio(self, ds_ratio):
+        print(f'{ds_ratio=}')
+        print(f'{self.MAX_DS_RATIO=}')
+        print(f'{ds_ratio > self.MAX_DS_RATIO=}')
         if ds_ratio > self.MAX_DS_RATIO:
+            print('lmao did it anyway gotem')
             factor, remainder = ds_ratio // self.MAX_DS_RATIO, ds_ratio % self.MAX_DS_RATIO
             if remainder != 0:
                 return [self.MAX_DS_RATIO] * factor + [remainder]
