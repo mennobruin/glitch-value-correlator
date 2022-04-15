@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import re
+import sys
 
 from application1.config import config_manager
 
@@ -50,3 +51,7 @@ def abs_norm(x):
     :return: normalized input vector
     """
     return x / np.sum(np.abs(x))
+
+
+def exit_on_error():
+    sys.exit(1)
