@@ -1,11 +1,12 @@
 import numpy as np
 import h5py
 import os
+import sys
 from ligo import segments
 
 from .base import BaseReader
 
-from application1.utils import check_extension, split_file_name
+from application1.utils import check_extension, split_file_name, exit_on_error
 from resources.constants import RESOURCE_DIR
 
 from application1.config import config_manager
@@ -48,7 +49,7 @@ class H5Reader(BaseReader):
     def load_h5(self, h5_file):
         if not self.h5_records:
             LOG.error(f'No data found from {self.gps_start} to {self.gps_end} in {RESOURCE_DIR + self.H5_DIR}')
-            raise FileNotFoundError
+            exit_on_error()
         if not self.h5_cache:
             h5_file = check_extension(h5_file, extension=self.H5)
             h5_file = self._check_path_exists(file_loc=self.H5_DIR, file=h5_file)
