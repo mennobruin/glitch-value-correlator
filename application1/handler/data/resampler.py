@@ -84,6 +84,7 @@ class Resampler:
 
     def downsample_adc(self, adc, f_sample):
         data = FrVect2array(adc.contents.data)
+        print(data.size, self.n_target * self.f_target, data.size < self.n_target * self.f_target)
         if data.size < self.n_target * self.f_target:
             return None
         ds_data = None
