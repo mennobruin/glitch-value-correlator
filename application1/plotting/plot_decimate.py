@@ -1,15 +1,14 @@
 import matplotlib.pyplot as plt
 import h5py
-import pathlib
 import os
 import re
 import numpy as np
 
+from resources.constants import RESOURCE_DIR
 from virgotools.frame_lib import FrameFile
 
-source='/virgoData/ffl/raw_O3b_arch'
-resource_path = str(pathlib.Path(__file__).parents[1].resolve()) + '/application1/resources/'
-ds_path = resource_path + 'ds_data/'
+source = '/virgoData/ffl/raw_O3b_arch'
+ds_path = RESOURCE_DIR + 'ds_data/'
 data_path = ds_path + 'data/'
 
 files = os.listdir(data_path)
