@@ -32,6 +32,7 @@ class Resampler:
         self.ds_path = RESOURCE_DIR + 'ds_data/'
         self.ds_data_path = self.ds_path + 'data/'
         os.makedirs(self.ds_data_path, exist_ok=True)
+        LOG.info(f'Storing downsampled data at {self.ds_data_path}')
         self.source = None
         self.filt_cache = {}
         self.ignored_channels = set()
@@ -104,12 +105,14 @@ class Resampler:
         n_points = data.size
         ds_ratio = n_points / self.n_target
         ds_ratio_log10 = np.log10(ds_ratio)
-        alpha, beta = int(ds_ratio_log10), ds_ratio_log10 % 1
-        remainder = np.power(10, beta)
-        if not almost_int(remainder):
-            n_padding = self.n_target * np.power(10, alpha) * remainder - n_points
+        factor, remainder = int(ds_ratio_log10), ds_ratio_log10 % 1
+        n_remainder = np.power(10, remainder)
+        if not almost_int(n_remainder):
+            n_padding = self.n_target * np.power(10, factor) * n_remainder - n_points
             data = self._add_padding(data, n_padding)
-        ratios = self._split_downsample_ratio(ds_ratio)
+            n_points = data.size
+            ds_ratio = n_points / self.n_target
+        ratios = self._split_downsample_ratio(ds_ratio=round(ds_ratio))
         print(ratios)
         for ds_ratio in ratios:
             data = self._n_sample_average(data, ratio=ds_ratio)
