@@ -10,6 +10,7 @@ from tqdm import tqdm
 from resources.constants import RESOURCE_DIR
 from application1.model.ffl_cache import FFLCache
 from application1.config import config_manager
+from application1.utils.tools import almost_int
 
 from virgotools.frame_lib import FrameFile, FrVect2array
 
@@ -100,20 +101,18 @@ class Resampler:
         return ds_data
 
     def _resample_mean(self, data):
-        padding = np.empty(math.ceil(data.size / self.n_target) * self.n_target - data.size)
-        padding.fill(np.nan)
-        data = np.append(data, padding)
-        ds_ratio = len(data) // self.n_target
+        n_points = data.size
+        ds_ratio = n_points / self.n_target
+        ds_ratio_log10 = np.log10(ds_ratio)
+        alpha, beta = int(ds_ratio_log10), ds_ratio_log10 % 1
+        remainder = np.power(10, beta)
+        if not almost_int(remainder):
+            n_padding = self.n_target * np.power(10, alpha) * remainder - n_points
+            data = self._add_padding(data, n_padding)
         ratios = self._split_downsample_ratio(ds_ratio)
+        print(ratios)
         for ds_ratio in ratios:
-            try:
-                data = self._n_sample_average(data, ratio=ds_ratio)
-            except ValueError as e:
-                print(f'{data.shape=}')
-                print(f'{ratios=}')
-                print(f'{ds_ratio=}')
-                print(f'{padding.shape=}')
-                raise e
+            data = self._n_sample_average(data, ratio=ds_ratio)
         return data
 
     def _split_downsample_ratio(self, ds_ratio) -> [int]:
@@ -126,6 +125,13 @@ class Resampler:
                 return [self.MAX_DS_RATIO] * factor
         else:
             return [ds_ratio]
+
+    @staticmethod
+    def _add_padding(self, data, n_padding):
+        padding = np.empty(n_padding)
+        padding.fill(np.nan)
+        data = np.append(data, padding)
+        return data
 
     @staticmethod
     def _n_sample_average(x: np.array, ratio: int):

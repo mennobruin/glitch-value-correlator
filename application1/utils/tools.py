@@ -45,3 +45,7 @@ def split_file_name(file_name):
 
 def exit_on_error():
     sys.exit(1)
+
+
+def almost_int(float_val):
+    return float_val % 1 < 0.0001
