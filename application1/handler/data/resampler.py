@@ -4,6 +4,7 @@ import h5py
 import math
 import multiprocessing as mp
 import scipy.signal as sig
+import warnings
 
 from tqdm import tqdm
 
@@ -140,7 +141,9 @@ class Resampler:
 
     @staticmethod
     def _n_sample_average(x: np.array, ratio: int):
-        return np.nanmean(x.reshape(-1, ratio), axis=1)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            return np.nanmean(x.reshape(-1, ratio), axis=1)
 
     def _decimate(self, data, f_sample, filtfilt=False):
         ds_ratio = f_sample / self.f_target
