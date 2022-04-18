@@ -48,7 +48,7 @@ class Resampler:
                 progress.update()
         mp_pool.close()
         mp_pool.join()
-        print(f'number of ignored channels: {len(self.ignored_channels)=}')
+        print(f'number of ignored channels: {len(self.ignored_channels)}')
 
     def process_segment(self, segment):
         gps_start, gps_end = segment
