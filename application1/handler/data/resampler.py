@@ -104,6 +104,9 @@ class Resampler:
     def _resample_mean(self, data):
         n_points = data.size
         ds_ratio = n_points / self.n_target
+        if math.isclose(ds_ratio, 1):  # f_sample ~= f_target
+            return data
+
         ds_ratio_log10 = np.log10(ds_ratio)
         factor, remainder = int(ds_ratio_log10), ds_ratio_log10 % 1
         n_remainder = np.power(10, remainder)
@@ -112,8 +115,8 @@ class Resampler:
             data = self._add_padding(data, n_padding)
             n_points = data.size
             ds_ratio = n_points / self.n_target
+
         ratios = self._split_downsample_ratio(ds_ratio=round(ds_ratio))
-        print(ratios)
         for ds_ratio in ratios:
             data = self._n_sample_average(data, ratio=ds_ratio)
         return data
@@ -130,7 +133,7 @@ class Resampler:
             return [ds_ratio]
 
     @staticmethod
-    def _add_padding(self, data, n_padding):
+    def _add_padding(data, n_padding):
         padding = np.empty(n_padding)
         padding.fill(np.nan)
         data = np.append(data, padding)
