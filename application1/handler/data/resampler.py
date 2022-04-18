@@ -87,6 +87,7 @@ class Resampler:
             return None
         ds_data = None
 
+        print(data.shape, data.size < self.n_target)
         if self.method == 'mean':
             ds_data = self._resample_mean(data)
         elif self.method == 'filt':
@@ -101,15 +102,14 @@ class Resampler:
     def _resample_mean(self, data):
         padding = np.empty(math.ceil(data.size / self.n_target) * self.n_target - data.size)
         padding.fill(np.nan)
-        padded_data = np.append(data, padding)
-        ds_ratio = len(padded_data) // self.n_target
+        data = np.append(data, padding)
+        ds_ratio = len(data) // self.n_target
         ratios = self._split_downsample_ratio(ds_ratio)
         for ds_ratio in ratios:
             try:
-                data = self._n_sample_average(padded_data, ratio=ds_ratio)
+                data = self._n_sample_average(data, ratio=ds_ratio)
             except ValueError as e:
                 print(f'{data.shape=}')
-                print(f'{padded_data.shape=}')
                 print(f'{ratios=}')
                 print(f'{ds_ratio=}')
                 print(f'{padding.shape=}')
