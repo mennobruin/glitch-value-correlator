@@ -111,7 +111,9 @@ class Resampler:
         n_remainder = np.power(10, remainder)
         if not almost_int(n_remainder):
             n_padding = self.n_target * np.power(10, factor) * n_remainder - n_points
+            print(f'{factor=} - {remainder=} - {self.n_target=}')
             print(f'{n_padding=} - {n_points=}')
+            print('--------------------------')
             data = self._add_padding(data, n_padding)
             n_points = data.size
             ds_ratio = n_points / self.n_target
