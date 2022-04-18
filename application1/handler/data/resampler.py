@@ -68,24 +68,22 @@ class Resampler:
                     channel = str(adc.contents.name)
                     if channel in self.ignored_channels:
                         continue
+                    ds_adc = self.downsample_adc(adc, f_sample)
+                    if ds_adc is None:
+                        self.ignored_channels.add(channel)
+                        continue
                     if t == gps_start:
                         ds_data = np.zeros(self.n_target * self.FRAMES_IN_FRAME_FILE)
-                        ds_adc = self.downsample_adc(adc, f_sample)
-                        if ds_adc is None:
-                            self.ignored_channels.add(channel)
-                            continue
                         ds_data[0:self.n_target] = ds_adc
-
                         h5_file.create_dataset(name=channel, data=ds_data)
                     else:
                         i = int((t - gps_start) * self.f_target)
                         j = i + self.n_target
-                        h5_file[channel][i:j] = self.downsample_adc(adc, f_sample)
+                        h5_file[channel][i:j] = ds_adc
 
     def downsample_adc(self, adc, f_sample):
         data = FrVect2array(adc.contents.data)
-        print(data.size, self.n_target * self.f_target, data.size < self.n_target * self.f_target)
-        if data.size < self.n_target * self.f_target:
+        if data.size < self.n_target:
             return None
         ds_data = None
 
