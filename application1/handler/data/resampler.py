@@ -105,7 +105,14 @@ class Resampler:
         ds_ratio = len(data) // self.n_target
         ratios = self._split_downsample_ratio(ds_ratio)
         for ds_ratio in ratios:
-            data = self._n_sample_average(data, ratio=ds_ratio)
+            try:
+                data = self._n_sample_average(data, ratio=ds_ratio)
+            except ValueError as e:
+                print(f'{data.shape=}')
+                print(f'{ratios=}')
+                print(f'{ds_ratio=}')
+                print(f'{padding.shape=}')
+                raise e
         return data
 
     def _split_downsample_ratio(self, ds_ratio) -> [int]:
