@@ -115,7 +115,7 @@ class Resampler:
 
         try:
             data = self._n_sample_average(data, ratio=ds_ratio)
-        except ValueError as e:
+        except TypeError as e:
             print(ds_ratio)
             raise e
         return data
