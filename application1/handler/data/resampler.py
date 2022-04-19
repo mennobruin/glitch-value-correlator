@@ -111,13 +111,9 @@ class Resampler:
             n_padding = round(np.ceil(n_points / self.n_target) * self.n_target) - n_points
             data = self._add_padding(data, n_padding)
             n_points = data.size
-            ds_ratio = n_points / self.n_target
+            ds_ratio = round(n_points / self.n_target)
 
-        try:
-            data = self._n_sample_average(data, ratio=ds_ratio)
-        except TypeError as e:
-            print(ds_ratio)
-            raise e
+        data = self._n_sample_average(data, ratio=ds_ratio)
         return data
 
     @staticmethod
