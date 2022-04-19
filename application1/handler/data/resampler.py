@@ -56,9 +56,9 @@ class Resampler:
                                               t_stop=int(gps_end),
                                               method=self.method)
         file_path = self.ds_data_path + file_name
-        if os.path.exists(file_path):
-            LOG.info(f'Found existing data from {gps_start} to {gps_end} at {file_name}, skipping...')
-            return
+        # if os.path.exists(file_path):
+        #     LOG.info(f'Found existing data from {gps_start} to {gps_end} at {file_name}, skipping...')
+        #     return
         with h5py.File(file_path + '.h5', 'w') as h5f:
             for t in np.arange(gps_start, gps_end, self.FRAME_DURATION):
                 self._store_data(h5_file=h5f, t=t, gps_start=gps_start)
@@ -107,30 +107,14 @@ class Resampler:
         if math.isclose(ds_ratio, 1):  # f_sample ~= f_target
             return data
 
-        ds_ratio_log10 = np.log10(ds_ratio)
-        factor, remainder = int(ds_ratio_log10), ds_ratio_log10 % 1
-        n_remainder = np.power(10, remainder)
-        if not almost_int(n_remainder):
-            n_padding = round(self.n_target * np.power(10, factor) * np.ceil(n_remainder) - n_points)
+        if not almost_int(ds_ratio):
+            n_padding = round(np.ceil(n_points / self.n_target) * self.n_target) - n_points
             data = self._add_padding(data, n_padding)
             n_points = data.size
             ds_ratio = n_points / self.n_target
 
-        ratios = self._split_downsample_ratio(ds_ratio=round(ds_ratio))
-        for ds_ratio in ratios:
-            data = self._n_sample_average(data, ratio=ds_ratio)
+        data = self._n_sample_average(data, ratio=ds_ratio)
         return data
-
-    def _split_downsample_ratio(self, ds_ratio) -> [int]:
-        if ds_ratio > self.MAX_DS_RATIO:
-            ds_ratio_log10 = np.log10(ds_ratio)
-            factor, remainder = int(ds_ratio_log10), round(np.power(10, ds_ratio_log10 % 1))
-            if remainder != 0:
-                return [self.MAX_DS_RATIO] * factor + [remainder]
-            else:
-                return [self.MAX_DS_RATIO] * factor
-        else:
-            return [ds_ratio]
 
     @staticmethod
     def _add_padding(data, n_padding):
@@ -162,6 +146,17 @@ class Resampler:
                     return sig.sosfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
         else:
             return self._resample(data)
+
+    def _split_downsample_ratio(self, ds_ratio) -> [int]:
+        if ds_ratio > self.MAX_DS_RATIO:
+            ds_ratio_log10 = np.log10(ds_ratio)
+            factor, remainder = int(ds_ratio_log10), round(np.power(10, ds_ratio_log10 % 1))
+            if remainder != 0:
+                return [self.MAX_DS_RATIO] * factor + [remainder]
+            else:
+                return [self.MAX_DS_RATIO] * factor
+        else:
+            return [ds_ratio]
 
     def _resample(self, data):  # Fourier resampling
         return sig.resample(data, self.n_target, window='hamming')

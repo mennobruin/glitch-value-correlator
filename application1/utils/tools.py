@@ -48,4 +48,4 @@ def exit_on_error():
 
 
 def almost_int(float_val):
-    return float_val % 1 < 0.0001
+    return abs(float_val - round(float_val)) % 1 < 0.0001
