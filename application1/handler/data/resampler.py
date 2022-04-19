@@ -111,9 +111,9 @@ class Resampler:
             n_padding = round(np.ceil(n_points / self.n_target) * self.n_target) - n_points
             data = self._add_padding(data, n_padding)
             n_points = data.size
-            ds_ratio = round(n_points / self.n_target)
+            ds_ratio = n_points / self.n_target
 
-        data = self._n_sample_average(data, ratio=ds_ratio)
+        data = self._n_sample_average(data, ratio=round(ds_ratio))
         return data
 
     @staticmethod
@@ -141,9 +141,10 @@ class Resampler:
                 if ds_ratio not in self.filt_cache:
                     self.filt_cache[ds_ratio] = sig.cheby1(N=self.FILTER_ORDER, rp=0.05, Wn=0.8 / ds_ratio, output='sos')
                 if filtfilt:
-                    return sig.sosfiltfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
+                    data = sig.sosfiltfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
                 else:
-                    return sig.sosfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
+                    data = sig.sosfilt(self.filt_cache[ds_ratio], data)[::int(ds_ratio)]
+            return data
         else:
             return self._resample(data)
 
