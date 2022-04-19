@@ -43,12 +43,9 @@ class Resampler:
         self.source = ffl_cache.ffl_file
 
         n_cpu = min(mp.cpu_count() - 1, len(segments))
-        mp_pool = mp.Pool(n_cpu)
-        with tqdm(total=len(segments)) as progress:
-            for i, _ in enumerate(mp_pool.imap_unordered(self.process_segment, segments)):
-                progress.update()
-        mp_pool.close()
-        mp_pool.join()
+        with mp.get_context('spawn').Pool(n_cpu) as pool:
+            for _ in tqdm(pool.imap_unordered(self.process_segment, segments), total=len(segments)):
+                pass
         print(f'number of ignored channels: {len(self.ignored_channels)}')
 
     def process_segment(self, segment):
@@ -59,6 +56,9 @@ class Resampler:
                                               t_stop=int(gps_end),
                                               method=self.method)
         file_path = self.ds_data_path + file_name
+        if os.path.exists(file_path):
+            LOG.info(f'Found existing data from {gps_start} to {gps_end} at {file_name}, skipping...')
+            return
         with h5py.File(file_path + '.h5', 'w') as h5f:
             for t in np.arange(gps_start, gps_end, self.FRAME_DURATION):
                 self._store_data(h5_file=h5f, t=t, gps_start=gps_start)
