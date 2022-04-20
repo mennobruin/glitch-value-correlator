@@ -91,7 +91,13 @@ class Resampler:
         ds_data = None
 
         if self.method == 'mean':
-            ds_data = self._resample_mean(data)
+            try:
+                ds_data = self._resample_mean(data)
+            except ValueError as e:
+                print(adc.contents.name)
+                print(adc.contents.sampleRate)
+                print(data.size)
+                raise e
         elif self.method == 'filt':
             ds_data = self._decimate(data, f_sample).astype(np.float64)
         elif self.method == 'filtfilt':
@@ -112,6 +118,7 @@ class Resampler:
             data = self._add_padding(data, n_padding)
             n_points = data.size
             ds_ratio = n_points / self.n_target
+            raise ValueError
 
         data = self._n_sample_average(data, ratio=round(ds_ratio))
         return data
