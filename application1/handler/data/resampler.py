@@ -123,7 +123,7 @@ class Resampler:
 
         data = self._n_sample_average(data, ratio=round(ds_ratio))
         if pad:
-            for row in data.reshape(25, 200):
+            for row in data.reshape(25, 20):
                 print(row)
             raise ValueError
         return data
