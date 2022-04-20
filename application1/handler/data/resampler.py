@@ -113,14 +113,19 @@ class Resampler:
         if math.isclose(ds_ratio, 1):  # f_sample ~= f_target
             return data
 
+        pad = False
         if not almost_int(ds_ratio):
             n_padding = round(np.ceil(n_points / self.n_target) * self.n_target) - n_points
             data = self._add_padding(data, n_padding)
             n_points = data.size
             ds_ratio = n_points / self.n_target
-            raise ValueError
+            pad = True
 
         data = self._n_sample_average(data, ratio=round(ds_ratio))
+        if pad:
+            for row in data.reshape(25, 200):
+                print(row)
+            raise ValueError
         return data
 
     @staticmethod
