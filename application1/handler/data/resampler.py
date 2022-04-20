@@ -91,13 +91,7 @@ class Resampler:
         ds_data = None
 
         if self.method == 'mean':
-            try:
-                ds_data = self._resample_mean(data)
-            except ValueError as e:
-                print(adc.contents.name)
-                print(adc.contents.sampleRate)
-                print(data.size)
-                raise e
+            ds_data = self._resample_mean(data)
         elif self.method == 'filt':
             ds_data = self._decimate(data, f_sample).astype(np.float64)
         elif self.method == 'filtfilt':
@@ -113,27 +107,39 @@ class Resampler:
         if math.isclose(ds_ratio, 1):  # f_sample ~= f_target
             return data
 
-        pad = False
         if not almost_int(ds_ratio):
             n_padding = round(np.ceil(n_points / self.n_target) * self.n_target) - n_points
             data = self._add_padding(data, n_padding)
             n_points = data.size
             ds_ratio = n_points / self.n_target
-            pad = True
 
         data = self._n_sample_average(data, ratio=round(ds_ratio))
-        if pad:
-            for row in data.reshape(25, 20):
-                print(row)
-            raise ValueError
         return data
 
     @staticmethod
     def _add_padding(data, n_padding):
-        padding = np.empty(n_padding)
-        padding.fill(np.nan)
-        data = np.append(data, padding)
-        return data
+        """ uniformly pad data with nans
+        step 0: data, n_padding=3
+        [1, 2, 3, 4, 5, 6]
+        step 1: reshape data to matrix with height=n_padding
+        [[1, 2], [3, 4], [5, 6]]
+        step 2: create array of nans
+        [[nan], [nan], [nan]]
+        step 3: hstack data with nans
+        [[1, 2, nan], [3, 4, nan], [5, 6, nan]]
+        step 4: flatten
+        [1, 2, nan, 3, 4, nan, 5, 6, nan]
+
+        :param data: input data
+        :param n_padding: number of nans that will be padded to the data
+        :return:
+        """
+        try:
+            data = data.reshape(n_padding, round(data.size / n_padding))
+            nans = [[np.nan] for _ in range(n_padding)]
+            return np.hstack((data, nans)).flatten()
+        except ValueError:  # wasn't able to reshape
+            return np.append(data, [np.nan] * n_padding)
 
     @staticmethod
     def _n_sample_average(x: np.array, ratio: int):
