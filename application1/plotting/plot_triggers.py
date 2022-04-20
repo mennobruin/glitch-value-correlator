@@ -11,7 +11,7 @@ file = RESOURCE_DIR + 'csv/GSpy_ALLIFO_O3b_0921_final.csv'
 
 def plot_trigger_density(trigger):
     pipeline = DefaultPipeline(trigger_file=file, trigger_type=trigger)
-    triggers = pipeline.get_segment(gps_start=1265655618, gps_end=1265673618)
+    triggers = pipeline.get_segment(gps_start=1262649618, gps_end=1262680000)
     # triggers = pipeline.triggers
     print(f'{triggers.size} triggers found')
     plt.hist(triggers, bins=100)
