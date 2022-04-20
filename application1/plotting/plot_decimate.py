@@ -12,7 +12,7 @@ ds_path = RESOURCE_DIR + 'ds_data/'
 data_path = ds_path + 'data/'
 
 files = os.listdir(data_path)
-f = 'excavator_f50_gs1262649700_gs1262649800_mean.h5'  # files[3]
+f = 'excavator_f50_gs1262649700_ge1262649800_mean.h5'  # files[3]
 with h5py.File(data_path + f, 'r') as hf:
     frames = list(hf.keys())
     channel = frames[frames.index("V1:EDB_B1p_PC_AdcMaxVal")]
