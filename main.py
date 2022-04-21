@@ -38,10 +38,10 @@ class Excavator:
         self.f_target = self.config['project.target_frequency']
         with open(self.config['project.blacklist_patterns'], 'r') as f:
             bl_patterns: list = f.readlines()
+            print(bl_patterns)
 
         self.h5_reader = H5Reader(gps_start=self.t_start, gps_end=self.t_stop)
-        self.ff_reader = FrameFileReader(self.source)
-        self.ff_reader.set_patterns(patterns=bl_patterns)
+        self.ff_reader = FrameFileReader(self.source, exclude_patterns=bl_patterns)
         self.writer = DataWriter()
         self.report = HTMLReport()
 

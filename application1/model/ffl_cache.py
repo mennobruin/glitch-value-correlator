@@ -16,7 +16,7 @@ class FFLCache:
     FFL_FORMAT = [('gwf', str, 100), ('gps_start', float), ('duration', float)]
     FFL_COLS = [0, 1, 2]
 
-    def __init__(self, ffl_file, gps_start, gps_end):
+    def __init__(self, ffl_file, gps_start, gps_end, bl_patterns=None):
         self.ffl_file = check_extension(ffl_file, extension='.ffl')
         self.gps_start = gps_start
         self.gps_end = gps_end
@@ -24,7 +24,7 @@ class FFLCache:
         if self.frames.size == 0:
             LOG.error(f'No data found from {gps_start} to {gps_end} in {ffl_file}.')
             exit_on_error()
-        self.reader = FrameFileReader(source=self.ffl_file)
+        self.reader = FrameFileReader(source=self.ffl_file, exclude_patterns=bl_patterns)
 
         self.gwf_files = [str(f) for f in self.frames.gwf]
         self.segments = segments.segmentlist(
