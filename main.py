@@ -181,8 +181,8 @@ class Excavator:
             try:
                 self.h_aux_cum[channel, transformation_name] += aux_hist
                 self.h_trig_cum[channel, transformation_name] += trig_hist
-            except OverflowError as e:
-                LOG.debug(f'OverflowError for channel {channel}: {e}, discarding.')
+            except (OverflowError, AssertionError) as e:
+                LOG.debug(f'Exception caught for channel {channel}: {e}, discarding.')
                 self.available_channels.remove(channel)
                 return
 
