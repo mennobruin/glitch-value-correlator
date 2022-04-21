@@ -80,7 +80,6 @@ class Excavator:
         self.report.add_row_to_table(content=['Channel', 'Transformation', 'KS Statistic'], tag='th', table_class='KS')
 
         ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)
-        LOG.debug(ks_results)
         self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
 
         for i, (k, v) in enumerate(ks_results[0:10]):
@@ -99,7 +98,7 @@ class Excavator:
                                        fig=fig,
                                        save=True,
                                        score=i)
-            self.report.add_row_to_table(content=[channel, transformation, v], table_class='KS')
+            self.report.add_row_to_table(content=[channel, transformation, round(v, 3)], table_class='KS')
             self.report.add_image(img=fname, div_class='images')
 
     def generate_report(self):
