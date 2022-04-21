@@ -49,3 +49,9 @@ def exit_on_error():
 
 def almost_int(float_val):
     return abs(float_val - round(float_val)) % 1 < 0.0001
+
+
+def create_dir_if_not_exists(path_to_dir):
+    if not os.path.exists(path_to_dir):
+        os.mkdir(path_to_dir)
+        LOG.info(f'Created new directory {path_to_dir}')

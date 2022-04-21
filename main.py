@@ -81,7 +81,7 @@ class Excavator:
 
         ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)
         LOG.debug(ks_results)
-        self.writer.write_csv(ks_results, 'results/ks_results.csv')
+        self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
 
         for i, (k, v) in enumerate(ks_results[0:10]):
             print(k, v)
