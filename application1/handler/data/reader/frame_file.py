@@ -9,13 +9,10 @@ from application1.model.channel import Channel, ChannelSegment
 
 class FrameFileReader(BaseReader):
 
-    def __init__(self, source=None):
+    def __init__(self, source=None, exclude_patterns=None):
         super(FrameFileReader, self).__init__()
-        self.exclude_patterns = None
+        self.exclude_patterns = exclude_patterns
         self.source = source
-
-    def set_patterns(self, patterns):
-        self.exclude_patterns = patterns
 
     def get_channel_segment(self, channel_name, t_start, t_stop, connection=None) -> ChannelSegment:
         if connection:
