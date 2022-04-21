@@ -117,11 +117,11 @@ class Hist(object):
 
         # shift bin indices to range 0 .. nbin and make histogram
         # note: old numpy version does not support minlenght
-        self.counts = np.bincount(ind, minlength=self.nbin).astype(np.uint32)
+        self.counts = np.bincount(ind-self.i_offset, minlength=self.nbin).astype(np.uint32)
 
-        self.counts = np.zeros(self.nbin, dtype=np.uint32)
-        cnts = np.bincount(ind - self.i_offset)  # fails if any(ind < i_offset)
-        self.counts[:len(cnts)] = cnts  # fails if any(ind >= i_offset + nbin)
+        # self.counts = np.zeros(self.nbin, dtype=np.uint32)
+        # cnts = np.bincount(ind - self.i_offset)  # fails if any(ind < i_offset)
+        # self.counts[:len(cnts)] = cnts  # fails if any(ind >= i_offset + nbin)
 
         self.check()
 
