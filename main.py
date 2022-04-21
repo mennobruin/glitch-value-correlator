@@ -1,5 +1,4 @@
 from tqdm import tqdm
-from IPython.core.debugger import set_trace
 import sys
 import numpy as np
 
@@ -102,7 +101,6 @@ class Excavator:
                                        score=i)
             self.report.add_row_to_table(content=[channel, transformation, v], table_class='KS')
             self.report.add_image(img=fname, div_class='images')
-        set_trace()
 
     def generate_report(self):
         LOG.info("Generating HTML Report...")
@@ -190,7 +188,6 @@ class Excavator:
 
     @staticmethod
     def get_histogram(data, cumulative_veto, spanlike):
-        set_trace()
         x_veto = data[~cumulative_veto]
         return Hist(x_veto, spanlike=spanlike)
 
