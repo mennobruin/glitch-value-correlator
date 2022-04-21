@@ -38,7 +38,6 @@ class Excavator:
         self.f_target = self.config['project.target_frequency']
         with open(self.config['project.blacklist_patterns'], 'r') as f:
             bl_patterns: list = f.read().splitlines()
-            print(bl_patterns)
 
         self.h5_reader = H5Reader(gps_start=self.t_start, gps_end=self.t_stop, exclude_patterns=bl_patterns)
         self.ff_reader = FrameFileReader(self.source, exclude_patterns=bl_patterns)
@@ -58,7 +57,6 @@ class Excavator:
 
         self.available_channels = self.h5_reader.get_available_channels()
         LOG.info(f'Found {len(self.available_channels)} available channels.')
-        return
 
         # trigger_pipeline = Omicron(channel=available_channels[0])
         trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final', trigger_type="Scattered_Light")
