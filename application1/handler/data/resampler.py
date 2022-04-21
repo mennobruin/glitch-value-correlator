@@ -45,6 +45,7 @@ class Resampler:
 
         n_cpu = min(mp.cpu_count() - 1, len(segments))
         with mp.get_context('spawn').Pool(n_cpu) as pool:
+            print("starting")
             for _ in tqdm(pool.imap_unordered(self.process_segment, segments), total=len(segments)):
                 pass
         print(f'number of ignored channels: {len(self.ignored_channels)}')
@@ -58,11 +59,15 @@ class Resampler:
                                               method=self.method)
         file_path = self.ds_data_path + file_name
 
+        print('processing segment')
         with h5py.File(file_path + '.h5', 'w') as h5f:
             for t in np.arange(gps_start, gps_end, self.FRAME_DURATION):
                 self._store_data(h5_file=h5f, t=t, gps_start=gps_start)
 
+        print('finished processing segment')
+
     def _store_data(self, h5_file, t, gps_start):
+        print('storing data')
         with FrameFile(self.source).get_frame(t) as ff:
             for adc in ff.iter_adc():
                 f_sample = adc.contents.sampleRate
