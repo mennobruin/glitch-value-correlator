@@ -1,8 +1,8 @@
 import numpy as np
 import h5py
 import os
-import sys
 from ligo import segments
+from fnmatch import fnmatch
 
 from .base import BaseReader
 
@@ -20,9 +20,10 @@ class H5Reader(BaseReader):
     H5_DIR = 'ds_data/data/'
     H5 = '.h5'
 
-    def __init__(self, gps_start, gps_end):
+    def __init__(self, gps_start, gps_end, exclude_patterns=None):
         super(H5Reader, self).__init__()
         self.h5_cache = None
+        self.exclude_patterns = exclude_patterns
         self.gps_start = gps_start
         self.gps_end = gps_end
         self.h5_records = self._get_records()
@@ -67,7 +68,11 @@ class H5Reader(BaseReader):
     def get_available_channels(self, file=None):
         file = file if file is not None else self.h5_files[0]
         self.load_h5(file)
-        return list(self.h5_cache.keys())
+
+        if self.exclude_patterns:
+            return [c for c in self.h5_cache.keys() if not any(fnmatch(c, p) for p in self.exclude_patterns)]
+        else:
+            return list(self.h5_cache.keys())
 
     def get_data_from_segments(self, request_segment, channel_name):
         request_segments = segments.segmentlist([request_segment]) & self.segments

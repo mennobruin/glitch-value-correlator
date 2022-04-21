@@ -32,7 +32,6 @@ class FrameFileReader(BaseReader):
                                 f_sample=adc.contents.sampleRate)
                         for adc in f.iter_adc()]
             if self.exclude_patterns:
-                print(self.exclude_patterns)
                 return [c for c in channels if not any(fnmatch(c.name, p) for p in self.exclude_patterns)]
             else:
                 return channels

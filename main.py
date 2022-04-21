@@ -37,7 +37,7 @@ class Excavator:
         self.t_stop = self.config['project.end_time']
         self.f_target = self.config['project.target_frequency']
         with open(self.config['project.blacklist_patterns'], 'r') as f:
-            bl_patterns: list = f.readlines()
+            bl_patterns: list = f.read().splitlines()
             print(bl_patterns)
 
         self.h5_reader = H5Reader(gps_start=self.t_start, gps_end=self.t_stop)
