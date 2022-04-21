@@ -36,7 +36,6 @@ class Resampler:
         LOG.info(f'Storing downsampled data at {self.ds_data_path}')
         self.source = None
         self.filt_cache = {}
-        self.ignored_channels = set()
 
     def downsample_ffl(self, ffl_cache: FFLCache):
         segments = [(gs, ge) for (gs, ge) in ffl_cache.segments]
@@ -45,10 +44,8 @@ class Resampler:
 
         n_cpu = min(mp.cpu_count() - 1, len(segments))
         with mp.get_context('spawn').Pool(n_cpu) as pool:
-            print("starting")
             for _ in tqdm(pool.imap_unordered(self.process_segment, segments), total=len(segments)):
                 pass
-        print(f'number of ignored channels: {len(self.ignored_channels)}')
 
     def process_segment(self, segment):
         gps_start, gps_end = segment
@@ -59,26 +56,17 @@ class Resampler:
                                               method=self.method)
         file_path = self.ds_data_path + file_name
 
-        print('processing segment')
         with h5py.File(file_path + '.h5', 'w') as h5f:
             for t in np.arange(gps_start, gps_end, self.FRAME_DURATION):
                 self._store_data(h5_file=h5f, t=t, gps_start=gps_start)
 
-        print('finished processing segment')
-
     def _store_data(self, h5_file, t, gps_start):
-        print('storing data')
         with FrameFile(self.source).get_frame(t) as ff:
             for adc in ff.iter_adc():
                 f_sample = adc.contents.sampleRate
                 if f_sample >= 50:
                     channel = str(adc.contents.name)
-                    if channel in self.ignored_channels:
-                        continue
                     ds_adc = self.downsample_adc(adc, f_sample)
-                    if ds_adc is None:
-                        self.ignored_channels.add(channel)
-                        continue
                     if t == gps_start:
                         ds_data = np.zeros(self.n_target * self.FRAMES_IN_FRAME_FILE)
                         ds_data[0:self.n_target] = ds_adc
@@ -90,8 +78,6 @@ class Resampler:
 
     def downsample_adc(self, adc, f_sample):
         data = FrVect2array(adc.contents.data)
-        if data.size < self.n_target:
-            return None
         ds_data = None
 
         if self.method == 'mean':
