@@ -40,7 +40,7 @@ class Excavator:
             bl_patterns: list = f.read().splitlines()
             print(bl_patterns)
 
-        self.h5_reader = H5Reader(gps_start=self.t_start, gps_end=self.t_stop)
+        self.h5_reader = H5Reader(gps_start=self.t_start, gps_end=self.t_stop, exclude_patterns=bl_patterns)
         self.ff_reader = FrameFileReader(self.source, exclude_patterns=bl_patterns)
         self.writer = DataWriter()
         self.report = HTMLReport()
