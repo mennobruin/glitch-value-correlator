@@ -58,6 +58,7 @@ class Excavator:
 
         self.available_channels = self.h5_reader.get_available_channels()
         LOG.info(f'Found {len(self.available_channels)} available channels.')
+        return
 
         # trigger_pipeline = Omicron(channel=available_channels[0])
         trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final', trigger_type="Scattered_Light")
