@@ -57,9 +57,7 @@ class Resampler:
                                               t_stop=int(gps_end),
                                               method=self.method)
         file_path = self.ds_data_path + file_name
-        # if os.path.exists(file_path):
-        #     LOG.info(f'Found existing data from {gps_start} to {gps_end} at {file_name}, skipping...')
-        #     return
+
         with h5py.File(file_path + '.h5', 'w') as h5f:
             for t in np.arange(gps_start, gps_end, self.FRAME_DURATION):
                 self._store_data(h5_file=h5f, t=t, gps_start=gps_start)

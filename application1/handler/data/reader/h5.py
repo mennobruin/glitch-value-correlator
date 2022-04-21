@@ -53,7 +53,12 @@ class H5Reader(BaseReader):
         if not self.h5_cache:
             h5_file = check_extension(h5_file, extension=self.H5)
             h5_file = self._check_path_exists(file_loc=self.H5_DIR, file=h5_file)
-            self.h5_cache = h5py.File(h5_file, 'r')
+            try:
+                self.h5_cache = h5py.File(h5_file, 'r')
+            except OSError as e:
+                LOG.error(f'Exception caught while trying to load {h5_file}: {e}')
+                LOG.info('The HDF5 file might have corrupted, try resampling the data.')
+                exit_on_error()
 
     def get_channel_from_file(self, file, channel_name):
         self.load_h5(file)
