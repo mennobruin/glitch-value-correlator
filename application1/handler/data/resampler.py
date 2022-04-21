@@ -40,6 +40,7 @@ class Resampler:
 
     def downsample_ffl(self, ffl_cache: FFLCache):
         segments = [(gs, ge) for (gs, ge) in ffl_cache.segments]
+        LOG.info(f'Downsampling data from {segments[0][0]} to {segments[-1][1]}')
         self.source = ffl_cache.ffl_file
 
         n_cpu = min(mp.cpu_count() - 1, len(segments))

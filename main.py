@@ -80,7 +80,11 @@ class Excavator:
 
         self.report.add_row_to_table(content=['Channel', 'Transformation', 'KS Statistic'], tag='th', table_class='KS')
 
-        for i, (k, v) in enumerate(sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)[0:3]):
+        ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)
+        LOG.debug(ks_results)
+        self.writer.write_csv(ks_results, 'results/ks_results.csv')
+
+        for i, (k, v) in enumerate(ks_results[0:10]):
             print(k, v)
             channel, transformation = k
             fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
@@ -193,7 +197,7 @@ class Excavator:
 if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
     excavator = Excavator()
-    # excavator.run()
-    # excavator.generate_report()
-    excavator.decimate_data()
+    excavator.run()
+    excavator.generate_report()
+    # excavator.decimate_data()
     LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")
