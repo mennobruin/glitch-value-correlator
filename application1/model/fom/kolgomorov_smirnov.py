@@ -27,7 +27,7 @@ class KolgomorovSmirnov(BaseFOM):
 
     def calculate(self, channel, transformation, h_aux, h_trig):
         # try:
-        self.scores[channel, transformation] = ks_2samp(h_trig, h_aux)
+        self.scores[channel, transformation] = ks_2samp(h_trig.counts, h_aux.counts)
         # except np.AxisError:
         #     self.scores[channel, transformation] = 0
 
