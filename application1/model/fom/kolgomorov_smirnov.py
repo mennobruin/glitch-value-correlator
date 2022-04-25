@@ -26,10 +26,10 @@ class KolgomorovSmirnov(BaseFOM):
             self.scores[channel, transformation] = 0
 
     def calculate(self, channel, transformation, h_aux, h_trig):
-        try:
-            self.scores[channel, transformation] = ks_2samp(h_trig, h_aux)
-        except np.AxisError:
-            self.scores[channel, transformation] = 0
+        # try:
+        self.scores[channel, transformation] = ks_2samp(h_trig, h_aux)
+        # except np.AxisError:
+        #     self.scores[channel, transformation] = 0
 
     def get_critical_value(self, n1, n2, confidence=0.05):
         return self.CRITICAL_COEFFICIENTS[confidence] * np.sqrt((n1 + n2) / n1 / n2)
