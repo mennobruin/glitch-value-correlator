@@ -142,9 +142,9 @@ class Excavator:
         ]
 
         join_names = lambda c: '_'.join(t.NAME for t in c)
-        self.transformation_names = [join_names(t) for t in transformation_combinations]
+        self.transformation_names = [join_names(t) for t in self.transformation_combinations]
         self.transformation_states = {
-            channel: {self.transformation_names[i]: t for i, t in enumerate(transformation_combinations)}
+            channel: {self.transformation_names[i]: t for i, t in enumerate(self.transformation_combinations)}
             for channel in self.available_channels}
 
         for channel in self.available_channels:
