@@ -95,27 +95,31 @@ class Excavator:
         table_cols = ['Channel', 'Transformation', 'KS Statistic', 'p-value']
         self.report.add_row_to_table(content=table_cols, tag='th', table_class='KS')
 
-        ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[0], reverse=True)
+        ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1][0], reverse=True)
         self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
 
         for i, (k, v) in enumerate(ks_results[0:10]):
             print(k, v)
             channel, transformation = k
-            fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
-                                     channel=channel,
-                                     transformation=transformation,
-                                     data_type='aux',
-                                     return_fig=True,
-                                     score=i)
-            fname = plot_histogram_cdf(histogram=self.h_trig_cum[channel, transformation],
-                                       channel=channel,
-                                       transformation=transformation,
-                                       data_type='trig',
-                                       fig=fig,
-                                       save=True,
-                                       score=i)
-            self.report.add_row_to_table(content=[channel, transformation, round(v[0], 3), round(v[1], 3)], table_class='KS')
-            self.report.add_image(img=fname, div_class='images')
+            statistic, pvalue = v
+            try:
+                fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
+                                         channel=channel,
+                                         transformation=transformation,
+                                         data_type='aux',
+                                         return_fig=True,
+                                         score=i)
+                fname = plot_histogram_cdf(histogram=self.h_trig_cum[channel, transformation],
+                                           channel=channel,
+                                           transformation=transformation,
+                                           data_type='trig',
+                                           fig=fig,
+                                           save=True,
+                                           score=i)
+                self.report.add_image(img=fname, div_class='images')
+            except AttributeError:
+                pass
+            self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), round(pvalue, 3)], table_class='KS')
 
     def generate_report(self):
         LOG.info("Generating HTML Report...")
