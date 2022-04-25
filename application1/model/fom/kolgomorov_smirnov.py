@@ -35,6 +35,9 @@ class KolgomorovSmirnov(BaseFOM):
         try:
             ks_result = ks_2samp(h_trig.counts, h_aux.counts)
             self.scores[channel, transformation] = ks_result.statistic, ks_result.pvalue
+            print(h_aux.counts.shape[0])
+            print(h_trig.counts.shape[0])
+            print('----------')
         except AttributeError:
             self.scores[channel, transformation] = 0, 0
 

@@ -91,9 +91,6 @@ class Excavator:
                 h_aux.align(h_trig)
 
                 fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
-                if channel == self.available_channels[0]:
-                    print(h_aux.counts.shape[0])
-                    print(h_trig.counts.shape[0])
 
         table_cols = ['Channel', 'Transformation', 'KS Statistic', 'p-value']
         self.report.add_row_to_table(content=table_cols, tag='th', table_class='KS')
