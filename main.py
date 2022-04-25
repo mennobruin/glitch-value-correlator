@@ -42,6 +42,7 @@ class Excavator:
             bl_patterns: list = f.read().splitlines()
 
         self.h5_reader = H5Reader(gps_start=self.t_start, gps_end=self.t_stop, exclude_patterns=bl_patterns)
+        self.n_points = int(round(abs(self.h5_reader.segments[0]) * self.f_target))
         self.ff_reader = FrameFileReader(self.source, exclude_patterns=bl_patterns)
         self.writer = DataWriter()
         self.report = HTMLReport()
@@ -51,6 +52,7 @@ class Excavator:
         self.cum_trig_veto = None
         self.transformation_names = None
         self.transformation_states = None
+        self.transformation_combinations = None
         self.h_aux_cum = None
         self.h_trig_cum = None
         self.i_trigger = None
@@ -66,6 +68,8 @@ class Excavator:
         if triggers.size == 0:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
+            
+        self.init_transformations()
 
         test_file = 'test.pickle'
         print(f'{os.path.exists(test_file)=}')
@@ -122,16 +126,12 @@ class Excavator:
         aux_data = FFLCache(ffl_file=self.source, gps_start=self.t_start, gps_end=self.t_stop)
         decimator.downsample_ffl(ffl_cache=aux_data)
 
-    def construct_histograms(self, segments, triggers) -> ({str, Hist}):
-        n_points = int(round(abs(segments[0]) * self.f_target))
-        self.cum_aux_veto = [np.zeros(n_points, dtype=bool) for _ in segments]
-        self.cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in segments]
+    def init_transformations(self):
+        window_length = self.n_points / 2 if self.n_points / 2 % 2 == 1 else self.n_points / 2 + 1  # must be odd
+        savitzky_golay = SavitzkyGolayDifferentiator(window_length=window_length, dx=1 / self.n_points)
+        gauss = GaussianDifferentiator(n_points=self.n_points)
 
-        window_length = n_points / 2 if n_points / 2 % 2 == 1 else n_points / 2 + 1  # must be odd
-        savitzky_golay = SavitzkyGolayDifferentiator(window_length=window_length, dx=1 / n_points)
-        gauss = GaussianDifferentiator(n_points=n_points)
-
-        transformation_combinations = [
+        self.transformation_combinations = [
             [],  # also do a run untransformed
             # [savitzky_golay],
             # [savitzky_golay, AbsMean],
@@ -153,6 +153,10 @@ class Excavator:
                     if isinstance(transformation, type):
                         self.transformation_states[channel][name][i] = transformation(f_target=self.f_target)
 
+    def construct_histograms(self, segments, triggers) -> ({str, Hist}):
+        self.cum_aux_veto = [np.zeros(self.n_points, dtype=bool) for _ in segments]
+        self.cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in segments]
+
         self.h_aux_cum = dict(((c, t), Hist(np.array([]))) for c in self.available_channels for t in self.transformation_names)
         self.h_trig_cum = dict(((c, t), Hist(np.array([]))) for c in self.available_channels for t in self.transformation_names)
 
@@ -160,7 +164,7 @@ class Excavator:
         for i_segment, segment, gap in iter_segments(segments):
             gps_start, gps_end = segment
             if gap:
-                for combination in transformation_combinations:
+                for combination in self.transformation_combinations:
                     for transformation in combination:
                         transformation.reset()
 
