@@ -1,5 +1,7 @@
 from tqdm import tqdm
 import sys
+import os
+import pickle
 import numpy as np
 
 from application1.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments
@@ -53,7 +55,7 @@ class Excavator:
         self.h_trig_cum = None
         self.i_trigger = None
 
-    def run(self, n_iter=1):
+    def run(self, n_iter=1, load_existing=False):
 
         self.available_channels = self.h5_reader.get_available_channels()
         LOG.info(f'Found {len(self.available_channels)} available channels.')
@@ -65,7 +67,16 @@ class Excavator:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
 
-        self.construct_histograms(segments=self.h5_reader.segments, triggers=triggers)
+        test_file = 'test.pk'
+        if load_existing and os.path.exists(test_file):
+            with open(test_file, 'rb') as f:
+                data = pickle.load(f)
+                self.h_trig_cum = data['trig']
+                self.h_aux_cum = data['aux']
+        else:
+            self.construct_histograms(segments=self.h5_reader.segments, triggers=triggers)
+            with open('test.pk', 'wb') as f:
+                pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum}, f)
 
         fom_ks = KolgomorovSmirnov()
         for channel in self.available_channels:

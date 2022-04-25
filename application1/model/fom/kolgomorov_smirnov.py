@@ -6,7 +6,7 @@ references:
 
 import numpy as np
 
-from scipy.stats import kstest
+from scipy.stats import ks_2samp
 
 from .base import BaseFOM
 
@@ -26,7 +26,7 @@ class KolgomorovSmirnov(BaseFOM):
             self.scores[channel, transformation] = 0
 
     def _calculate(self, channel, transformation, h_aux, h_trig):
-        self.scores[channel, transformation] = kstest(h_trig, h_aux)
+        self.scores[channel, transformation] = ks_2samp(h_trig, h_aux)
 
     def get_critical_value(self, n1, n2, confidence=0.05):
         return self.CRITICAL_COEFFICIENTS[confidence] * np.sqrt((n1 + n2) / n1 / n2)
