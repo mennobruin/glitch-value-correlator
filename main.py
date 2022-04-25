@@ -84,6 +84,8 @@ class Excavator:
                 pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum}, pkf)
 
         fom_ks = KolgomorovSmirnov()
+        print(self.h_trig_cum[0].counts.shape[0])
+        print(self.h_trig_cum[0].counts.shape[0])
         for channel in self.available_channels:
             for transformation_name in self.transformation_names:
                 h_aux = self.h_aux_cum[channel, transformation_name]
@@ -95,6 +97,7 @@ class Excavator:
         table_cols = ['Channel', 'Transformation', 'KS Statistic', 'p-value']
         self.report.add_row_to_table(content=table_cols, tag='th', table_class='KS')
 
+        fom_ks.filter_scores()
         ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1][0], reverse=True)
         self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
 
