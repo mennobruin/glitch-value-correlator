@@ -23,21 +23,14 @@ class KolgomorovSmirnov(BaseFOM):
         self.scores = {}
 
     def filter_scores(self):
-        n = 0
-        for k, v in self.scores.items():
-            statistic, p_value = v
-            if p_value == 0:
-                self.scores.pop(k)
-                n += 1
-        LOG.debug(f'Filtered out {n=} channels with p-value=0.0')
+        filtered_scores = {k: v for k, v in self.scores.items() if v[1] != 0}
+        LOG.debug(f'Filtered out {len(self.scores) - len(filtered_scores)} channels with p-value=0.0')
+        self.scores = filtered_scores
 
     def calculate(self, channel, transformation, h_aux, h_trig):
         try:
             ks_result = ks_2samp(h_trig.counts, h_aux.counts)
             self.scores[channel, transformation] = ks_result.statistic, ks_result.pvalue
-            print(h_aux.counts.shape[0])
-            print(h_trig.counts.shape[0])
-            print('----------')
         except AttributeError:
             self.scores[channel, transformation] = 0, 0
 
