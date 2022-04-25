@@ -67,7 +67,7 @@ class Excavator:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
 
-        test_file = 'test.pk'
+        test_file = 'test.pickle'
         if load_existing and os.path.exists(test_file):
             with open(test_file, 'rb') as f:
                 data = pickle.load(f)
@@ -75,7 +75,7 @@ class Excavator:
                 self.h_aux_cum = data['aux']
         else:
             self.construct_histograms(segments=self.h5_reader.segments, triggers=triggers)
-            with open('test.pk', 'wb') as f:
+            with open(test_file, 'wb') as f:
                 pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum}, f)
 
         fom_ks = KolgomorovSmirnov()
