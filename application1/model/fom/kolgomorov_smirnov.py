@@ -6,6 +6,7 @@ references:
 
 import numpy as np
 
+from math import isclose
 from scipy.stats import ks_2samp
 
 from .base import BaseFOM
@@ -22,9 +23,9 @@ class KolgomorovSmirnov(BaseFOM):
         super(KolgomorovSmirnov, self).__init__()
         self.scores = {}
 
-    def filter_scores(self):
-        filtered_scores = {k: v for k, v in self.scores.items() if v[1] != 0}
-        LOG.debug(f'Filtered out {len(self.scores) - len(filtered_scores)} channels with p-value=0.0')
+    def filter_scores(self, p_threshold=0.05):
+        filtered_scores = {k: v for k, v in self.scores.items() if v[1] < p_threshold}
+        LOG.debug(f'Filtered out {len(self.scores) - len(filtered_scores)} channels with p-value>{p_threshold:.2f}')
         self.scores = filtered_scores
 
     def calculate(self, channel, transformation, h_aux, h_trig):
