@@ -39,7 +39,7 @@ def myroll(x, shift):
     return np.concatenate((x[-shift:], x[:-shift]))
 
 
-class Hist(object):
+class Hist:
     """Histogram that allows for easy merging, so that calculating a histogram
     over long stretches can be done in pieces. To avoid floating point issues,
     calculations are done with integers as far as possible. Most calculations
