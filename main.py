@@ -95,7 +95,7 @@ class Excavator:
         table_cols = ['Channel', 'Transformation', 'KS Statistic', 'p-value']
         self.report.add_row_to_table(content=table_cols, tag='th', table_class='KS')
 
-        ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)
+        ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[0], reverse=True)
         self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
 
         for i, (k, v) in enumerate(ks_results[0:10]):
