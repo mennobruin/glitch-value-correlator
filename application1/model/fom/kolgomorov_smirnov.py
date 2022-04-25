@@ -9,6 +9,9 @@ import numpy as np
 from scipy.stats import ks_2samp
 
 from .base import BaseFOM
+from application1.config import config_manager
+
+LOG = config_manager.get_logger(__name__)
 
 
 class KolgomorovSmirnov(BaseFOM):
@@ -19,11 +22,14 @@ class KolgomorovSmirnov(BaseFOM):
         super(KolgomorovSmirnov, self).__init__()
         self.scores = {}
 
-    def _calculate(self, channel, transformation, h_aux, h_trig):
-        try:
-            self.scores[channel, transformation] = np.amax(np.abs(h_aux.cdf - h_trig.cdf))
-        except AssertionError:
-            self.scores[channel, transformation] = 0
+    def filter_scores(self):
+        n = 0
+        for k, v in self.scores.items():
+            statistic, p_value = v
+            if p_value == 0:
+                self.scores.pop(k)
+                n += 1
+        LOG.debug(f'Filtered out {n=} channels with p-value=0.0')
 
     def calculate(self, channel, transformation, h_aux, h_trig):
         try:
