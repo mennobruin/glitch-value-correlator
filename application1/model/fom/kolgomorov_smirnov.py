@@ -19,13 +19,13 @@ class KolgomorovSmirnov(BaseFOM):
         super(KolgomorovSmirnov, self).__init__()
         self.scores = {}
 
-    def calculate(self, channel, transformation, h_aux, h_trig):
+    def _calculate(self, channel, transformation, h_aux, h_trig):
         try:
             self.scores[channel, transformation] = np.amax(np.abs(h_aux.cdf - h_trig.cdf))
         except AssertionError:
             self.scores[channel, transformation] = 0
 
-    def _calculate(self, channel, transformation, h_aux, h_trig):
+    def calculate(self, channel, transformation, h_aux, h_trig):
         self.scores[channel, transformation] = ks_2samp(h_trig, h_aux)
 
     def get_critical_value(self, n1, n2, confidence=0.05):

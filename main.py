@@ -69,14 +69,14 @@ class Excavator:
 
         test_file = 'test.pickle'
         if load_existing and os.path.exists(test_file):
-            with open(test_file, 'rb') as f:
-                data = pickle.load(f)
+            with open(test_file, 'rb') as pkf:
+                data = pickle.load(pkf)
                 self.h_trig_cum = data['trig']
                 self.h_aux_cum = data['aux']
         else:
             self.construct_histograms(segments=self.h5_reader.segments, triggers=triggers)
-            with open(test_file, 'wb') as f:
-                pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum}, f)
+            with open(test_file, 'wb') as pkf:
+                pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum}, pkf)
 
         fom_ks = KolgomorovSmirnov()
         for channel in self.available_channels:
@@ -87,7 +87,8 @@ class Excavator:
 
                 fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
 
-        self.report.add_row_to_table(content=['Channel', 'Transformation', 'KS Statistic'], tag='th', table_class='KS')
+        table_cols = ['Channel', 'Transformation', 'KS Statistic', 'p-value']
+        self.report.add_row_to_table(content=table_cols, tag='th', table_class='KS')
 
         ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1], reverse=True)
         self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
@@ -108,7 +109,7 @@ class Excavator:
                                        fig=fig,
                                        save=True,
                                        score=i)
-            self.report.add_row_to_table(content=[channel, transformation, round(v, 3)], table_class='KS')
+            self.report.add_row_to_table(content=[channel, transformation, round(v[0], 3), round(v[1], 3)], table_class='KS')
             self.report.add_image(img=fname, div_class='images')
 
     def generate_report(self):
@@ -204,7 +205,7 @@ class Excavator:
 if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
     excavator = Excavator()
-    excavator.run()
+    excavator.run(load_existing=True)
     excavator.generate_report()
     # excavator.decimate_data()
     LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")
