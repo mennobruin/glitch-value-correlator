@@ -11,26 +11,32 @@ source = '/virgoData/ffl/raw_O3b_arch'
 ds_path = RESOURCE_DIR + 'ds_data/'
 data_path = ds_path + 'data/'
 
+channels = ['V1:ENV_WEB_UPS_VOLT_S',
+            'V1:ENV_CEB_UPS_VOLT_S',
+            'V1:ENV_WEB_UPS_VOLT_R',
+            'V1:ENV_NEB_IPS_VOLT_S']
+
 files = os.listdir(data_path)
 f = 'excavator_f50_gs1262649700_ge1262649800_mean.h5'  # files[3]
 with h5py.File(data_path + f, 'r') as hf:
     frames = list(hf.keys())
-    channel = frames[frames.index("V1:EDB_B1p_PC_AdcMaxVal")]
-    # channel = frames[300]
-    frame = hf.get(channel)
-    data = np.array(frame)
+    for c in channels:
+        fig, axes = plt.subplots(2, 1)
+        channel = frames[frames.index(c)]
+        # channel = frames[300]
+        frame = hf.get(channel)
+        data = np.array(frame)
 
-    print(channel)
-    print(tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric()))
-    f_sample, gs, ge, _ = tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric())
+        print(channel)
+        print(tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric()))
+        f_sample, gs, ge, _ = tuple(int(s) for s in re.split('(\d+)', f) if s.isnumeric())
 
-    with FrameFile(source) as ff:
-        unsampled_data = ff.getChannel(channel, gs, ge).data
-        plt.title(channel)
-        plt.plot(range(len(unsampled_data)), unsampled_data)
+        with FrameFile(source) as ff:
+            unsampled_data = ff.getChannel(channel, gs, ge).data
+            axes[0].set_title(channel)
+            axes[0].plot(range(len(unsampled_data)), unsampled_data)
+
+        axes[1].set_title(channel)
+        axes[1].plot(range(len(data)), data)
         plt.show()
-
-    plt.title(channel)
-    plt.plot(range(len(data)), data)
-    plt.show()
 
