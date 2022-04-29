@@ -98,6 +98,9 @@ class Resampler:
         return ds_data
 
     def _resample_mean(self, data):
+        global test
+        if test:
+            print(data)
         n_points = data.size
         ds_ratio = n_points / self.n_target
         if math.isclose(ds_ratio, 1):  # f_sample ~= f_target
