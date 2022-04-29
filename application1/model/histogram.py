@@ -66,7 +66,7 @@ class Hist:
 
         assert x.size < 2 ** 32  # counts are uint32, enough for 1 year at 50Hz
         assert x.ndim < 2
-        self.n_tot = x.size
+        self.ntot = x.size
 
         if not x.size:  # emtpy histo
             self.const_val = None
@@ -128,7 +128,7 @@ class Hist:
     # derived properties are always calculated
     @property
     def isempty(self):
-        return self.n_tot == 0
+        return self.ntot == 0
 
     @property
     def isconst(self):
@@ -136,7 +136,7 @@ class Hist:
 
     @property
     def isexpanded(self):
-        return self.n_tot > 0 and self.const_val is None
+        return self.ntot > 0 and self.const_val is None
 
     @property
     def span(self):
@@ -160,16 +160,16 @@ class Hist:
         last point should be 1 by definition and that a first
         implicit point equal to zero is missing"""
         assert self.isexpanded
-        return self.counts.cumsum() / self.n_tot
+        return self.counts.cumsum() / self.ntot
 
     def __repr__(self):
         if self.isempty:
             return 'empty histogram'
         if self.isconst:
             return 'histogram of %i points with constant value %g' % (
-                self.n_tot, self.const_val)
+                self.ntot, self.const_val)
         return 'histogram of %i points, span = %g, offset = %g' % (
-            self.n_tot, self.span, self.offset)
+            self.ntot, self.span, self.offset)
 
     def enlarge(self):
         """increase span by 2 and merge bins"""
@@ -227,7 +227,7 @@ class Hist:
         self.i_max = self.i_min
         self.i_offset = self.i_min - self.n_bin // 2  # center window
         self.counts = np.zeros(self.n_bin, dtype=np.uint32)
-        self.counts[self.n_bin // 2] = self.n_tot
+        self.counts[self.n_bin // 2] = self.ntot
         self.const_val = None
         self.check()
 
@@ -245,7 +245,7 @@ class Hist:
             assert self.counts[istop] > 0
             assert (self.counts[:istart] == 0).all()
             assert (self.counts[istop + 1:] == 0).all()
-            assert self.n_tot == self.counts.sum()
+            assert self.ntot == self.counts.sum()
         else:  # constant histogram
             assert self.isconst
 
@@ -253,7 +253,7 @@ class Hist:
         """only for debugging purposes, this might alter both self and other"""
         if self.isempty and other.isempty:
             return True
-        if self.n_tot != other.n_tot:
+        if self.ntot != other.ntot:
             return False
         if self.isconst and other.isconst:
             return self.const_val == other.const_val
@@ -281,7 +281,7 @@ class Hist:
             self.i_max = max(self.i_max, other.i_max)
         else:
             assert self.const_val == other.const_val
-        self.n_tot += other.n_tot
+        self.ntot += other.ntot
         self.check()
         return self
 
