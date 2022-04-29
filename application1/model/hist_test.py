@@ -38,7 +38,7 @@ def test():
     hist1 += hist2
 
     h = hist1
-    plt.bar(h.xgrid, h.counts, width=h.span / h.nbin)
+    plt.bar(h.xgrid, h.counts, width=h.span / h.n_bin)
     plt.xlim([h.offset, h.offset + h.span])
     plt.show()
 

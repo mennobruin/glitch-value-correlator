@@ -6,8 +6,7 @@ references:
 
 import numpy as np
 
-from math import isclose
-from scipy.stats import ks_2samp
+from scipy.stats.distributions import kstwo
 
 from .base import BaseFOM
 from application1.config import config_manager
@@ -30,10 +29,23 @@ class KolgomorovSmirnov(BaseFOM):
 
     def calculate(self, channel, transformation, h_aux, h_trig):
         try:
-            ks_result = ks_2samp(h_trig.counts, h_aux.counts)
-            self.scores[channel, transformation] = ks_result.statistic, ks_result.pvalue
+            d_n = self._get_statistic(h_aux, h_trig)
+            p = self._get_p_value(d_n, h_aux.n_tot, h_trig.n_tot)
+            self.scores[channel, transformation] = d_n, p
         except AttributeError:
             self.scores[channel, transformation] = 0, 0
+
+    @staticmethod
+    def _get_statistic(h_aux, h_trig):
+        return np.amax(np.abs(h_aux.cdf - h_trig.cdf))
+
+    @staticmethod
+    def _get_p_value(d_n, n1, n2):
+        if n1 > n2:
+            n = n1 * n2 / (n1 + n2)
+        else:
+            n = n2 * n1 / (n1 + n2)
+        return kstwo.sf(d_n, round(n), cdf=False)
 
     def get_critical_value(self, n1, n2, confidence=0.05):
         return self.CRITICAL_COEFFICIENTS[confidence] * np.sqrt((n1 + n2) / n1 / n2)
