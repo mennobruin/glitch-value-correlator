@@ -15,6 +15,8 @@ from application1.utils.tools import almost_int
 
 from virgotools.frame_lib import FrameFile, FrVect2array
 
+from IPython.core.debugger import set_trace
+
 LOG = config_manager.get_logger(__name__)
 
 
@@ -66,6 +68,8 @@ class Resampler:
                 f_sample = adc.contents.sampleRate
                 if f_sample >= 50:
                     channel = str(adc.contents.name)
+                    if channel == "V1:SUSP_SBE_LC_elapsed_time":
+                        set_trace()
                     ds_adc = self.downsample_adc(adc, f_sample)
                     if t == gps_start:
                         ds_data = np.zeros(self.n_target * self.FRAMES_IN_FRAME_FILE)
