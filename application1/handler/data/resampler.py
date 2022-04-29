@@ -17,9 +17,6 @@ from virgotools.frame_lib import FrameFile, FrVect2array
 
 LOG = config_manager.get_logger(__name__)
 
-global test
-test = False
-
 
 class Resampler:
 
@@ -64,17 +61,18 @@ class Resampler:
                 self._store_data(h5_file=h5f, t=t, gps_start=gps_start)
 
     def _store_data(self, h5_file, t, gps_start):
-        global test
+        """
+        with FrameFile(self.source).get_frame(t) as ff:
+            for adc in ff.iter_adc():
+                adc.contents.data <--- off by a factor 10^7?
+        getChannel(channel, ...).data <--- correct?
+
+        """
         with FrameFile(self.source).get_frame(t) as ff:
             for adc in ff.iter_adc():
                 f_sample = adc.contents.sampleRate
                 if f_sample >= 50:
                     channel = str(adc.contents.name)
-                    if channel == "V1:SUSP_SBE_LC_elapsed_time":
-                        test = True
-                        with FrameFile(self.source) as ff:
-                            unsampled_data = ff.getChannel(channel, t, t+self.FRAME_DURATION).data
-                            print(unsampled_data)
                     ds_adc = self.downsample_adc(adc, f_sample)
                     if t == gps_start:
                         ds_data = np.zeros(self.n_target * self.FRAMES_IN_FRAME_FILE)
@@ -145,14 +143,6 @@ class Resampler:
 
     @staticmethod
     def _n_sample_average(x: np.array, ratio: int):
-        global test
-        if test:
-            print(ratio)
-            print(x)
-            print(x.reshape(-1, ratio))
-            print(np.nanmean(x.reshape(-1, ratio), axis=1))
-            exit_on_error()
-
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
             return np.nanmean(x.reshape(-1, ratio), axis=1)
