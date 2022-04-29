@@ -17,7 +17,7 @@ from virgotools.frame_lib import FrameFile, FrVect2array
 
 LOG = config_manager.get_logger(__name__)
 
-
+global test
 test = False
 
 
@@ -64,6 +64,7 @@ class Resampler:
                 self._store_data(h5_file=h5f, t=t, gps_start=gps_start)
 
     def _store_data(self, h5_file, t, gps_start):
+        global test
         with FrameFile(self.source).get_frame(t) as ff:
             for adc in ff.iter_adc():
                 f_sample = adc.contents.sampleRate
@@ -138,6 +139,7 @@ class Resampler:
 
     @staticmethod
     def _n_sample_average(x: np.array, ratio: int):
+        global test
         if test:
             print(ratio)
             print(x)
