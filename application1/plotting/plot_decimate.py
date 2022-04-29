@@ -17,11 +17,9 @@ files = os.listdir(data_path)
 f = 'excavator_f50_gs1262649700_ge1262649800_mean.h5'  # files[3]
 with h5py.File(data_path + f, 'r') as hf:
     frames = list(hf.keys())
-    # for c in channels:
-    for i in range(100, 110):
+    for c in channels:
         fig, axes = plt.subplots(2, 1)
-        # channel = frames[frames.index(c)]
-        channel = frames[i]
+        channel = frames[frames.index(c)]
         frame = hf.get(channel)
         data = np.array(frame)
 
