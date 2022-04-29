@@ -6,8 +6,8 @@ from application1.config import config_manager
 LOG = config_manager.get_logger(__name__)
 
 
-def plot_histogram(data, save=False):
-    pass
+# def plot_histogram(data, save=False):
+#     pass
 
 
 def plot_histogram(channel, transformation, histogram, data_type, save=False, score=None):
@@ -18,7 +18,7 @@ def plot_histogram(channel, transformation, histogram, data_type, save=False, sc
     fig = plt.figure(figsize=(10, 8), dpi=100)
 
     plt.title(f_name)
-    plt.bar(histogram.xgrid, histogram.counts, width=histogram.span / histogram.nbin)
+    plt.bar(histogram.xgrid, histogram.counts, width=histogram.span / histogram.n_bin)
     plt.xlim([histogram.offset, histogram.offset + histogram.span])
 
     if save:

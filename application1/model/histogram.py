@@ -62,11 +62,11 @@ class Hist:
         """
 
         self.l2_nbin = l2_nbin
-        self.nbin = 2 ** l2_nbin
+        self.n_bin = 2 ** l2_nbin
 
         assert x.size < 2 ** 32  # counts are uint32, enough for 1 year at 50Hz
         assert x.ndim < 2
-        self.ntot = x.size
+        self.n_tot = x.size
 
         if not x.size:  # emtpy histo
             self.const_val = None
@@ -87,7 +87,7 @@ class Hist:
         self.const_val = None
 
         # tiny bit extra, for x_min-x_max = 2**n, you need nbin+1
-        margin = (self.nbin + 2) / self.nbin
+        margin = (self.n_bin + 2) / self.n_bin
         self.l2_span = int(np.ceil(np.log2((x_max - x_min) * margin)))
 
         if spanlike:
@@ -101,23 +101,23 @@ class Hist:
         self.i_max = myfloor(x_max, self.l2_nbin - self.l2_span)
         if max(self.i_max, -self.i_min) > flintmax:
             raise ValueError('Data are badly scaled')
-        assert self.i_max - self.i_min < self.nbin
+        assert self.i_max - self.i_min < self.n_bin
 
         # get bin indices for data on infinite scale
         ind = myfloor(x, self.l2_nbin - self.l2_span)
 
         if (spanlike and self.l2_span == spanlike.l2_span and
                 spanlike.i_offset <= self.i_min and
-                self.i_max < spanlike.i_offset + self.nbin):
+                self.i_max < spanlike.i_offset + self.n_bin):
             # use offset of spanlike to avoid shifting
-            assert self.nbin == spanlike.nbin
+            assert self.n_bin == spanlike.nbin
             self.i_offset = spanlike.i_offset
         else:  # center histogram around data
-            self.i_offset = (self.i_min + self.i_max + 1 - self.nbin) // 2
+            self.i_offset = (self.i_min + self.i_max + 1 - self.n_bin) // 2
 
         # shift bin indices to range 0 .. nbin and make histogram
         # note: old numpy version does not support minlenght
-        self.counts = np.bincount(ind-self.i_offset, minlength=self.nbin).astype(np.uint32)
+        self.counts = np.bincount(ind - self.i_offset, minlength=self.n_bin).astype(np.uint32)
 
         # self.counts = np.zeros(self.nbin, dtype=np.uint32)
         # cnts = np.bincount(ind - self.i_offset)  # fails if any(ind < i_offset)
@@ -128,7 +128,7 @@ class Hist:
     # derived properties are always calculated
     @property
     def isempty(self):
-        return self.ntot == 0
+        return self.n_tot == 0
 
     @property
     def isconst(self):
@@ -136,7 +136,7 @@ class Hist:
 
     @property
     def isexpanded(self):
-        return self.ntot > 0 and self.const_val is None
+        return self.n_tot > 0 and self.const_val is None
 
     @property
     def span(self):
@@ -149,7 +149,7 @@ class Hist:
     @property
     def xgrid(self):
         """returns grid for plotting"""
-        xg = np.arange(self.nbin, dtype=float)
+        xg = np.arange(self.n_bin, dtype=float)
         xg *= 2.0 ** (self.l2_span - self.l2_nbin)
         xg += self.offset
         return xg
@@ -160,29 +160,29 @@ class Hist:
         last point should be 1 by definition and that a first
         implicit point equal to zero is missing"""
         assert self.isexpanded
-        return self.counts.cumsum() / self.ntot
+        return self.counts.cumsum() / self.n_tot
 
     def __repr__(self):
         if self.isempty:
             return 'empty histogram'
         if self.isconst:
             return 'histogram of %i points with constant value %g' % (
-                self.ntot, self.const_val)
+                self.n_tot, self.const_val)
         return 'histogram of %i points, span = %g, offset = %g' % (
-            self.ntot, self.span, self.offset)
+            self.n_tot, self.span, self.offset)
 
     def enlarge(self):
         """increase span by 2 and merge bins"""
         assert self.isexpanded
 
-        newcounts = np.zeros(self.nbin, dtype=np.uint32)
+        newcounts = np.zeros(self.n_bin, dtype=np.uint32)
         if self.i_offset % 2:  # odd
             newcounts[0] = self.counts[0]
-            newcounts[1:self.nbin // 2] = (self.counts[1:-1:2] +
+            newcounts[1:self.n_bin // 2] = (self.counts[1:-1:2] +
                                            self.counts[2:-1:2])
-            newcounts[self.nbin // 2] = self.counts[-1]
+            newcounts[self.n_bin // 2] = self.counts[-1]
         else:  # even
-            newcounts[:self.nbin // 2] = self.counts[::2] + self.counts[1::2]
+            newcounts[:self.n_bin // 2] = self.counts[::2] + self.counts[1::2]
         self.counts = newcounts
 
         """
@@ -225,9 +225,9 @@ class Hist:
         self.l2_span = l2_span
         self.i_min = myfloor(self.const_val, self.l2_nbin - self.l2_span)
         self.i_max = self.i_min
-        self.i_offset = self.i_min - self.nbin // 2  # center window
-        self.counts = np.zeros(self.nbin, dtype=np.uint32)
-        self.counts[self.nbin // 2] = self.ntot
+        self.i_offset = self.i_min - self.n_bin // 2  # center window
+        self.counts = np.zeros(self.n_bin, dtype=np.uint32)
+        self.counts[self.n_bin // 2] = self.n_tot
         self.const_val = None
         self.check()
 
@@ -239,13 +239,13 @@ class Hist:
         elif self.isexpanded:  # normal histogram
             istart = self.i_min - self.i_offset
             istop = self.i_max - self.i_offset
-            assert 0 <= istart < self.nbin
-            assert 0 <= istop < self.nbin
+            assert 0 <= istart < self.n_bin
+            assert 0 <= istop < self.n_bin
             assert self.counts[istart] > 0
             assert self.counts[istop] > 0
             assert (self.counts[:istart] == 0).all()
             assert (self.counts[istop + 1:] == 0).all()
-            assert self.ntot == self.counts.sum()
+            assert self.n_tot == self.counts.sum()
         else:  # constant histogram
             assert self.isconst
 
@@ -253,7 +253,7 @@ class Hist:
         """only for debugging purposes, this might alter both self and other"""
         if self.isempty and other.isempty:
             return True
-        if self.ntot != other.ntot:
+        if self.n_tot != other.n_tot:
             return False
         if self.isconst and other.isconst:
             return self.const_val == other.const_val
@@ -281,7 +281,7 @@ class Hist:
             self.i_max = max(self.i_max, other.i_max)
         else:
             assert self.const_val == other.const_val
-        self.ntot += other.ntot
+        self.n_tot += other.n_tot
         self.check()
         return self
 
@@ -293,7 +293,7 @@ class Hist:
         histos with the same value.
         """
         assert not (self.isempty or other.isempty), 'cannot align empty histos'
-        assert self.nbin == other.nbin
+        assert self.n_bin == other.n_bin
 
         # handle constant histograms
         if self.isconst:
@@ -319,19 +319,19 @@ class Hist:
 
         # if windows cannot fit in one aligned histogram, enlarge both
         while (max(self.i_max, other.i_max) -
-               min(self.i_min, other.i_min)) >= self.nbin:
+               min(self.i_min, other.i_min)) >= self.n_bin:
             self.enlarge()
             other.enlarge()
         assert self.l2_span == other.l2_span
 
         # shift to align
-        if self.i_offset <= other.i_min and other.i_max < self.i_offset + self.nbin:
+        if self.i_offset <= other.i_min and other.i_max < self.i_offset + self.n_bin:
             # only need to shift other
             other.shift(self.i_offset - other.i_offset)
         else:  # need to shift both
             i_offset_new = (min(self.i_min, other.i_min) +
-                           max(self.i_max, other.i_max) +
-                           1 - self.nbin) // 2
+                            max(self.i_max, other.i_max) +
+                            1 - self.n_bin) // 2
             self.shift(i_offset_new - self.i_offset)  # checked at end
             other.shift(i_offset_new - other.i_offset)
         assert self.i_offset == other.i_offset
@@ -339,7 +339,7 @@ class Hist:
 
 def plot_hist(h, **kwargs):
     import matplotlib.pyplot as plt
-    plt.bar(h.xgrid, h.counts, width=h.span / h.nbin, **kwargs)
+    plt.bar(h.xgrid, h.counts, width=h.span / h.n_bin, **kwargs)
     plt.xlim([h.offset, h.offset + h.span])
     plt.show()
 
