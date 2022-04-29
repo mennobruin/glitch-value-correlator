@@ -30,7 +30,7 @@ class KolgomorovSmirnov(BaseFOM):
     def calculate(self, channel, transformation, h_aux, h_trig):
         try:
             d_n = self._get_statistic(h_aux, h_trig)
-            p = self._get_p_value(d_n, h_aux.n_tot, h_trig.n_tot)
+            p = self._get_p_value(d_n, h_aux.ntot, h_trig.ntot)
             self.scores[channel, transformation] = d_n, p
         except AttributeError:
             self.scores[channel, transformation] = 0, 0
