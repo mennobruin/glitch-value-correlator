@@ -45,7 +45,7 @@ class KolgomorovSmirnov(BaseFOM):
             n = n1 * n2 / (n1 + n2)
         else:
             n = n2 * n1 / (n1 + n2)
-        return kstwo.sf(d_n, round(n), cdf=False)
+        return np.clip(kstwo.sf(d_n, round(n)), 0, 1)
 
     def get_critical_value(self, n1, n2, confidence=0.05):
         return self.CRITICAL_COEFFICIENTS[confidence] * np.sqrt((n1 + n2) / n1 / n2)
