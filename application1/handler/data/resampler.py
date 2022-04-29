@@ -74,7 +74,6 @@ class Resampler:
                         test = True
                         with FrameFile(self.source) as ff:
                             unsampled_data = ff.getChannel(channel, t, t+self.FRAME_DURATION).data
-                            print(np.allclose(unsampled_data, adc.contents.data))
                             print(unsampled_data)
                     ds_adc = self.downsample_adc(adc, f_sample)
                     if t == gps_start:
