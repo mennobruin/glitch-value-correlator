@@ -11,13 +11,14 @@ from tqdm import tqdm
 from resources.constants import RESOURCE_DIR
 from application1.model.ffl_cache import FFLCache
 from application1.config import config_manager
-from application1.utils.tools import almost_int
+from application1.utils.tools import almost_int, exit_on_error
 
 from virgotools.frame_lib import FrameFile, FrVect2array
 
-from IPython.core.debugger import set_trace
-
 LOG = config_manager.get_logger(__name__)
+
+
+test = False
 
 
 class Resampler:
@@ -69,7 +70,7 @@ class Resampler:
                 if f_sample >= 50:
                     channel = str(adc.contents.name)
                     if channel == "V1:SUSP_SBE_LC_elapsed_time":
-                        set_trace()
+                        test = True
                     ds_adc = self.downsample_adc(adc, f_sample)
                     if t == gps_start:
                         ds_data = np.zeros(self.n_target * self.FRAMES_IN_FRAME_FILE)
@@ -137,6 +138,13 @@ class Resampler:
 
     @staticmethod
     def _n_sample_average(x: np.array, ratio: int):
+        if test:
+            print(ratio)
+            print(x)
+            print(x.reshape(-1, ratio))
+            print(np.nanmean(x.reshape(-1, ratio), axis=1))
+            exit_on_error()
+
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
             return np.nanmean(x.reshape(-1, ratio), axis=1)
