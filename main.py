@@ -91,17 +91,17 @@ class Excavator:
 
                 fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
 
-        table_cols = ['Channel', 'Transformation', 'KS Statistic', 'p-value']
+        table_cols = ['Channel', 'Transformation', r'$D_n$', r'critical $D_n$', 'p-value']
         self.report.add_row_to_table(content=table_cols, tag='th', table_class='KS')
 
-        fom_ks.filter_scores()
-        ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1][0], reverse=True)
+        # fom_ks.filter_scores()
+        ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1].d_n, reverse=True)
         self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
 
         for i, (k, v) in enumerate(ks_results[0:10]):
             print(k, v)
             channel, transformation = k
-            statistic, pvalue = v
+            statistic, p_value, c = v
             try:
                 fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
                                          channel=channel,
@@ -119,7 +119,7 @@ class Excavator:
                 self.report.add_image(img=fname, div_class='images')
             except AttributeError:
                 pass
-            self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), round(pvalue, 3)], table_class='KS')
+            self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), c, f'{p_value:.2E}'], table_class='KS')
 
     def generate_report(self):
         LOG.info("Generating HTML Report...")
