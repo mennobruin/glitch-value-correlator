@@ -95,6 +95,8 @@ class Excavator:
         self.report.add_row_to_table(content=table_cols, tag='th', table_class='KS')
 
         # fom_ks.filter_scores()
+        fom_ks.filter_nans()
+        print(list(fom_ks.scores.items())[0:3])
         ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1].d_n, reverse=True)
         self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
 
