@@ -11,7 +11,8 @@ source = '/virgoData/ffl/raw_O3b_arch'
 ds_path = RESOURCE_DIR + 'ds_data/'
 data_path = ds_path + 'data/'
 
-channels = ['V1:SUSP_SBE_LC_elapsed_time',]
+channels = ['V1:SUSP_SBE_LC_elapsed_time',
+            'V1:ENV_CEB_UPS_VOLT_S']
 
 files = os.listdir(data_path)
 f = 'excavator_f50_gs1262649700_ge1262649800_mean.h5'  # files[3]
