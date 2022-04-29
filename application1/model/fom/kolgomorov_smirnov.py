@@ -26,9 +26,14 @@ class KolgomorovSmirnov(BaseFOM):
         super(KolgomorovSmirnov, self).__init__()
         self.scores = {}
 
-    def filter_scores(self, p_threshold=0.05):
+    def filter_threshold(self, p_threshold=0.05):
         filtered_scores = {k: v for k, v in self.scores.items() if v[1] < p_threshold}
         LOG.debug(f'Filtered out {len(self.scores) - len(filtered_scores)} channels with p-value>{p_threshold:.2f}')
+        self.scores = filtered_scores
+
+    def filter_nans(self):
+        filtered_scores = {k: v for k, v in self.scores.items() if np.nan in v}
+        LOG.debug(f'Filtered out {len(self.scores) - len(filtered_scores)} channels containing nans')
         self.scores = filtered_scores
 
     def calculate(self, channel, transformation, h_aux, h_trig, confidence=0.05):
