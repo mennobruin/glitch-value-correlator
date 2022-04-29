@@ -72,6 +72,10 @@ class Resampler:
                     channel = str(adc.contents.name)
                     if channel == "V1:SUSP_SBE_LC_elapsed_time":
                         test = True
+                        with FrameFile(self.source) as ff:
+                            unsampled_data = ff.getChannel(channel, t, t+self.FRAME_DURATION).data
+                            print(np.allclose(unsampled_data, adc.contents.data))
+                            print(unsampled_data)
                     ds_adc = self.downsample_adc(adc, f_sample)
                     if t == gps_start:
                         ds_data = np.zeros(self.n_target * self.FRAMES_IN_FRAME_FILE)
