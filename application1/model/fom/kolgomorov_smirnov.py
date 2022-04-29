@@ -7,11 +7,15 @@ references:
 import numpy as np
 
 from scipy.stats.distributions import kstwo
+from collections import namedtuple
 
 from .base import BaseFOM
 from application1.config import config_manager
 
 LOG = config_manager.get_logger(__name__)
+
+
+KSResult = namedtuple('KSResult', ['d_n', 'p', 'critical_d'])
 
 
 class KolgomorovSmirnov(BaseFOM):
@@ -27,13 +31,14 @@ class KolgomorovSmirnov(BaseFOM):
         LOG.debug(f'Filtered out {len(self.scores) - len(filtered_scores)} channels with p-value>{p_threshold:.2f}')
         self.scores = filtered_scores
 
-    def calculate(self, channel, transformation, h_aux, h_trig):
+    def calculate(self, channel, transformation, h_aux, h_trig, confidence=0.05):
         if h_aux.const_val is None:
             d_n = self._get_statistic(h_aux, h_trig)
             p = self._get_p_value(d_n, h_aux.ntot, h_trig.ntot)
-            self.scores[channel, transformation] = d_n, p
+            c = self._get_critical_value(h_aux.ntot, h_trig.ntot, confidence)
+            self.scores[channel, transformation] = KSResult(d_n, p, c)
         else:
-            self.scores[channel, transformation] = 0, 0
+            self.scores[channel, transformation] = np.nan, np.nan
 
     @staticmethod
     def _get_statistic(h_aux, h_trig):
@@ -47,5 +52,5 @@ class KolgomorovSmirnov(BaseFOM):
             n = n2 * n1 / (n1 + n2)
         return np.clip(kstwo.sf(d_n, round(n)), 0, 1)
 
-    def get_critical_value(self, n1, n2, confidence=0.05):
+    def _get_critical_value(self, n1, n2, confidence):
         return self.CRITICAL_COEFFICIENTS[confidence] * np.sqrt((n1 + n2) / n1 / n2)
