@@ -77,7 +77,7 @@ class Resampler:
                         h5_file[channel][i:j] = ds_adc
 
     def downsample_adc(self, adc, f_sample):
-        data = FrVect2array(adc.contents.data)
+        data = FrVect2array(adc.contents.data).astype(np.float64, copy=False)
         slope = adc.contents.slope
         bias = adc.contents.bias
         if slope != 1:
