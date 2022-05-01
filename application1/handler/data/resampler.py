@@ -73,6 +73,9 @@ class Resampler:
                 f_sample = adc.contents.sampleRate
                 if f_sample >= 50:
                     channel = str(adc.contents.name)
+                    if channel == "V1:SUSP_SBE_LC_elapsed_time":
+                        print(adc.contents.slope)
+                        print(adc.contents.bias)
                     ds_adc = self.downsample_adc(adc, f_sample)
                     if t == gps_start:
                         ds_data = np.zeros(self.n_target * self.FRAMES_IN_FRAME_FILE)
