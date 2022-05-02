@@ -28,7 +28,7 @@ class DefaultPipeline:
         return sorted_triggers
 
     def get_segment(self, gps_start, gps_end) -> np.ndarray:
-        i_start, i_end = np.searchsorted(self.triggers, (gps_start, gps_end))
+        i_start, i_end = np.searchsorted(self.triggers.GPStime, (gps_start, gps_end))
         LOG.info(f'Found {i_end - i_start} triggers of type {self.trigger_type if self.trigger_type else "[all]"} '
                  f'from {gps_start} to {gps_end}.')
         return self.triggers[i_start:i_end]
