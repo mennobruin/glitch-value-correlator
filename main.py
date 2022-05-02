@@ -160,6 +160,7 @@ class Excavator:
     def construct_histograms(self, segments, triggers) -> ({str, Hist}):
         self.cum_aux_veto = [np.zeros(self.n_points, dtype=bool) for _ in segments]
         self.cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in segments]
+        self.cum_trig_dur_veto = []
 
         self.h_aux_cum = dict(((c, t), Hist(np.array([]))) for c in self.available_channels for t in self.transformation_names)
         self.h_trig_cum = dict(((c, t), Hist(np.array([]))) for c in self.available_channels for t in self.transformation_names)
@@ -184,7 +185,7 @@ class Excavator:
                 for (t0, t1) in trigger_times
             ]
             trigger_times = [t for t_list in trigger_times for t in t_list]
-            self.cum_trig_dur_veto = np.zeros(len(trigger_times), dtype=bool)
+            self.cum_trig_dur_veto.append(np.zeros(len(trigger_times), dtype=bool))
             self.i_trigger = np.floor(trigger_times).astype(np.int32)
             for channel in tqdm(self.available_channels, position=0, leave=True, desc=f'{segment[0]} -> {segment[1]}'):
                 self.update_channel_histogram(i_segment, segment, channel)
