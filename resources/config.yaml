@@ -6,7 +6,7 @@ project.start_time: 1262649800
 #project.end_time: 1262684200
 #project.end_time: 1262700800
 #project.end_time: 1262655700
-project.end_time: 1262649900
+project.end_time: 126265100
 project.target_frequency: 50
 project.blacklist_patterns: './resources/blacklist_patterns.txt'
 
