@@ -183,7 +183,7 @@ class Excavator:
                 list(range(int(np.floor(t0 * self.f_target)), int(np.ceil(t1 * self.f_target))))
                 for (t0, t1) in trigger_times
             ]
-            self.cum_trig_dur_veto = [np.zeros(t_list, dtype=bool) for t_list in trigger_times]
+            self.cum_trig_dur_veto = [np.zeros(len(t_list), dtype=bool) for t_list in trigger_times]
             trigger_times = [t for t_list in trigger_times for t in t_list]
             self.i_trigger = np.floor(trigger_times).astype(np.int32)
             for channel in tqdm(self.available_channels, position=0, leave=True, desc=f'{segment[0]} -> {segment[1]}'):
