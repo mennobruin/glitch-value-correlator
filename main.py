@@ -65,7 +65,7 @@ class Excavator:
         # trigger_pipeline = Omicron(channel=available_channels[0])
         trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final', trigger_type="Scattered_Light")
         triggers = trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
-        if triggers.size == 0:
+        if triggers.shape[0] == 0:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
             
@@ -175,7 +175,10 @@ class Excavator:
                 LOG.info(f'No triggers found from {gps_start} to {gps_end}')
                 continue
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
-            self.i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
+            half_duration = seg_triggers.duration / 2
+            trigger_times = (seg_triggers.GPSTime - half_duration, seg_triggers.GPSTime + half_duration)
+            trigger_times = np.ravel([list(range(t0, t1)) for (t0, t1) in trigger_times])
+            self.i_trigger = np.floor((trigger_times - gps_start) * self.f_target).astype(np.int32)
             for channel in tqdm(self.available_channels, position=0, leave=True, desc=f'{segment[0]} -> {segment[1]}'):
                 self.update_channel_histogram(i_segment, segment, channel)
             self.h5_reader.reset_cache()
