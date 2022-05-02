@@ -50,6 +50,7 @@ class Excavator:
         self.available_channels = None
         self.cum_aux_veto = None
         self.cum_trig_veto = None
+        self.cum_trig_dur_veto = None
         self.transformation_names = None
         self.transformation_states = None
         self.transformation_combinations = None
@@ -182,9 +183,9 @@ class Excavator:
                 list(range(int(np.floor(t0 * self.f_target)), int(np.ceil(t1 * self.f_target))))
                 for (t0, t1) in trigger_times
             ]
+            self.cum_trig_dur_veto = [np.zeros(t_list, dtype=bool) for t_list in trigger_times]
             trigger_times = [t for t_list in trigger_times for t in t_list]
             self.i_trigger = np.floor(trigger_times).astype(np.int32)
-            print(self.i_trigger)
             for channel in tqdm(self.available_channels, position=0, leave=True, desc=f'{segment[0]} -> {segment[1]}'):
                 self.update_channel_histogram(i_segment, segment, channel)
             self.h5_reader.reset_cache()
@@ -202,8 +203,11 @@ class Excavator:
             aux_hist = self.get_histogram(data=x_transform,
                                           cumulative_veto=self.cum_aux_veto[i],
                                           spanlike=self.h_aux_cum[channel, transformation_name])
+            # trig_hist = self.get_histogram(data=x_transform[self.i_trigger],
+            #                                cumulative_veto=self.cum_trig_veto[i],
+            #                                spanlike=aux_hist)
             trig_hist = self.get_histogram(data=x_transform[self.i_trigger],
-                                           cumulative_veto=self.cum_trig_veto[i],
+                                           cumulative_veto=self.cum_trig_dur_veto[i],
                                            spanlike=aux_hist)
             try:
                 self.h_aux_cum[channel, transformation_name] += aux_hist
