@@ -180,7 +180,7 @@ class Excavator:
             trigger_times = zip(trigger_offset - half_duration, trigger_offset + half_duration)
             print(list(trigger_times))
             trigger_times = np.ravel([
-                range(np.floor(t0 * self.f_target), np.ceil(t1 * self.f_target))
+                list(range(np.floor(t0 * self.f_target), np.ceil(t1 * self.f_target)))
                 for (t0, t1) in trigger_times
             ])
             print(list(trigger_times))
