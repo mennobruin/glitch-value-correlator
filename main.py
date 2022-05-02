@@ -177,8 +177,8 @@ class Excavator:
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
             half_duration = seg_triggers.duration / 2
             trigger_times = zip(seg_triggers.GPStime - half_duration, seg_triggers.GPStime + half_duration)
-            print(trigger_times)
-            trigger_times = np.ravel([list(range(t0, t1)) for (t0, t1) in trigger_times])
+            print(list(trigger_times))
+            trigger_times = np.ravel([list(range(np.floor(t0), np.ceil(t1))) for (t0, t1) in trigger_times])
             self.i_trigger = np.floor((trigger_times - gps_start) * self.f_target).astype(np.int32)
             for channel in tqdm(self.available_channels, position=0, leave=True, desc=f'{segment[0]} -> {segment[1]}'):
                 self.update_channel_histogram(i_segment, segment, channel)
