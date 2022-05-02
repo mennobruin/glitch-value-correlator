@@ -179,6 +179,8 @@ class Excavator:
             trigger_offset = seg_triggers.GPStime - gps_start
             trigger_times = zip(trigger_offset - half_duration, trigger_offset + half_duration)
             print(list(trigger_times))
+            print([(t0, t1) for (t0, t1) in trigger_times])
+            print([(t0, t1) for (t0, t1) in list(trigger_times)])
             print([(np.floor(t0 * self.f_target), np.ceil(t1 * self.f_target)) for (t0, t1) in trigger_times])
             print([list(range(np.floor(t0 * self.f_target), np.ceil(t1 * self.f_target))) for (t0, t1) in trigger_times])
             trigger_times = np.ravel([
