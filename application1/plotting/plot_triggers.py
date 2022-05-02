@@ -9,7 +9,7 @@ from virgotools.frame_lib import FrameFile
 source = '/virgoData/ffl/raw_O3b_arch'
 file = RESOURCE_DIR + 'csv/GSpy_ALLIFO_O3b_0921_final.csv'
 reader = CSVReader()
-triggers = reader.load_csv(file, header=[0])
+triggers = reader.load_csv(file)
 
 # min_start = 1262228200
 # max_end = 1265825600

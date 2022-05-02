@@ -13,7 +13,7 @@ class DefaultPipeline:
     GPS_TIME = 'GPStime'
     LABEL = 'label'
     DURATION = 'duration'
-    COLUMNS = [GPS_TIME, LABEL, DURATION]
+    COLUMNS = [GPS_TIME, DURATION, LABEL]
 
     def __init__(self, trigger_file, trigger_type=None):
         self.reader = CSVReader()
