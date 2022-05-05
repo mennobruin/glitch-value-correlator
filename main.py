@@ -8,14 +8,15 @@ from application1.utils import count_triggers_in_segment, slice_triggers_in_segm
 from application1.model.histogram import Hist
 from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov
-from application1.model.transformation import Abs, do_transformations, GaussianDifferentiator, SavitzkyGolayDifferentiator, HighPass
+from application1.model.transformation import Abs, do_transformations, GaussianDifferentiator, \
+    SavitzkyGolayDifferentiator, HighPass
 from application1.handler.data.reader.frame_file import FrameFileReader
 from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.data.writer import DataWriter
 from application1.handler.data.resampler import Resampler
 from application1.handler.triggers import DefaultPipeline
 from application1.config import config_manager
-from application1.plotting.plot import plot_histogram_cdf
+from application1.plotting.plot import plot_histogram_cdf, plot_histogram
 from application1.plotting.report import HTMLReport
 from resources.constants import CONFIG_FILE
 
@@ -68,7 +69,7 @@ class Excavator:
         if triggers.size == 0:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
-            
+
         self.init_transformations()
 
         test_file = 'test.pickle'
@@ -102,23 +103,31 @@ class Excavator:
             channel, transformation = k
             statistic, p_value = v
             try:
-                fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
-                                         channel=channel,
-                                         transformation=transformation,
-                                         data_type='aux',
-                                         return_fig=True,
-                                         score=i)
-                fname = plot_histogram_cdf(histogram=self.h_trig_cum[channel, transformation],
-                                           channel=channel,
-                                           transformation=transformation,
-                                           data_type='trig',
-                                           fig=fig,
-                                           save=True,
-                                           score=i)
-                self.report.add_image(img=fname, div_class='images')
+                hist_fname = plot_histogram(histogram=self.h_trig_cum[channel, transformation],
+                                            channel=channel,
+                                            transformation=transformation,
+                                            data_type='trig',
+                                            rank=i)
+                cdf_fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
+                                             channel=channel,
+                                             transformation=transformation,
+                                             data_type='aux',
+                                             return_fig=True,
+                                             rank=i)
+                cdf_fname = plot_histogram_cdf(histogram=self.h_trig_cum[channel, transformation],
+                                               channel=channel,
+                                               transformation=transformation,
+                                               data_type='trig',
+                                               fig=cdf_fig,
+                                               save=True,
+                                               rank=i)
+                div = self.report.add_div(div_name=f'rank_{i}', parent_class='images')
+                self.report.add_image(img=cdf_fname, div=div)
+                self.report.add_image(img=hist_fname, div=div)
             except AttributeError:
                 pass
-            self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), f'{p_value:.2E}'], table_class='KS')
+            self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), f'{p_value:.2E}'],
+                                         table_class='KS')
 
     def generate_report(self):
         LOG.info("Generating HTML Report...")
@@ -158,10 +167,13 @@ class Excavator:
 
     def construct_histograms(self, segments, triggers) -> ({str, Hist}):
         self.cum_aux_veto = [np.zeros(self.n_points, dtype=bool) for _ in segments]
-        self.cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in segments]
+        self.cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in
+                              segments]
 
-        self.h_aux_cum = dict(((c, t), Hist(np.array([]))) for c in self.available_channels for t in self.transformation_names)
-        self.h_trig_cum = dict(((c, t), Hist(np.array([]))) for c in self.available_channels for t in self.transformation_names)
+        self.h_aux_cum = dict(
+            ((c, t), Hist(np.array([]))) for c in self.available_channels for t in self.transformation_names)
+        self.h_trig_cum = dict(
+            ((c, t), Hist(np.array([]))) for c in self.available_channels for t in self.transformation_names)
 
         LOG.info('Constructing histograms...')
         for i_segment, segment, gap in iter_segments(segments):
