@@ -72,7 +72,7 @@ class Excavator:
 
         self.init_transformations()
 
-        test_file = 'test.pickle'
+        test_file = f'test_{self.t_start}_{self.t_stop}.pickle'
         if load_existing and os.path.exists(test_file):
             with open(test_file, 'rb') as pkf:
                 data = pickle.load(pkf)
