@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import time
 import h5py
 import math
 import multiprocessing as mp
@@ -75,6 +76,7 @@ class Resampler:
                         i = int((t - gps_start) * self.f_target)
                         j = i + self.n_target
                         h5_file[channel][i:j] = ds_adc
+                    time.sleep(0.001)
 
     def downsample_adc(self, adc, f_sample):
         data = FrVect2array(adc.contents.data)
