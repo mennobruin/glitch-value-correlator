@@ -7,7 +7,7 @@ import numpy as np
 from application1.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments
 from application1.model.histogram import Hist
 from application1.model.ffl_cache import FFLCache
-from application1.model.fom import KolgomorovSmirnov
+from application1.model.fom import KolgomorovSmirnov, AndersonDarling
 from application1.model.transformation import Abs, do_transformations, GaussianDifferentiator, \
     SavitzkyGolayDifferentiator, HighPass
 from application1.handler.data.reader.frame_file import FrameFileReader
@@ -84,6 +84,7 @@ class Excavator:
                 pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum}, pkf)
 
         fom_ks = KolgomorovSmirnov()
+        fom_ad = AndersonDarling()
         for channel in self.available_channels:
             for transformation_name in self.transformation_names:
                 h_aux = self.h_aux_cum[channel, transformation_name]
@@ -91,20 +92,32 @@ class Excavator:
                 h_aux.align(h_trig)
 
                 fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
+                fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
 
-        table_cols = ['Channel', 'Transformation', r'$D_n$', 'p-value']
-        self.report.add_row_to_table(content=table_cols, tag='th', table_class='KS')
+        table_cols = ['Channel', 'Transformation', 'KS', 'p-value']
+        ks_table = 'KS_table'
+        self.report.add_tag(tag_type='table', tag_id=ks_table)
+        self.report.add_row_to_table(content=table_cols, tag='th', table_id=ks_table)
+
+        table_cols = ['Channel', 'Transformation', 'AD', 'p-value']
+        ad_table = 'AD_table'
+        self.report.add_tag(tag_type='table', tag_id=ad_table)
+        self.report.add_row_to_table(content=table_cols, tag='th', table_id=ad_table)
 
         ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1].d_n, reverse=True)
+        ad_results = sorted(fom_ad.scores.items(), key=lambda f: f[1].ad, reverse=True)
         self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
+        self.writer.write_csv(ad_results, 'ad_results.csv', file_path=self.writer.default_path + 'results/')
 
+        images_div = 'images'
+        self.report.add_tag(tag_type='div', tag_id=images_div)
         for i, (k, v) in enumerate(ks_results[0:10]):
             print(k, v)
             channel, transformation = k
             statistic, p_value = v
             try:
                 div_id = f'rank_{i}'
-                self.report.add_div(div_id=div_id, parent_class='images')
+                self.report.add_tag(tag_type='div', tag_id=div_id, parent_div=images_div)
                 cdf_fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
                                              channel=channel,
                                              transformation=transformation,

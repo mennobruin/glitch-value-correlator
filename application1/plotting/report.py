@@ -25,16 +25,16 @@ class HTMLReport:
         with open(self.TEMP_FILE, 'w+') as f:
             f.write(str(self.html.prettify()))
 
-    def add_div(self, div_id, parent_class=None):
-        if parent_class:
-            parent_div = self.html.find('div', class_=parent_class)
+    def add_tag(self, tag_type, tag_id, parent_div=None):
+        if parent_div:
+            parent = self.html.find('div', id=parent_div)
         else:
-            parent_div = self.html.find('body')
-        new_div = self.html.new_tag('div', id=div_id)
-        parent_div.append(new_div)
+            parent = self.html.find('body')
+        new_tag = self.html.new_tag(tag_type, id=tag_id)
+        parent.append(new_tag)
 
-    def add_row_to_table(self, content: list, tag='td', table_class=None):
-        table = self.html.find('table', class_=table_class)
+    def add_row_to_table(self, content: list, tag='td', table_id=None):
+        table = self.html.find('table', id=table_id)
 
         row = self.html.new_tag('tr')
         for val in content:
@@ -44,8 +44,8 @@ class HTMLReport:
 
         table.append(row)
 
-    def add_image(self, img, div_class=None, div_id=None):
-        div = self.html.find('div', class_=div_class, id=div_id)
+    def add_image(self, img, div_id=None):
+        div = self.html.find('div', id=div_id)
         new_img = self.html.new_tag('img', src=PLOT_DIR + img)
         new_img['width'] = 450
         new_img['height'] = 360
