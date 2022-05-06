@@ -9,24 +9,16 @@ LOG = config_manager.get_logger(__name__)
 def plot_histogram(channel, transformation, histogram, data_type, save=False, rank=None):
     transformation = transformation if transformation != '' else 'none'
     f_name = f'{rank}_{channel}_{transformation}+{data_type}'
-    print('test1')
     LOG.info(f'Plotting {f_name}...')
 
     fig = plt.figure(figsize=(10, 8), dpi=100)
 
-    print('test2')
-
     plt.title(f_name)
-    plt.bar(histogram.xgrid, histogram.counts, width=histogram.span / histogram.n_bin)
+    plt.bar(histogram.xgrid, histogram.counts, width=histogram.span / histogram.nbin)
     plt.xlim([histogram.offset, histogram.offset + histogram.span])
-    print('test3')
-
-    print(save)
-    LOG.info(save)
 
     if save:
         save_name = f'{rank}_{transformation}_{data_type}.png'
-        print(save_name)
         fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
         return save_name
     else:
