@@ -32,8 +32,6 @@ class HTMLReport:
             parent_div = self.html.find('body')
         new_div = self.html.new_tag('div', id=div_name)
         parent_div.append(new_div)
-        print(parent_div.prettify())
-        print(new_div.prettify())
         return new_div
 
     def add_row_to_table(self, content: list, tag='td', table_class=None):
@@ -50,7 +48,7 @@ class HTMLReport:
     def add_image(self, img, div=None, div_class=None, div_id=None):
         if not div:
             div = self.html.find('div', class_=div_class, id=div_id)
-        print(div.prettify())
+        print(div)
         new_img = self.html.new_tag('img', src=PLOT_DIR + img)
         new_img['width'] = 450
         new_img['height'] = 360
