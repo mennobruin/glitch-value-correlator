@@ -6,10 +6,6 @@ from application1.config import config_manager
 LOG = config_manager.get_logger(__name__)
 
 
-# def plot_histogram(data, save=False):
-#     pass
-
-
 def plot_histogram(channel, transformation, histogram, data_type, save=False, rank=None):
     transformation = transformation if transformation != '' else 'none'
     f_name = f'{rank}_{channel}_{transformation}+{data_type}'
