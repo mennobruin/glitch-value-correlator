@@ -27,7 +27,7 @@ class AndersonDarling(BaseFOM):
             combined = self._combine(h_aux, h_trig)
             combined_ecdf = combined * (1 - combined)
             ad = np.sum(np.divide(d_n, combined_ecdf, out=np.zeros_like(d_n), where=combined_ecdf!=0))
-            ad /= h_aux.ntot * h_trig.ntot
+            # ad /= h_aux.ntot * h_trig.ntot
             self.scores[channel, transformation] = ADResult(ad, ad < self.critical_value)
 
     @staticmethod
