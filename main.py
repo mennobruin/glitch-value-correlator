@@ -94,15 +94,15 @@ class Excavator:
                 fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
                 fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
 
-        table_cols = ['Channel', 'Transformation', 'KS', 'p-value']
+        ks_table_cols = ['Channel', 'Transformation', 'KS', 'p-value']
         ks_table = 'KS_table'
         self.report.add_tag(tag_type='table', tag_id=ks_table)
-        self.report.add_row_to_table(content=table_cols, tag='th', table_id=ks_table)
+        self.report.add_row_to_table(content=ks_table_cols, tag='th', table_id=ks_table)
 
-        table_cols = ['Channel', 'Transformation', 'AD', 'p-value']
+        ad_table_cols = ['Channel', 'Transformation', 'AD', f'below alpha={fom_ad.critical_value}']
         ad_table = 'AD_table'
         self.report.add_tag(tag_type='table', tag_id=ad_table)
-        self.report.add_row_to_table(content=table_cols, tag='th', table_id=ad_table)
+        self.report.add_row_to_table(content=ad_table_cols, tag='th', table_id=ad_table)
 
         ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1].d_n, reverse=True)
         ad_results = sorted(fom_ad.scores.items(), key=lambda f: f[1].ad, reverse=True)
@@ -112,7 +112,6 @@ class Excavator:
         images_div = 'images'
         self.report.add_tag(tag_type='div', tag_id=images_div)
         for i, (k, v) in enumerate(ks_results[0:10]):
-            print(k, v)
             channel, transformation = k
             statistic, p_value = v
             try:
@@ -134,8 +133,12 @@ class Excavator:
                 self.report.add_image(img=cdf_fname, div_id=div_id)
             except AttributeError as e:
                 LOG.debug(e)
-            self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), f'{p_value:.2E}'],
-                                         table_class='KS')
+            self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), f'{p_value:.2E}'], table_id=ks_table)
+
+        for i, (k, v) in enumerate(ad_results[0:10]):
+            channel, transformation = k
+            statistic, threshold = v
+            self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), str(threshold)], table_id=ad_table)
 
     def generate_report(self):
         LOG.info("Generating HTML Report...")
