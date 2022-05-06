@@ -45,9 +45,6 @@ class HTMLReport:
         table.append(row)
 
     def add_image(self, img, div_class=None, div_id=None):
-        print('test1')
-        print(self.html.find_all('div', class_='images', id='rank_5'))
-        print('test2')
         div = self.html.find('div', class_=div_class, id=div_id)
         new_img = self.html.new_tag('img', src=PLOT_DIR + img)
         new_img['width'] = 450
