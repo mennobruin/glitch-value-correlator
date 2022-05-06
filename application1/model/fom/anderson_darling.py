@@ -25,11 +25,8 @@ class AndersonDarling(BaseFOM):
             d_n = self._get_distances(h_aux, h_trig)
             combined = self._combine(h_aux, h_trig)
             ad = np.sum(d_n / (combined * (1 - combined)))
-            print(ad)
             ad /= h_aux.ntot * h_trig.ntot
-            print(ad)
             self.scores[channel, transformation] = ADResult(ad, ad < self.CRITICAL_VALUES[0.05])
-            print('----------')
 
     @staticmethod
     def _get_distances(h_aux, h_trig):
