@@ -24,7 +24,13 @@ class AndersonDarling(BaseFOM):
     def calculate(self, channel, transformation, h_aux, h_trig):
         if h_aux.const_val is None:
             d_n = self._get_distances(h_aux, h_trig)
+            print(d_n)
             combined = self._combine(h_aux, h_trig)
+            print(combined)
+            print(np.sum(d_n))
+            print(combined * (1-combined))
+            print(sum(combined * (1-combined)))
+            print('------------------')
             ad = np.sum(d_n / (combined * (1 - combined)))
             ad /= h_aux.ntot * h_trig.ntot
             self.scores[channel, transformation] = ADResult(ad, ad < self.critical_value)
