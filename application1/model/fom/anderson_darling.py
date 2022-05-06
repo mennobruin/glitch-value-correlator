@@ -33,6 +33,6 @@ class AndersonDarling(BaseFOM):
         return np.abs(h_aux.cdf - h_trig.cdf)
 
     @staticmethod
-    def _combine(h_aux, h_trig):
-        combined = h_aux + h_trig
-        return combined.cdf
+    def _combine(h1, h2):
+        h1 += h2
+        return h1.cdf
