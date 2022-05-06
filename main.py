@@ -131,6 +131,7 @@ class Excavator:
 
     def generate_report(self):
         LOG.info("Generating HTML Report...")
+
         self.report.run_html()
 
     def decimate_data(self):
@@ -222,10 +223,14 @@ class Excavator:
         return Hist(x_veto, spanlike=spanlike)
 
 
+"""
+new add_div method doesn't really work -> pprint html and see where it goes wrong.
+"""
+
 if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
     excavator = Excavator()
-    # excavator.run(load_existing=True)
-    # excavator.generate_report()
-    excavator.decimate_data()
+    excavator.run(load_existing=True)
+    excavator.generate_report()
+    # excavator.decimate_data()
     LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")
