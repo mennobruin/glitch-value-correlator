@@ -124,8 +124,8 @@ class Excavator:
                 div = self.report.add_div(div_name=f'rank_{i}', parent_class='images')
                 self.report.add_image(img=cdf_fname, div=div)
                 self.report.add_image(img=hist_fname, div=div)
-            except AttributeError:
-                pass
+            except AttributeError as e:
+                print(e)
             self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), f'{p_value:.2E}'],
                                          table_class='KS')
 
