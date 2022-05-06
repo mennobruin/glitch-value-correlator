@@ -17,8 +17,11 @@ def plot_histogram(channel, transformation, histogram, data_type, save=False, ra
     plt.bar(histogram.xgrid, histogram.counts, width=histogram.span / histogram.n_bin)
     plt.xlim([histogram.offset, histogram.offset + histogram.span])
 
+    print(save)
+
     if save:
         save_name = f'{rank}_{transformation}_{data_type}.png'
+        print(save_name)
         fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
         return save_name
     else:
