@@ -85,7 +85,7 @@ class Excavator:
 
         fom_ks = KolgomorovSmirnov()
         fom_ad = AndersonDarling()
-        for channel in self.available_channels[0:10]:
+        for channel in self.available_channels:
             for transformation_name in self.transformation_names:
                 h_aux = self.h_aux_cum[channel, transformation_name]
                 h_trig = self.h_trig_cum[channel, transformation_name]
