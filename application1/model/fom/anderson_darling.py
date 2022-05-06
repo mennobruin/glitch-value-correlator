@@ -16,8 +16,9 @@ class AndersonDarling(BaseFOM):
 
     CRITICAL_VALUES = {0.01: 3.857, 0.05: 2.492, 0.10: 1.933}
 
-    def __init__(self):
+    def __init__(self, alpha=0.05):
         super(AndersonDarling, self).__init__()
+        self.critical_value = self.CRITICAL_VALUES[alpha]
         self.scores = {}
 
     def calculate(self, channel, transformation, h_aux, h_trig):
@@ -26,7 +27,7 @@ class AndersonDarling(BaseFOM):
             combined = self._combine(h_aux, h_trig)
             ad = np.sum(d_n / (combined * (1 - combined)))
             ad /= h_aux.ntot * h_trig.ntot
-            self.scores[channel, transformation] = ADResult(ad, ad < self.CRITICAL_VALUES[0.05])
+            self.scores[channel, transformation] = ADResult(ad, ad < self.critical_value)
 
     @staticmethod
     def _get_distances(h_aux, h_trig):
