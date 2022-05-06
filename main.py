@@ -131,7 +131,7 @@ class Excavator:
 
     def generate_report(self):
         LOG.info("Generating HTML Report...")
-
+        print(self.report)
         self.report.run_html()
 
     def decimate_data(self):
