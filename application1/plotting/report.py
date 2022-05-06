@@ -14,6 +14,9 @@ class HTMLReport:
         with open(REPORT_INDEX) as f:
             self.html = bs4.BeautifulSoup(f.read(), features='lxml')
 
+    def __repr__(self):
+        return self.html.prettify()
+
     def run_html(self):
         self.update_html()
         webbrowser.open('file://' + os.path.realpath(self.TEMP_FILE))
