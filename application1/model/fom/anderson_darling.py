@@ -8,12 +8,10 @@ from application1.config import config_manager
 
 LOG = config_manager.get_logger(__name__)
 
-
 ADResult = namedtuple('ADResult', ['ad', 'below_critical'])
 
 
 class AndersonDarling(BaseFOM):
-
     CRITICAL_VALUES = {0.01: 3.857, 0.05: 2.492, 0.10: 1.933}
 
     def __init__(self, alpha=0.05):
@@ -23,11 +21,12 @@ class AndersonDarling(BaseFOM):
 
     def calculate(self, channel, transformation, h_aux, h_trig):
         if h_aux.const_val is None:
+            n = 1 / (h_aux.ntot * h_trig.ntot)
             d_n = self._get_distances(h_aux, h_trig)
             combined = self._combine(h_aux, h_trig)
             combined_ecdf = combined * (1 - combined)
-            ad = np.sum(np.divide(d_n, combined_ecdf, out=np.zeros_like(d_n), where=combined_ecdf!=0))
-            ad /= h_aux.ntot + h_trig.ntot
+            ad = np.sum(np.divide(d_n, combined_ecdf, out=np.zeros_like(d_n), where=combined_ecdf != 0))
+            ad *= n
             self.scores[channel, transformation] = ADResult(ad, ad < self.critical_value)
 
     @staticmethod
