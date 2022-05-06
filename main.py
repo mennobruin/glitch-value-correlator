@@ -103,11 +103,13 @@ class Excavator:
             channel, transformation = k
             statistic, p_value = v
             try:
+                div = self.report.add_div(div_name=f'rank_{i}', parent_class='images')
                 hist_fname = plot_histogram(histogram=self.h_trig_cum[channel, transformation],
                                             channel=channel,
                                             transformation=transformation,
                                             data_type='trig',
                                             rank=i)
+                self.report.add_image(img=hist_fname, div=div)
                 cdf_fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
                                              channel=channel,
                                              transformation=transformation,
@@ -121,11 +123,9 @@ class Excavator:
                                                fig=cdf_fig,
                                                save=True,
                                                rank=i)
-                div = self.report.add_div(div_name=f'rank_{i}', parent_class='images')
                 self.report.add_image(img=cdf_fname, div=div)
-                self.report.add_image(img=hist_fname, div=div)
-            except AttributeError as e:
-                print(e)
+            except AttributeError:
+                pass
             self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), f'{p_value:.2E}'],
                                          table_class='KS')
 
