@@ -12,6 +12,7 @@ ds_path = RESOURCE_DIR + 'ds_data/'
 data_path = ds_path + 'data/'
 
 channels = ['V1:SUSP_SBE_LC_elapsed_time',
+            'V1:PAY_WI_Cam_ProcessingTime',
             'V1:ENV_CEB_UPS_VOLT_S']
 
 files = os.listdir(data_path)
