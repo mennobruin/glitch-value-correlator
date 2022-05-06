@@ -20,12 +20,12 @@ class KolgomorovSmirnov(BaseFOM):
 
     def calculate(self, channel, transformation, h_aux, h_trig):
         if h_aux.const_val is None:
-            d_n = self._get_statistic(h_aux, h_trig)
+            d_n = self._get_distance(h_aux, h_trig)
             p = self._get_p_value(d_n, h_aux.ntot, h_trig.ntot)
             self.scores[channel, transformation] = KSResult(d_n, p)
 
     @staticmethod
-    def _get_statistic(h_aux, h_trig):
+    def _get_distance(h_aux, h_trig):
         return np.amax(np.abs(h_aux.cdf - h_trig.cdf))
 
     @staticmethod
