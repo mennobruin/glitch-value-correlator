@@ -53,12 +53,13 @@ def plot_trigger_spectrogram(channel, trigger_type, i=0):
     trigger = dfs[trigger_type].iloc[i]
     trigger_time = trigger.GPStime
     duration = trigger.duration
-    print(trigger_time, duration)
+    snr = trigger.snr
+    print(f'{trigger_time=}, {duration=}, {snr=}')
     t0 = trigger_time - 3 * duration
     t1 = trigger_time + 3 * duration
 
     channels = ffl_reader.get_available_channels(trigger_time)
-    print([c for c in channels if 'Hrec_hoft' in c])
+    print([c for c in channels if 'Hrec' in c])
 
     # with FrameFile(source) as ff:
     #     data = ff.getChannel(channel, t0, t1).data
