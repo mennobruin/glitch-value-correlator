@@ -32,7 +32,7 @@ def plot_histogram_cdf(histogram, channel, transformation, data_type, save=False
     LOG.info(f'Plotting {f_name}...')
 
     if not fig:
-        fig = plt.figure(figsize=(10, 8), dpi=100)
+        fig = plt.figure(figsize=(10, 8), dpi=300)
 
     plt.plot(histogram.xgrid, histogram.cdf, label=data_type)
     plt.legend(loc='upper left')

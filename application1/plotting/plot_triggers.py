@@ -1,13 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
+plt.rcParams['font.size'] = 16
 
 from application1.handler.data.reader.csv import CSVReader
 from resources.constants import RESOURCE_DIR
 from application1.handler.triggers import DefaultPipeline
-from virgotools.frame_lib import FrameFile
+# from virgotools.frame_lib import FrameFile
 
 source = '/virgoData/ffl/raw_O3b_arch'
 file = RESOURCE_DIR + 'csv/GSpy_ALLIFO_O3b_0921_final.csv'
+RESULTS_DIR = 'results/'
 reader = CSVReader()
 triggers = reader.load_csv(file)
 
@@ -24,6 +26,21 @@ def plot_trigger_density(trigger):
     plt.show()
 
 
+def plot_trigger_times():
+    pipeline = DefaultPipeline(trigger_file=file)
+    triggers = pipeline.get_segment(gps_start=1238680000, gps_end=1262690000)
+    times_cutoff = [t % 1 for t in triggers]
+
+    fig, ax = plt.subplots(1, 1)
+
+    ax.hist(times_cutoff, bins=100)
+    ax.set_xlim(0, 1)
+    ax.set_xlabel('Trigger Time (fraction)', labelpad=10)
+    ax.set_ylabel('Counts (#)', labelpad=10)
+    plt.savefig(RESULTS_DIR + 'trigger_times.png', dpi=300, transparent=False, bbox_inches='tight')
+    plt.show()
+
+
 def plot_trigger_spectrogram(channel, trigger_type):
     trigger = triggers.loc[triggers['label'] == trigger_type][0]
     print(trigger)
@@ -37,4 +54,5 @@ def plot_trigger_spectrogram(channel, trigger_type):
 
 
 # plot_trigger_density(trigger='Scattered_Light')
-plot_trigger_spectrogram(channel='', trigger_type='Scattered_Light')
+# plot_trigger_spectrogram(channel='', trigger_type='Scattered_Light')
+plot_trigger_times()

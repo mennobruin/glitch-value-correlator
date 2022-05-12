@@ -3,7 +3,7 @@
 .idea/
 /resources/ds_data/
 /resources/report/*temp*
-*/results/*
+/application1/plotting/results/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
