@@ -4,6 +4,8 @@
 /resources/ds_data/
 /resources/report/*temp*
 /application1/plotting/results/
+*.pickle
+*.pk
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
