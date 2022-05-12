@@ -13,14 +13,16 @@ file = RESOURCE_DIR + 'csv/GSpy_ALLIFO_O3b_0921_final.csv'
 RESULTS_DIR = 'results/'
 reader = CSVReader()
 ffl_reader = FrameFileReader(source=source)
+min_start = 1262228200
+max_end = 1265825600
 triggers = reader.load_csv(file)
+triggers = triggers[triggers.GPStime > min_start]
+triggers = triggers[triggers.GPStime < max_end]
 triggers = triggers.sort_values('snr', ascending=False)
 
 dfs = {}
 for _label in set(triggers.label):
     dfs[_label] = triggers[triggers.label == _label]
-# min_start = 1262228200
-# max_end = 1265825600
 
 
 def plot_trigger_density(trigger):
