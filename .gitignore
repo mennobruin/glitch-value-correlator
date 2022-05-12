@@ -2,7 +2,6 @@
 *.keytab
 .idea/
 /resources/ds_data/
-/resources/csv/
 /resources/report/*temp*
 /application1/plotting/results/
 *.pickle
