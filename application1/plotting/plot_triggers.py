@@ -45,8 +45,8 @@ def plot_trigger_times():
     plt.show()
 
 
-def plot_trigger_spectrogram(channel, trigger_type):
-    trigger = dfs[trigger_type].iloc[0]
+def plot_trigger_spectrogram(channel, trigger_type, i=0):
+    trigger = dfs[trigger_type].iloc[i]
     print(trigger)
     duration = trigger.duration
     t0 = trigger - 3 * duration
@@ -66,4 +66,5 @@ def plot_trigger_spectrogram(channel, trigger_type):
 
 # plot_trigger_density(trigger='Scattered_Light')
 plot_trigger_spectrogram(channel='V1:Hrec_hoft_2_200Hz', trigger_type='Scattered_Light')
+plot_trigger_spectrogram(channel='V1:Hrec_hoft_2_200Hz', trigger_type='Scattered_Light', i=-1)
 # plot_trigger_times()
