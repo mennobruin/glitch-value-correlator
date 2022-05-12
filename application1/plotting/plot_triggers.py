@@ -12,7 +12,7 @@ source = '/virgoData/ffl/raw_O3b_arch'
 file = RESOURCE_DIR + 'csv/GSpy_ALLIFO_O3b_0921_final.csv'
 RESULTS_DIR = 'results/'
 reader = CSVReader()
-ffl_reader = FrameFileReader()
+ffl_reader = FrameFileReader(source=source)
 triggers = reader.load_csv(file)
 triggers = triggers.sort_values('snr', ascending=False)
 
