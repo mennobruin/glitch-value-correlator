@@ -42,14 +42,14 @@ def plot_trigger_hist():
         if not os.path.exists(fom_file):
             fom_ks = KolgomorovSmirnov()
             fom_ad = AndersonDarling()
-            for channel in available_channels:
+            for c in available_channels:
                 for transformation_name in transformation_names:
-                    h_aux = h_aux_cum[channel, transformation_name]
-                    h_trig = h_trig_cum[channel, transformation_name]
+                    h_aux = h_aux_cum[c, transformation_name]
+                    h_trig = h_trig_cum[c, transformation_name]
                     h_aux.align(h_trig)
 
-                    fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
-                    fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
+                    fom_ks.calculate(c, transformation_name, h_aux, h_trig)
+                    fom_ad.calculate(c, transformation_name, h_aux, h_trig)
 
             with open(fom_file, 'wb') as pkf:
                 pickle.dump({'ks': fom_ks, 'ad': fom_ad}, pkf)
@@ -62,7 +62,9 @@ def plot_trigger_hist():
         ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1].d_n, reverse=True)
         ad_results = sorted(fom_ad.scores.items(), key=lambda f: f[1].ad, reverse=True)
         winner = ad_results[0]
-        print(winner)
+        channel, result = winner
+        print(h_aux_cum[channel].counts)
+        print(h_trig_cum[channel].counts)
     else:
         print(f'{test_file=} not found, check t_start/t_stop in config.yaml')
 
