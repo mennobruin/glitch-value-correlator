@@ -22,7 +22,8 @@ with h5py.File(data_path + f, 'r') as hf:
     frames = list(hf.keys())
     for c in channels:
         # fig, axes = plt.subplots()
-        plt.figure(figsize=(10, 8), dpi=300)
+        fig = plt.figure(figsize=(8, 6.4), dpi=300)
+        ax = fig.gca()
         channel = frames[frames.index(c)]
         frame = hf.get(channel)
         data = np.array(frame)
@@ -38,8 +39,8 @@ with h5py.File(data_path + f, 'r') as hf:
             t0, t1 = 0, 10
             plt.plot(np.linspace(t0, t1, len(unsampled_data)), unsampled_data)
             plt.xlim(t0, t1)
-            plt.xlabel(f'Time since gps={gs} [s]')
-            plt.ylabel('[arb. unit]')
+            plt.xlabel(f'Time since gps={gs} [s]', labelpad=10)
+            plt.ylabel('[arb. unit]', labelpad=10)
             plt.title(channel)
             plt.savefig(RESULTS_DIR + f'{channel}_{gs}.png', dpi=300, transparent=False, bbox_inches='tight')
 

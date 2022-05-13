@@ -3,16 +3,16 @@ import matplotlib.pyplot as plt
 plt.rcParams['font.size'] = 16
 
 from application1.handler.data.reader.csv import CSVReader
-from application1.handler.data.reader.frame_file import FrameFileReader
+# from application1.handler.data.reader.frame_file import FrameFileReader
 from resources.constants import RESOURCE_DIR
 from application1.handler.triggers import DefaultPipeline
-from virgotools.frame_lib import FrameFile
+# from virgotools.frame_lib import FrameFile
 
 source = '/virgoData/ffl/raw_O3b_arch'
 file = RESOURCE_DIR + 'csv/GSpy_ALLIFO_O3b_0921_final.csv'
 RESULTS_DIR = 'results/'
 reader = CSVReader()
-ffl_reader = FrameFileReader(source=source)
+# ffl_reader = FrameFileReader(source=source)
 min_start = 1262228200
 max_end = 1265825600
 triggers = reader.load_csv(file)
@@ -39,12 +39,14 @@ def plot_trigger_times():
     triggers = pipeline.get_segment(gps_start=1238680000, gps_end=1262690000)
     times_cutoff = [t % 1 for t in triggers]
 
-    fig, ax = plt.subplots(1, 1)
+    fig = plt.figure(figsize=(8, 6.4), dpi=300)
+    ax = fig.gca()
 
     ax.hist(times_cutoff, bins=100)
     ax.set_xlim(0, 1)
     ax.set_xlabel('Trigger Time (fraction)', labelpad=10)
     ax.set_ylabel('Counts (#)', labelpad=10)
+    ax.set_title('Omicron Triggers')
     plt.savefig(RESULTS_DIR + 'trigger_times.png', dpi=300, transparent=False, bbox_inches='tight')
     plt.show()
 
@@ -74,6 +76,6 @@ def plot_trigger_spectrogram(channel, trigger_type, i=0):
 
 
 # plot_trigger_density(trigger='Scattered_Light')
-plot_trigger_spectrogram(channel='V1:Hrec_hoft_2_200Hz', trigger_type='Scattered_Light')
-plot_trigger_spectrogram(channel='V1:Hrec_hoft_2_200Hz', trigger_type='Scattered_Light', i=-1)
-# plot_trigger_times()
+# plot_trigger_spectrogram(channel='V1:Hrec_hoft_2_200Hz', trigger_type='Scattered_Light')
+# plot_trigger_spectrogram(channel='V1:Hrec_hoft_2_200Hz', trigger_type='Scattered_Light', i=-1)
+plot_trigger_times()
