@@ -63,8 +63,8 @@ def plot_trigger_hist():
         ad_results = sorted(fom_ad.scores.items(), key=lambda f: f[1].ad, reverse=True)
         winner = ad_results[0]
         channel, result = winner
-        print(h_aux_cum[channel].counts)
-        print(h_trig_cum[channel].counts)
+        print(np.sum(h_aux_cum[channel].counts))
+        print(np.sum(h_trig_cum[channel].counts))
     else:
         print(f'{test_file=} not found, check t_start/t_stop in config.yaml')
 
