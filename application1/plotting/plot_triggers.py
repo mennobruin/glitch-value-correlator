@@ -61,16 +61,16 @@ def plot_trigger_spectrogram(channel, trigger_type, i=0):
     channels = ffl_reader.get_available_channels(trigger_time)
     print([c for c in channels if 'Hrec' in c])
 
-    # with FrameFile(source) as ff:
-    #     data = ff.getChannel(channel, t0, t1).data
-    #
-    # fig, ax = plt.subplots()
-    # plt.specgram(data, Fs=200)
-    # plt.xlabel('Time')
-    # plt.ylabel('Frequency')
-    # ax.set_yscale('log', basey=2)
-    # plt.title(channel)
-    # plt.show()
+    with FrameFile(source) as ff:
+        data = ff.getChannel(channel, t0, t1).data
+
+    fig, ax = plt.subplots()
+    plt.specgram(data, Fs=200)
+    plt.xlabel('Time')
+    plt.ylabel('Frequency')
+    ax.set_yscale('log', basey=2)
+    plt.title(channel)
+    plt.show()
 
 
 # plot_trigger_density(trigger='Scattered_Light')

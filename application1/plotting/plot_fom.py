@@ -1,11 +1,11 @@
 import numpy as np
 import pickle
 import matplotlib.pyplot as plt
-plt.rcParams['font.size'] = 16
 import os
 
 from application1.model.fom import AndersonDarling
 from application1.plotting.plot import plot_histogram_cdf
+plt.rcParams['font.size'] = 16
 
 t_start = 1262649600
 t_stop = 1262655700
