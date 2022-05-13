@@ -64,8 +64,11 @@ def plot_trigger_hist():
         winner = ad_results[0]
         channel, result = winner
         h_trig = h_trig_cum[channel]
-        print(np.nonzero(h_trig.counts))
-        print(h_trig.xgrid)
+
+        # fig = plt.figure(figsize=(8, 6.4), dpi=300)
+        plt.scatter(h_trig.xgrid, h_trig.counts)
+        plt.yscale('log')
+        plt.show()
     else:
         print(f'{test_file=} not found, check t_start/t_stop in config.yaml')
 
