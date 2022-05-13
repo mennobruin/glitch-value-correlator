@@ -22,6 +22,7 @@ if os.path.exists(test_file):
 
 fom_ad = AndersonDarling()
 
+
 def anderson_darling(h1, h2):
     d_n = fom_ad._get_distances(h1, h2)
     combined = fom_ad._combine_hist(h1, h2)
