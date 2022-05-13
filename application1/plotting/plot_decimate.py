@@ -41,7 +41,7 @@ with h5py.File(data_path + f, 'r') as hf:
             plt.xlabel(f'Time since gps={gs} [s]')
             plt.ylabel('[arb. unit]')
             plt.title(channel)
-            plt.savefig(RESULTS_DIR + f'{channel}_{gs}.png', dpi=300, transparent=False, bbox_inches='tight')
+            plt.savefig(f'{channel}_{gs}.png', dpi=300, transparent=False, bbox_inches='tight')
 
         # axes[1].set_title(channel)
         # axes[1].plot(range(len(data)), data)
