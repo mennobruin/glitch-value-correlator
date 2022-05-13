@@ -11,7 +11,7 @@ plt.rcParams['font.size'] = 16
 source = '/virgoData/ffl/raw_O3b_arch'
 ds_path = RESOURCE_DIR + 'ds_data/'
 data_path = ds_path + 'data/'
-RESULTS_DIR = '/application1/plotting/results/'
+RESULTS_DIR = 'application1/plotting/results/'
 
 channels = ['V1:SUSP_SBE_LC_elapsed_time',
             'V1:PAY_WI_Cam_ProcessingTime']
@@ -41,7 +41,7 @@ with h5py.File(data_path + f, 'r') as hf:
             plt.xlabel(f'Time since gps={gs} [s]')
             plt.ylabel('[arb. unit]')
             plt.title(channel)
-            plt.savefig(f'{channel}_{gs}.png', dpi=300, transparent=False, bbox_inches='tight')
+            plt.savefig(RESULTS_DIR + f'{channel}_{gs}.png', dpi=300, transparent=False, bbox_inches='tight')
 
         # axes[1].set_title(channel)
         # axes[1].plot(range(len(data)), data)
