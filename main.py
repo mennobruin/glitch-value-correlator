@@ -10,7 +10,7 @@ from application1.handler.data.reader.frame_file import FrameFileReader
 from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.data.resampler import Resampler
 from application1.handler.data.writer import DataWriter
-from application1.handler.triggers import DefaultPipeline
+from application1.handler.triggers import DefaultPipeline, Omicron
 from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov, AndersonDarling
 from application1.model.histogram import Hist
@@ -64,9 +64,10 @@ class Excavator:
         self.available_channels = self.h5_reader.get_available_channels()
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
-        # trigger_pipeline = Omicron(channel=available_channels[0])
-        trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final', trigger_type="Scattered_Light")
+        trigger_pipeline = Omicron(channel=self.available_channels[0])
+        # trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final', trigger_type="Scattered_Light")
         triggers = trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
+        return
         if triggers.size == 0:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
@@ -239,6 +240,6 @@ if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
     excavator = Excavator()
     excavator.run(load_existing=True)
-    excavator.generate_report()
+    # excavator.generate_report()
     # excavator.decimate_data()
     LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")
