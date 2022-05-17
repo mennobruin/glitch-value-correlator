@@ -1,23 +1,24 @@
-from tqdm import tqdm
-import sys
 import os
 import pickle
-import numpy as np
+import sys
 
-from application1.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments
-from application1.model.histogram import Hist
-from application1.model.ffl_cache import FFLCache
-from application1.model.fom import KolgomorovSmirnov, AndersonDarling
-from application1.model.transformation import Abs, do_transformations, GaussianDifferentiator, \
-    SavitzkyGolayDifferentiator, HighPass
+import numpy as np
+from tqdm import tqdm
+
+from application1.config import config_manager
 from application1.handler.data.reader.frame_file import FrameFileReader
 from application1.handler.data.reader.h5 import H5Reader
-from application1.handler.data.writer import DataWriter
 from application1.handler.data.resampler import Resampler
+from application1.handler.data.writer import DataWriter
 from application1.handler.triggers import DefaultPipeline
-from application1.config import config_manager
-from application1.plotting.plot import plot_histogram_cdf, plot_histogram
+from application1.model.ffl_cache import FFLCache
+from application1.model.fom import KolgomorovSmirnov, AndersonDarling
+from application1.model.histogram import Hist
+from application1.model.transformation import do_transformations, GaussianDifferentiator, \
+    SavitzkyGolayDifferentiator, HighPass
+from application1.plotting.plot import plot_histogram_cdf
 from application1.plotting.report import HTMLReport
+from application1.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments
 from resources.constants import CONFIG_FILE
 
 LOG = config_manager.get_logger(__name__)
@@ -233,10 +234,6 @@ class Excavator:
         x_veto = data[~cumulative_veto]
         return Hist(x_veto, spanlike=spanlike)
 
-
-"""
-new add_div method doesn't really work -> pprint html and see where it goes wrong.
-"""
 
 if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")

@@ -1,3 +1,4 @@
+import numpy as np
 from subprocess import Popen, PIPE
 
 
@@ -12,4 +13,10 @@ class Omicron:
     def get_segment(self, gps_start, gps_end):
         command = self.COMMAND.format(self.channel, gps_start, gps_end)
         process = Popen(command, stdout=PIPE, shell=True)
+        triggers = np.loadtxt(process.stdout, dtype=self.FORMAT)
+        triggers = triggers.view(dtype=(np.record, triggers.dtype), type=np.recarray)
+        print(triggers)
+        triggers.sort(order='gps')
+        print(triggers)
+        return triggers
 
