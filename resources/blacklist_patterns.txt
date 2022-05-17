@@ -3,5 +3,7 @@
 V1:VAC*
 V1:Daq*
 *rms
-*_DS
-*_notsafe
+*DS
+*notsafe
+*elapsed_time
+*ProcessingTime
