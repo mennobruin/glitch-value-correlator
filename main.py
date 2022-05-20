@@ -6,7 +6,7 @@ import numpy as np
 from tqdm import tqdm
 
 from application1.config import config_manager
-from application1.handler.data.reader.frame_file import FrameFileReader
+from application1.handler.data.reader.ffl import FrameFileReader
 from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.data.resampler import Resampler
 from application1.handler.data.writer import DataWriter

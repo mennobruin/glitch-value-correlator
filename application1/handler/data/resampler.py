@@ -65,7 +65,7 @@ class Resampler:
         with FrameFile(self.source).get_frame(t) as ff:
             for adc in ff.iter_adc():
                 f_sample = adc.contents.sampleRate
-                if f_sample >= 50:
+                if f_sample >= self.f_target:
                     channel = str(adc.contents.name)
                     ds_adc = self.downsample_adc(adc, f_sample)
                     if t == gps_start:

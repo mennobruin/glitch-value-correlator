@@ -1,12 +1,19 @@
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
-plt.rcParams['font.size'] = 16
 
 from application1.handler.data.reader.csv import CSVReader
 # from application1.handler.data.reader.frame_file import FrameFileReader
 from resources.constants import RESOURCE_DIR
 from application1.handler.triggers import DefaultPipeline
 # from virgotools.frame_lib import FrameFile
+from sklearn.manifold import TSNE
+import seaborn as sns
+import pandas as pd
+import pickle as pk
+
+plt.rcParams['font.size'] = 16
 
 source = '/virgoData/ffl/raw_O3b_arch'
 file = RESOURCE_DIR + 'csv/GSpy_ALLIFO_O3b_0921_final.csv'
@@ -16,9 +23,9 @@ reader = CSVReader()
 min_start = 1262228200
 max_end = 1265825600
 triggers = reader.load_csv(file)
-triggers = triggers[triggers.GPStime > min_start]
-triggers = triggers[triggers.GPStime < max_end]
-triggers = triggers.sort_values('snr', ascending=False)
+# triggers = triggers[triggers.GPStime > min_start]
+# triggers = triggers[triggers.GPStime < max_end]
+# triggers = triggers.sort_values('snr', ascending=False)
 
 dfs = {}
 for _label in set(triggers.label):
@@ -75,7 +82,42 @@ def plot_trigger_spectrogram(channel, trigger_type, i=0):
     plt.show()
 
 
+def plot_trigger_distribution_2d():
+    exclude = {'GPStime', 'label', 'imgUrl', 'id', 'ifo'}
+    new_cols = list(set(triggers.columns) ^ exclude)
+    samples = triggers.sample(n=10000)
+    data = samples[new_cols].values
+
+    tsne_file = 't_sne.pickle'
+    if not os.path.exists(tsne_file):
+        tsne = TSNE(n_components=2, learning_rate='auto', init='random', verbose=1)
+        embedding = tsne.fit_transform(data)
+        with open(tsne_file, 'wb') as f:
+            pk.dump(embedding, file=f)
+    else:
+        with open(tsne_file, 'rb') as f:
+            embedding = pk.load(f)
+            print(embedding.shape)
+
+    new_df = pd.DataFrame()
+    new_df['x'] = embedding[:, 0]
+    new_df['y'] = embedding[:, 1]
+
+    plt.figure(figsize=(16, 10))
+    sns.scatterplot(
+        x='x', y='y',
+        data=new_df,
+        hue=samples.label,
+        palette=sns.color_palette("hls", len(set(samples.label))),
+        alpha=0.5
+    )
+    plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    plt.savefig(RESULTS_DIR + 't-sne.png', dpi=300, transparent=False, bbox_inches='tight')
+    plt.show()
+
+
 # plot_trigger_density(trigger='Scattered_Light')
 # plot_trigger_spectrogram(channel='V1:Hrec_hoft_2_200Hz', trigger_type='Scattered_Light')
 # plot_trigger_spectrogram(channel='V1:Hrec_hoft_2_200Hz', trigger_type='Scattered_Light', i=-1)
-plot_trigger_times()
+# plot_trigger_times()
+plot_trigger_distribution_2d()

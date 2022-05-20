@@ -4,7 +4,7 @@ import sys
 from ligo import segments
 from framel import frgetvect1d
 
-from application1.handler.data.reader.frame_file import FrameFileReader
+from application1.handler.data.reader.ffl import FrameFileReader
 from application1.utils import check_extension, exit_on_error
 from application1.config import config_manager
 
