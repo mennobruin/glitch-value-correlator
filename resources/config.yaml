@@ -1,14 +1,16 @@
 # Inputs
-project.source: '/virgoData/ffl/raw_O3b_arch'
+#project.source: '/virgoData/ffl/raw_O3b_arch'
+project.source: '/virgoData/ffl/trend'
 #project.start_time: 1262680000
 #project.start_time: 1262649600
-project.start_time:
+project.start_time: 1256655644
 #project.start_time: 1262655700
 #project.end_time: 1262684200
 #project.end_time: 1262700800
 #project.end_time: 1262655700
-project.end_time:
-project.target_frequency: 50
+project.end_time: 1269608940
+#project.target_frequency: 50
+project.target_frequency: 1
 project.blacklist_patterns: './resources/blacklist_patterns.txt'
 
 # Kerberos config

@@ -7,3 +7,4 @@ V1:Daq*
 *notsafe
 *elapsed_time
 *ProcessingTime
+*Cfg*
