@@ -4,6 +4,7 @@ from fnmatch import fnmatch
 import numpy as np
 from ligo import segments
 from virgotools.frame_lib import FrameFile
+from PyFd import frgetvect1d
 
 from application1.config import config_manager
 from application1.model.channel import Channel, ChannelSegment
@@ -42,11 +43,8 @@ class FrameFileReader(BaseReader):
         return segment
 
     @staticmethod
-    def get_channel_data(ffl_file, channel_name, t_start, t_stop) -> ChannelSegment:
-        print(ffl_file, channel_name, t_start, t_stop)
-        with FrameFile(ffl_file) as ff:
-            frame = ff.getChannel(channel_name, t_start, t_stop)
-        return frame.data
+    def get_channel_data(gwf_file, channel_name, t_start, t_stop) -> ChannelSegment:
+        return frgetvect1d(gwf_file, channel_name, t_start, t_stop-t_start)[0].astype(float)
 
     def get_available_channels(self, t0=None) -> [Channel]:
         t0 = t0 if t0 else self.gps_start
