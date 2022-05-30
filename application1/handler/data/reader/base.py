@@ -26,8 +26,9 @@ class BaseReader:
         self.segments = None
 
     def _reset_cache(self):
-        self.cache.close()
-        self.cache = None
+        if self.cache:
+            self.cache.close()
+            self.cache = None
 
     def _check_path_exists(self, file_loc, file):
         if not os.path.isfile(file):

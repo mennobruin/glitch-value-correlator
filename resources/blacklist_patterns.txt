@@ -1,7 +1,7 @@
 *max
 *min
-V1:VAC*
-V1:Daq*
+*VAC*
+*Daq*
 *rms*
 *mean
 *DS
