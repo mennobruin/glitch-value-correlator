@@ -4,7 +4,7 @@ from fnmatch import fnmatch
 import numpy as np
 from ligo import segments
 from virgotools.frame_lib import FrameFile
-from PyFd import frgetvect1d
+from framel import frgetvect1d
 
 from application1.config import config_manager
 from application1.model.channel import Channel, ChannelSegment
