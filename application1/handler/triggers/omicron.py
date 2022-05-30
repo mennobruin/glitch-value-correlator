@@ -11,7 +11,7 @@ LOG = config_manager.get_logger(__name__)
 
 class Omicron:
 
-    COMMAND = 'omicron-print channel={0} gps-start={1:d} gps-end={2:d}'
+    COMMAND = 'source /virgoDev/Omicron/v3r2p0/cmt/setup.sh && omicron-print channel={0} gps-start={1:d} gps-end={2:d}'
     FORMAT = [('gps', float), ('freq', float), ('snr', float)]
 
     def __init__(self, channel):
@@ -21,8 +21,6 @@ class Omicron:
         command = self.COMMAND.format(self.channel.name, gps_start, gps_end)
         process = Popen(command, stdout=PIPE, shell=True)
         data = process.stdout
-
-        print(type(data.readline()), data.readline())
         if data.readline():
             triggers = np.loadtxt(data, dtype=self.FORMAT)
             triggers = triggers.view(dtype=(np.record, triggers.dtype), type=np.recarray)
