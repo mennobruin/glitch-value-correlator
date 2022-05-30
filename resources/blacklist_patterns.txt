@@ -2,9 +2,10 @@
 *min
 V1:VAC*
 V1:Daq*
-*rms
+*rms*
+*mean
 *DS
-*notsafe
-*elapsed_time
-*ProcessingTime
+*notsafe*
+*elapsed_time*
+*ProcessingTime*
 *Cfg*
