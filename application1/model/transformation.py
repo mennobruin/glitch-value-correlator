@@ -122,9 +122,9 @@ class HighPass(Transformation):
     FILTER_ORDER = 1
     FREQUENCY_CUTOFF = 2
 
-    def __init__(self, f_target):
-        f_nyquist = f_target / 2
-        self.B, self.A = sig.butter(self.FILTER_ORDER, self.FREQUENCY_CUTOFF / f_nyquist, btype='highpass')
+    def __init__(self, f_sample):
+        f_nyquist = f_sample / 2
+        self.B, self.A = sig.butter(self.FILTER_ORDER, self.FREQUENCY_CUTOFF / f_nyquist, btype='highpass', fs=f_sample)
 
         self.zi = None
 
