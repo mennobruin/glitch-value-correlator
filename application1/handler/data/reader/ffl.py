@@ -1,3 +1,4 @@
+import os
 from fnmatch import fnmatch
 
 import numpy as np
@@ -19,9 +20,14 @@ class FrameFileReader(BaseReader):
     def __init__(self, source, gps_start, gps_end, exclude_patterns=None):
         super(FrameFileReader, self).__init__(gps_start, gps_end, exclude_patterns)
         self.source = source
-        self.records = self._get_records(loc=self.FFL_DIR, ext=self.FFL)
+        self.records = self._get_records(self.source)
         self.files = self.records.file
         self.segments = self._get_segments(self.records)
+
+    def _get_records(self, file):
+        records = np.array(file, dtype=self.RECORD_STRUCTURE)
+        records = records.view(dtype=(np.record, records.dtype), type=np.recarray)
+        return records[(records.gps_end > self.gps_start) & (records.gps_start < self.gps_end)]
 
     # @lru_cache(maxsize=None)
     # def _load_cache(self, t):

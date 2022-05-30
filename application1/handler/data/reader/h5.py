@@ -1,3 +1,4 @@
+import os
 from fnmatch import fnmatch
 
 import h5py
@@ -5,7 +6,7 @@ import numpy as np
 from ligo import segments
 
 from application1.config import config_manager
-from application1.utils import check_extension, exit_on_error
+from application1.utils import check_extension, exit_on_error, split_file_name
 from resources.constants import RESOURCE_DIR
 from .base import BaseReader
 
@@ -22,6 +23,16 @@ class H5Reader(BaseReader):
         self.records = self._get_records(loc=self.default_path + self.H5_DIR, ext=self.H5)
         self.files = self.records.file
         self.segments = self._get_segments(self.records)
+
+    def _get_records(self, loc, ext):
+        files = sorted([f for f in os.listdir(loc) if f.endswith(ext)])
+        records = []
+        for file in files:
+            _, gps_start, gps_end = split_file_name(file)
+            records.append((file, gps_start, gps_end))
+        records = np.array(records, dtype=self.RECORD_STRUCTURE)
+        records = records.view(dtype=(np.record, records.dtype), type=np.recarray)
+        return records[(records.gps_end > self.gps_start) & (records.gps_start < self.gps_end)]
 
     def load(self, file, channel):
         if self.records.size == 0:

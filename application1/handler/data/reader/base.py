@@ -37,16 +37,6 @@ class BaseReader:
                 raise FileNotFoundError
         return file
 
-    def _get_records(self, loc, ext):
-        files = sorted([f for f in os.listdir(loc) if f.endswith(ext)])
-        records = []
-        for file in files:
-            _, gps_start, gps_end = split_file_name(file)
-            records.append((file, gps_start, gps_end))
-        records = np.array(records, dtype=self.RECORD_STRUCTURE)
-        records = records.view(dtype=(np.record, records.dtype), type=np.recarray)
-        return records[(records.gps_end > self.gps_start) & (records.gps_start < self.gps_end)]
-
     @staticmethod
     def _get_segments(records):
         return segments.segmentlist(
