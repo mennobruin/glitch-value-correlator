@@ -11,7 +11,7 @@ from application1.config import config_manager
 LOG = config_manager.get_logger(__name__)
 
 
-class BaseReader:
+class BaseReader
 
     RECORD_STRUCTURE = [('file', str, 100), ('gps_start', float), ('gps_end', float)]
 
