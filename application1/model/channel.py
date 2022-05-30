@@ -7,6 +7,9 @@ class Channel:
         self.f_sample = f_sample
         self.unit = unit
 
+    def __repr__(self):
+        return self.name
+
     def __iter__(self):
         for value in vars(self).values():
             yield value
