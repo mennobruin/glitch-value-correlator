@@ -11,7 +11,7 @@ LOG = config_manager.get_logger(__name__)
 
 class Omicron:
 
-    COMMAND = 'source /virgoDev/Omicron/v3r2p0/cmt/setup.sh && omicron-print channel={0} gps-start={1:d} gps-end={2:d}'
+    COMMAND = '. /virgoDev/Omicron/v3r2p0/cmt/setup.sh && omicron-print channel={0} gps-start={1:d} gps-end={2:d}'
     FORMAT = [('gps', float), ('freq', float), ('snr', float)]
 
     def __init__(self, channel):
