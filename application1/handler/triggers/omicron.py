@@ -19,6 +19,7 @@ class Omicron:
 
     def get_segment(self, gps_start, gps_end):
         command = self.COMMAND.format(self.channel.name, gps_start, gps_end)
+        print(command)
         process = Popen(command, stdout=PIPE, shell=True)
         data = process.stdout
         if data.readline():
