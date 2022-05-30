@@ -43,6 +43,7 @@ class FrameFileReader(BaseReader):
 
     @staticmethod
     def get_channel_data(ffl_file, channel_name, t_start, t_stop) -> ChannelSegment:
+        print(ffl_file, channel_name, t_start, t_stop)
         with FrameFile(ffl_file) as ff:
             frame = ff.getChannel(channel_name, t_start, t_stop)
         return frame.data

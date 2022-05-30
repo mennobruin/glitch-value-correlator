@@ -78,5 +78,3 @@ class H5Reader(BaseReader):
             all_data.append(channel_data)
 
         return np.concatenate(all_data)
-
-
