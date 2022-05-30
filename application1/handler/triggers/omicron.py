@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 from subprocess import Popen, PIPE
 
@@ -19,8 +21,9 @@ class Omicron:
         command = self.COMMAND.format(self.channel.name, gps_start, gps_end)
         process = Popen(command, stdout=PIPE, shell=True)
         data = process.stdout
-        print(type(data), data)
-        if data:
+
+        print(type(data.readline()), data.readline())
+        if data.readline():
             triggers = np.loadtxt(data, dtype=self.FORMAT)
             triggers = triggers.view(dtype=(np.record, triggers.dtype), type=np.recarray)
             print(triggers.shape)
