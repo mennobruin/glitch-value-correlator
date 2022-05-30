@@ -44,9 +44,14 @@ class Excavator:
             bl_patterns: list = f.read().splitlines()
 
         if self.config['project.decimate']:
-            self.reader = H5Reader(gps_start=self.t_start, gps_end=self.t_stop, exclude_patterns=bl_patterns)
+            self.reader = H5Reader(gps_start=self.t_start,
+                                   gps_end=self.t_stop,
+                                   exclude_patterns=bl_patterns)
         else:
-            self.reader = FrameFileReader(self.source, exclude_patterns=bl_patterns)
+            self.reader = FrameFileReader(source=self.source,
+                                          gps_start=self.t_start,
+                                          gps_end=self.t_stop,
+                                          exclude_patterns=bl_patterns)
         self.n_points = int(round(abs(self.reader.segments[0]) * self.f_target))
         self.writer = DataWriter()
         self.report = HTMLReport()
