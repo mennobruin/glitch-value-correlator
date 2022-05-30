@@ -40,6 +40,7 @@ class Excavator:
         self.t_start = self.config['project.start_time']
         self.t_stop = self.config['project.end_time']
         self.f_target = self.config['project.target_frequency']
+        self.f_sample = self.config['project.sample_frequency']
         with open(self.config['project.blacklist_patterns'], 'r') as f:
             bl_patterns: list = f.read().splitlines()
 
@@ -52,7 +53,7 @@ class Excavator:
                                           gps_start=self.t_start,
                                           gps_end=self.t_stop,
                                           exclude_patterns=bl_patterns)
-        self.n_points = int(round(abs(self.reader.segments[0]) * self.f_target))
+        self.n_points = int(round(abs(self.reader.segments[0]) * self.f_sample))
         self.writer = DataWriter()
         self.report = HTMLReport()
 
@@ -207,7 +208,7 @@ class Excavator:
                 LOG.info(f'No triggers found from {gps_start} to {gps_end}')
                 continue
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
-            self.i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
+            self.i_trigger = np.floor((seg_triggers - gps_start) * self.f_sample).astype(np.int32)
             for channel in tqdm(self.available_channels, position=0, leave=True, desc=f'{segment[0]} -> {segment[1]}'):
                 self.update_channel_histogram(i_segment, segment, channel)
             self.reader._reset_cache()
