@@ -70,6 +70,8 @@ class Excavator:
     def run(self, n_iter=1, load_existing=False):
 
         self.available_channels = self.reader.get_available_channels()
+        print(self.available_channels)
+        return
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
         # trigger_pipeline = Omicron(channel=self.available_channels[0])
@@ -223,16 +225,16 @@ class Excavator:
             x_transform = do_transformations(
                 transformations=self.transformation_states[channel][transformation_name],
                 data=x_aux)
-            aux_hist = self.get_histogram(data=x_transform,
-                                          cumulative_veto=self.cum_aux_veto[i],
-                                          spanlike=self.h_aux_cum[channel, transformation_name])
-            trig_hist = self.get_histogram(data=x_transform[self.i_trigger],
-                                           cumulative_veto=self.cum_trig_veto[i],
-                                           spanlike=aux_hist)
             try:
+                aux_hist = self.get_histogram(data=x_transform,
+                                              cumulative_veto=self.cum_aux_veto[i],
+                                              spanlike=self.h_aux_cum[channel, transformation_name])
+                trig_hist = self.get_histogram(data=x_transform[self.i_trigger],
+                                               cumulative_veto=self.cum_trig_veto[i],
+                                               spanlike=aux_hist)
                 self.h_aux_cum[channel, transformation_name] += aux_hist
                 self.h_trig_cum[channel, transformation_name] += trig_hist
-            except (OverflowError, AssertionError) as e:
+            except (OverflowError, AssertionError, IndexError) as e:
                 LOG.debug(f'Exception caught for channel {channel}: {e}, discarding.')
                 self.available_channels.remove(channel)
                 return

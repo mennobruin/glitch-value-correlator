@@ -34,7 +34,7 @@ class H5Reader(BaseReader):
         records = records.view(dtype=(np.record, records.dtype), type=np.recarray)
         return records[(records.gps_end > self.gps_start) & (records.gps_start < self.gps_end)]
 
-    def load(self, file, channel):
+    def load(self, file, channel=None):
         if self.records.size == 0:
             LOG.error(f'No data found from {self.gps_start} to {self.gps_end} in {RESOURCE_DIR + self.H5_DIR}')
             exit_on_error()
