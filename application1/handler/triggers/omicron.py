@@ -1,6 +1,11 @@
 import numpy as np
 from subprocess import Popen, PIPE
 
+from application1.utils import exit_on_error
+from application1.config import config_manager
+
+LOG = config_manager.get_logger(__name__)
+
 
 class Omicron:
 
@@ -13,10 +18,16 @@ class Omicron:
     def get_segment(self, gps_start, gps_end):
         command = self.COMMAND.format(self.channel, gps_start, gps_end)
         process = Popen(command, stdout=PIPE, shell=True)
-        triggers = np.loadtxt(process.stdout, dtype=self.FORMAT)
-        triggers = triggers.view(dtype=(np.record, triggers.dtype), type=np.recarray)
-        print(triggers.shape)
-        print(triggers)
-        triggers.sort(order='gps')
-        print(triggers)
-        return triggers
+        data = process.stdout
+        print(type(data), data)
+        if data:
+            triggers = np.loadtxt(data, dtype=self.FORMAT)
+            triggers = triggers.view(dtype=(np.record, triggers.dtype), type=np.recarray)
+            print(triggers.shape)
+            print(triggers)
+            triggers.sort(order='gps')
+            return triggers
+        else:
+            LOG.error(f"No triggers found / failed to load triggers between {gps_start} and {gps_end}. "
+                      f"Are you in the correct environment? Try 'source /virgoDev/Omicron/vXrYpZ/cmt/setup.sh' first.")
+            exit_on_error()
