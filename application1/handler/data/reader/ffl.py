@@ -44,6 +44,7 @@ class FrameFileReader(BaseReader):
 
     @staticmethod
     def get_channel_data(gwf_file, channel_name, t_start, t_stop):
+        print(frgetvect1d(gwf_file, channel_name, start=t_start, span=t_stop-t_start, verbose=True))
         data, *_ = frgetvect1d(gwf_file, channel_name, start=t_start, span=t_stop-t_start, verbose=True)
         return data.astype(float)
 
