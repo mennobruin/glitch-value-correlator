@@ -71,10 +71,9 @@ class Excavator:
         self.available_channels = self.reader.get_available_channels()
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
-        trigger_pipeline = Omicron(channel=self.available_channels[0])
-        # trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final', trigger_type="Scattered_Light")
+        # trigger_pipeline = Omicron(channel=self.available_channels[0])
+        trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final')#, trigger_type="Scattered_Light")
         triggers = trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
-        return
         if triggers.size == 0:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
