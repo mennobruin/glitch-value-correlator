@@ -9,7 +9,7 @@ class CSVReader(BaseReader):
     CSV_DIR = 'csv/'
 
     def __init__(self):
-        super(CSVReader, self).__init__()
+        super(CSVReader, self).__init__(gps_start=None, gps_end=None, exclude_patterns=None)
 
     def load_csv(self, csv_file, usecols=None) -> pd.DataFrame:
         csv_file = check_extension(csv_file, extension='.csv')
