@@ -70,6 +70,7 @@ class Excavator:
     def run(self, n_iter=1, load_existing=False):
 
         self.available_channels = self.reader.get_available_channels()
+        self.available_channels = np.random.choice(self.available_channels, size=200)
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
         # trigger_pipeline = Omicron(channel=self.available_channels[0])
