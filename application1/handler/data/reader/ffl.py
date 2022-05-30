@@ -47,16 +47,17 @@ class FrameFileReader(BaseReader):
         data, *_ = frgetvect1d(gwf_file, channel.name, start=t_start, span=t_stop - t_start)
         return data.astype(float)
 
-    def get_available_channels(self, t0=None) -> [Channel]:
+    def get_available_channels(self, t0=None, f_target=None) -> [Channel]:
         t0 = t0 if t0 else self.gps_start
         with FrameFile(self.source).get_frame(t0) as f:
             channels = [Channel(name=str(adc.contents.name),
                                 f_sample=adc.contents.sampleRate)
                         for adc in f.iter_adc()]
+            if f_target:
+                channels = [c for c in channels if c.f_sample == f_target]
             if self.exclude_patterns:
-                return [c for c in channels if not any(fnmatch(c.name, p) for p in self.exclude_patterns)]
-            else:
-                return channels
+                channels = [c for c in channels if not any(fnmatch(c.name, p) for p in self.exclude_patterns)]
+            return channels
 
     # def load(self, file, channel, t):
     #     if self.records.size == 0:
