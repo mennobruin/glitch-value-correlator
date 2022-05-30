@@ -52,6 +52,9 @@ class Excavator:
                                           gps_start=self.t_start,
                                           gps_end=self.t_stop,
                                           exclude_patterns=bl_patterns)
+        print(self.reader.records)
+        print(self.reader.segments.size)
+        print(self.reader.segments)
         self.n_points = int(round(abs(self.reader.segments[0]) * self.f_target))
         self.writer = DataWriter()
         self.report = HTMLReport()

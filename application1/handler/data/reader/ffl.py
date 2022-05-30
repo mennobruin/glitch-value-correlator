@@ -27,7 +27,6 @@ class FrameFileReader(BaseReader):
     def _get_records(self, file):
         records = np.loadtxt(file, dtype=self.RECORD_STRUCTURE)
         records = records.view(dtype=(np.record, records.dtype), type=np.recarray)
-        print(records)
         return records[(records.gps_end > self.gps_start) & (records.gps_start < self.gps_end)]
 
     # @lru_cache(maxsize=None)
