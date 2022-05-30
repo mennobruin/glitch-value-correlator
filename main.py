@@ -183,7 +183,7 @@ class Excavator:
             for name, transformations in self.transformation_states[channel].items():
                 for i, transformation in enumerate(transformations):
                     if isinstance(transformation, type):
-                        self.transformation_states[channel][name][i] = transformation(f_target=self.f_target)
+                        self.transformation_states[channel][name][i] = transformation(f_sample=self.f_target)
 
     def construct_histograms(self, segments, triggers) -> ({str, Hist}):
         self.cum_aux_veto = [np.zeros(self.n_points, dtype=bool) for _ in segments]
