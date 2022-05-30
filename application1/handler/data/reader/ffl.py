@@ -43,9 +43,8 @@ class FrameFileReader(BaseReader):
         return segment
 
     @staticmethod
-    def get_channel_data(gwf_file, channel_name, t_start, t_stop):
-        print(gwf_file, channel_name, t_start, t_stop, t_start-t_stop)
-        data, *_ = frgetvect1d(gwf_file, channel_name, start=t_start, span=t_stop-t_start, verbose=True)
+    def get_channel_data(gwf_file, channel, t_start, t_stop):
+        data, *_ = frgetvect1d(gwf_file, channel.name, start=t_start, span=t_stop - t_start, verbose=True)
         return data.astype(float)
 
     def get_available_channels(self, t0=None) -> [Channel]:
