@@ -1,78 +1,57 @@
-import numpy as np
-import h5py
-import os
-from ligo import segments
 from fnmatch import fnmatch
 
-from .base import BaseReader
-
-from application1.utils import check_extension, split_file_name, exit_on_error
-from resources.constants import RESOURCE_DIR
+import h5py
+import numpy as np
+from ligo import segments
 
 from application1.config import config_manager
+from application1.utils import check_extension, exit_on_error
+from resources.constants import RESOURCE_DIR
+from .base import BaseReader
 
 LOG = config_manager.get_logger(__name__)
 
 
 class H5Reader(BaseReader):
 
-    RECORD_STRUCTURE = [('file', str, 100), ('gps_start', float), ('gps_end', float)]
     H5_DIR = 'ds_data/data/'
     H5 = '.h5'
 
     def __init__(self, gps_start, gps_end, exclude_patterns=None):
-        super(H5Reader, self).__init__()
-        self.h5_cache = None
-        self.exclude_patterns = exclude_patterns
-        self.gps_start = gps_start
-        self.gps_end = gps_end
-        self.h5_records = self._get_records()
-        self.h5_files = self.h5_records.file
-        self.segments = segments.segmentlist(
-            segments.segment(gs, ge) for gs, ge in
-            zip(self.h5_records.gps_start, self.h5_records.gps_end)
-        )
+        super(H5Reader, self).__init__(gps_start, gps_end, exclude_patterns)
+        self.records = self._get_records(loc=self.default_path + self.H5_DIR, ext=self.H5)
+        self.files = self.records.file
+        self.segments = self._get_segments(self.records)
 
-    def _get_records(self):
-        h5_files = sorted([f for f in os.listdir(RESOURCE_DIR + self.H5_DIR) if f.endswith(self.H5)])
-        records = []
-        for file in h5_files:
-            _, gps_start, gps_end = split_file_name(file)
-            records.append((file, gps_start, gps_end))
-        records = np.array(records, dtype=self.RECORD_STRUCTURE)
-        records = records.view(dtype=(np.record, records.dtype), type=np.recarray)
-        return records[(records.gps_end > self.gps_start) & (records.gps_start < self.gps_end)]
-
-    def reset_cache(self):
-        self.h5_cache.close()
-        self.h5_cache = None
-
-    def load_h5(self, h5_file):
-        if self.h5_records.size == 0:
+    def load(self, file, channel):
+        if self.records.size == 0:
             LOG.error(f'No data found from {self.gps_start} to {self.gps_end} in {RESOURCE_DIR + self.H5_DIR}')
             exit_on_error()
-        if not self.h5_cache:
-            h5_file = check_extension(h5_file, extension=self.H5)
-            h5_file = self._check_path_exists(file_loc=self.H5_DIR, file=h5_file)
+        if not self.cache:
+            file = check_extension(file, extension=self.H5)
+            file = self._check_path_exists(file_loc=self.H5_DIR, file=file)
             try:
-                self.h5_cache = h5py.File(h5_file, 'r')
+                self.cache = h5py.File(file, 'r')
             except OSError as e:
-                LOG.error(f'Exception caught while trying to load {h5_file}: {e}')
-                LOG.info('The HDF5 file might have corrupted, try resampling the data.')
+                LOG.error(f'Exception caught while trying to load {file}: {e}')
+                LOG.info(f'The HDF5 file {file} might have corrupted, try resampling the data.')
                 exit_on_error()
+        elif channel not in self.cache:
+            self._reset_cache()
+            self.load(file, channel)
 
     def get_channel_from_file(self, file, channel_name):
-        self.load_h5(file)
-        return self.h5_cache[channel_name]
+        self.load(file, channel_name)
+        return self.cache[channel_name]
 
     def get_available_channels(self, file=None):
-        file = file if file is not None else self.h5_files[0]
-        self.load_h5(file)
+        file = file if file is not None else self.files[0]
+        self.load(file)
 
         if self.exclude_patterns:
-            return [c for c in self.h5_cache.keys() if not any(fnmatch(c, p) for p in self.exclude_patterns)]
+            return [c for c in self.cache.keys() if not any(fnmatch(c, p) for p in self.exclude_patterns)]
         else:
-            return list(self.h5_cache.keys())
+            return list(self.cache.keys())
 
     def get_data_from_segments(self, request_segment, channel_name):
         request_segments = segments.segmentlist([request_segment]) & self.segments
@@ -80,7 +59,7 @@ class H5Reader(BaseReader):
         all_data = []
         for seg in request_segments:
             i_segment = self.segments.find(seg)
-            h5_file = self.h5_files[i_segment]
+            h5_file = self.files[i_segment]
             try:
                 channel_data = self.get_channel_from_file(h5_file, channel_name)
             except KeyError:

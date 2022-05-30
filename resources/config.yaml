@@ -1,6 +1,7 @@
 # Inputs
 #project.source: '/virgoData/ffl/raw_O3b_arch'
 project.source: '/virgoData/ffl/trend'
+project.decimate: false
 #project.start_time: 1262680000
 #project.start_time: 1262649600
 project.start_time: 1256655644

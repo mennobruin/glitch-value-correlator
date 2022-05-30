@@ -43,9 +43,11 @@ class Excavator:
         with open(self.config['project.blacklist_patterns'], 'r') as f:
             bl_patterns: list = f.read().splitlines()
 
-        self.h5_reader = H5Reader(gps_start=self.t_start, gps_end=self.t_stop, exclude_patterns=bl_patterns)
-        self.n_points = int(round(abs(self.h5_reader.segments[0]) * self.f_target))
-        self.ff_reader = FrameFileReader(self.source, exclude_patterns=bl_patterns)
+        if self.config['project.decimate']:
+            self.reader = H5Reader(gps_start=self.t_start, gps_end=self.t_stop, exclude_patterns=bl_patterns)
+        else:
+            self.reader = FrameFileReader(self.source, exclude_patterns=bl_patterns)
+        self.n_points = int(round(abs(self.reader.segments[0]) * self.f_target))
         self.writer = DataWriter()
         self.report = HTMLReport()
 
@@ -61,7 +63,7 @@ class Excavator:
 
     def run(self, n_iter=1, load_existing=False):
 
-        self.available_channels = self.h5_reader.get_available_channels()
+        self.available_channels = self.reader.get_available_channels()
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
         trigger_pipeline = Omicron(channel=self.available_channels[0])
@@ -81,7 +83,7 @@ class Excavator:
                 self.h_trig_cum = data['trig']
                 self.h_aux_cum = data['aux']
         else:
-            self.construct_histograms(segments=self.h5_reader.segments, triggers=triggers)
+            self.construct_histograms(segments=self.reader.segments, triggers=triggers)
             with open(test_file, 'wb') as pkf:
                 pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum}, pkf)
 
@@ -204,10 +206,10 @@ class Excavator:
             self.i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
             for channel in tqdm(self.available_channels, position=0, leave=True, desc=f'{segment[0]} -> {segment[1]}'):
                 self.update_channel_histogram(i_segment, segment, channel)
-            self.h5_reader.reset_cache()
+            self.reader._reset_cache()
 
     def update_channel_histogram(self, i, segment, channel):
-        x_aux = self.h5_reader.get_data_from_segments(request_segment=segment, channel_name=channel)
+        x_aux = self.reader.get_data_from_segments(request_segment=segment, channel_name=channel)
         if x_aux is None:
             self.available_channels.remove(channel)
             LOG.debug(f'Discarded {channel} due to disappearance.')
