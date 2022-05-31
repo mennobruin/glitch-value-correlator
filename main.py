@@ -88,10 +88,11 @@ class Excavator:
                 data = pickle.load(pkf)
                 self.h_trig_cum = data['trig']
                 self.h_aux_cum = data['aux']
+                self.available_channels = data['channels']
         else:
             self.construct_histograms(segments=self.reader.segments, triggers=triggers)
             with open(test_file, 'wb') as pkf:
-                pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum}, pkf)
+                pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum, 'channels': self.available_channels}, pkf)
 
         fom_ks = KolgomorovSmirnov()
         fom_ad = AndersonDarling()
@@ -253,7 +254,7 @@ class Excavator:
 if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
     excavator = Excavator()
-    excavator.run(load_existing=True)
+    excavator.run(load_existing=False)
     excavator.generate_report()
     # excavator.decimate_data()
     LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")
