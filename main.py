@@ -53,6 +53,7 @@ class Excavator:
                                           gps_start=self.t_start,
                                           gps_end=self.t_stop,
                                           exclude_patterns=bl_patterns)
+        return
         self.n_points = int(round(abs(self.reader.segments[0]) * self.f_target))
         self.writer = DataWriter()
         self.report = HTMLReport()
@@ -248,6 +249,6 @@ if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
     excavator = Excavator()
     excavator.run(load_existing=False)
-    excavator.generate_report()
+    # excavator.generate_report()
     # excavator.decimate_data()
     LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")
