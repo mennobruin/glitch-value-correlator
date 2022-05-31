@@ -102,14 +102,14 @@ class Excavator:
                 h_trig = self.h_trig_cum[channel, transformation_name]
                 try:
                     h_aux.align(h_trig)
+
+                    fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
+                    fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
                 except AssertionError:
                     print(channel, transformation_name)
                     print(h_aux)
                     print(h_trig)
                     print('-------------------------')
-
-                fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
-                fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
 
         ks_table_cols = ['Channel', 'Transformation', 'KS', 'p-value']
         ks_table = 'KS_table'
