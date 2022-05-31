@@ -9,7 +9,7 @@ project.start_time: 1256688000
 #project.end_time: 1262684200
 #project.end_time: 1262700800
 #project.end_time: 1262655700
-project.end_time: 1256706000
+project.end_time: 1256774400
 project.target_frequency: 1
 project.cutoff_frequency: 50
 project.blacklist_patterns: './resources/blacklist_patterns.txt'
