@@ -99,7 +99,13 @@ class Excavator:
             for transformation_name in self.transformation_names:
                 h_aux = self.h_aux_cum[channel, transformation_name]
                 h_trig = self.h_trig_cum[channel, transformation_name]
-                h_aux.align(h_trig)
+                try:
+                    h_aux.align(h_trig)
+                except AssertionError:
+                    print(channel, transformation_name)
+                    print(h_aux)
+                    print(h_trig)
+                    print('-------------------------')
 
                 fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
                 fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
@@ -247,7 +253,7 @@ class Excavator:
 if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
     excavator = Excavator()
-    excavator.run(load_existing=False)
+    excavator.run(load_existing=True)
     excavator.generate_report()
     # excavator.decimate_data()
     LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")
