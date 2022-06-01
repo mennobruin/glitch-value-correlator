@@ -23,9 +23,10 @@ with open(test_file, 'rb') as pkf:
     available_channels = data['channels']
 
 
-print([c for c in available_channels if "DQ" in c])
-channel = "V1:DQ_BRMSMon_BRMS_ALL_MIC_AIRPLANE_ENV_TCS_CO2_WI_MIC"
-i = available_channels.index(channel)
+# print([c for c in available_channels if "DQ" in c])
+# channel = "V1:DQ_BRMSMon_BRMS_ALL_MIC_AIRPLANE_ENV_TCS_CO2_WI_MIC"
+# i = available_channels.index(channel)
+i = 2
 
 plot_histogram(channel=available_channels[i], transformation=transformation_names[0], histogram=h_trig_cum[i], data_type='trig', block=False)
 plot_histogram(channel=available_channels[i], transformation=transformation_names[0], histogram=h_aux_cum[i], data_type='aux', block=False)
