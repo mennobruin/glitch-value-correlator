@@ -29,9 +29,9 @@ with open(test_file, 'rb') as pkf:
 i = 2
 channel = available_channels[i]
 transformation = transformation_names[0]
-plot_histogram(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig', block=False)
-plot_histogram(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux', block=False)
+plot_histogram(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig')
+plot_histogram(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux')
 
 transformation = transformation_names[2]
-plot_histogram(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig', block=False)
+plot_histogram(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig')
 plot_histogram(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux')
