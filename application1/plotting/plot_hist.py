@@ -1,6 +1,6 @@
 import pickle
 
-from .plot import plot_histogram
+from .plot import plot_histogram, plot_histogram_cdf
 from application1.model.transformation import HighPass, GaussianDifferentiator
 
 transformation_combinations = [
@@ -29,9 +29,13 @@ with open(test_file, 'rb') as pkf:
 i = 2
 channel = available_channels[i]
 transformation = transformation_names[0]
-plot_histogram(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig')
-plot_histogram(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux')
+# plot_histogram(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig')
+# plot_histogram(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux')
+fig = plot_histogram_cdf(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig', return_fig=True)
+plot_histogram_cdf(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux', fig=fig)
 
 transformation = transformation_names[2]
-plot_histogram(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig')
-plot_histogram(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux')
+# plot_histogram(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig')
+# plot_histogram(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux')
+fig = plot_histogram_cdf(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig', return_fig=True)
+plot_histogram_cdf(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux', fig=fig)
