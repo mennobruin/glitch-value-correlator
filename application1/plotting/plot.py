@@ -6,7 +6,7 @@ from application1.config import config_manager
 LOG = config_manager.get_logger(__name__)
 
 
-def plot_histogram(channel, transformation, histogram, data_type, save=False, rank=None):
+def plot_histogram(channel, transformation, histogram, data_type, save=False, rank=None, block=True):
     transformation = transformation if transformation != '' else 'none'
     f_name = f'{rank}_{channel}_{transformation}+{data_type}'
     LOG.info(f'Plotting {f_name}...')
@@ -22,7 +22,7 @@ def plot_histogram(channel, transformation, histogram, data_type, save=False, ra
         fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
         return save_name
     else:
-        plt.show()
+        plt.show(block=block)
     plt.clf()
 
 
