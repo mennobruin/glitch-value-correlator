@@ -34,4 +34,4 @@ plot_histogram(channel=channel, transformation=transformation, histogram=h_aux_c
 
 transformation = transformation_names[2]
 plot_histogram(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig', block=False)
-plot_histogram(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux', block=False)
+plot_histogram(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux')
