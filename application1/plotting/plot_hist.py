@@ -23,8 +23,7 @@ with open(test_file, 'rb') as pkf:
     available_channels = data['channels']
 
 
-print([c for c in available_channels if 'DQ_BRMSMon' in c])
-
+print(available_channels)
 channel = "V1:DQ_BRMSMon_BRMS_ALL_MIC_AIRPLANE_ENV_TCS_CO2_WI_MIC"
 i = available_channels.index(channel)
 
