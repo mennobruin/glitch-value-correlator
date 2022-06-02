@@ -50,8 +50,8 @@ class FrameFileReader(BaseReader):
     def get_channel_data(self, channel, t_start):
         with FrameFile(self.source).get_frame(t_start) as ff:
             for adc in ff.iter_adc():
-                print(str(adc.contents.name), channel, str(adc.contents.name) == channel)
                 if str(adc.contents.name) == channel:
+                    print(channel)
                     return FrVect2array(adc.contents.data)
 
         return None
