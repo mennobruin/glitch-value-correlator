@@ -89,7 +89,7 @@ class Excavator:
             with open(test_file, 'rb') as pkf:
                 data = pickle.load(pkf)
                 self.h_trig_cum = data['trig']
-                print(self.h_trig_cum.values())
+                print(len(self.h_trig_cum.values()))
                 print(self.h_trig_cum.keys())
                 self.h_aux_cum = data['aux']
                 self.available_channels = data['channels']
@@ -255,7 +255,12 @@ class Excavator:
                     trig_hist = self.get_histogram(data=x_transform[i_trigger],
                                                    cumulative_veto=self.cum_trig_veto[i],
                                                    spanlike=aux_hist)
+                    print(label)
+                    print(i_trigger)
+                    print(trig_hist)
                     self.h_trig_cum[label][channel, transformation_name] += trig_hist
+                    print(self.h_trig_cum)
+                    exit(0)
             except (OverflowError, AssertionError, IndexError) as e:
                 LOG.debug(f'Exception caught for channel {channel}: {e}, discarding.')
                 self.available_channels.remove(channel)
