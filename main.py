@@ -75,7 +75,8 @@ class Excavator:
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
         # trigger_pipeline = Omicron(channel=self.available_channels[0])
-        trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final')#, trigger_type="Scattered_Light")
+        trigger_pipeline = DefaultPipeline(
+            trigger_file='GSpy_ALLIFO_O3b_0921_final')  # , trigger_type="Scattered_Light")
         self.labels = trigger_pipeline.labels
         triggers = trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
         if triggers.size == 0:
@@ -156,12 +157,14 @@ class Excavator:
                 self.report.add_image(img=cdf_fname, div_id=div_id)
             except AttributeError as e:
                 LOG.debug(e)
-            self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), f'{p_value:.2E}'], table_id=ks_table)
+            self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), f'{p_value:.2E}'],
+                                         table_id=ks_table)
 
         for i, (k, v) in enumerate(ad_results[0:10]):
             channel, transformation = k
             statistic, threshold = v
-            self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), str(threshold)], table_id=ad_table)
+            self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), str(threshold)],
+                                         table_id=ad_table)
 
     def generate_report(self):
         LOG.info("Generating HTML Report...")
@@ -212,11 +215,9 @@ class Excavator:
             (channel, transform): Hist(np.array([]))
             for channel in self.available_channels for transform in self.transformation_names
         }
-        print(len(self.available_channels))
-        print(len(self.transformation_names))
         self.h_trig_cum = {
-            label: {(channel, transform): Hist(np.array([]))}
-            for channel in self.available_channels for transform in self.transformation_names
+            label: {(channel, transform): Hist(np.array([]))
+                    for channel in self.available_channels for transform in self.transformation_names}
             for label in self.labels
         }
 
@@ -256,7 +257,6 @@ class Excavator:
                                               spanlike=self.h_aux_cum[channel, transformation_name])
                 self.h_aux_cum[channel, transformation_name] += aux_hist
 
-                print(self.h_trig_cum)
                 for label, i_trigger in self.i_trigger.items():
                     trig_hist = self.get_histogram(data=x_transform[i_trigger],
                                                    cumulative_veto=self.cum_trig_veto[label][i],
