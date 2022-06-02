@@ -212,6 +212,8 @@ class Excavator:
             (channel, transform): Hist(np.array([]))
             for channel in self.available_channels for transform in self.transformation_names
         }
+        print(len(self.available_channels))
+        print(len(self.transformation_names))
         self.h_trig_cum = {
             label: {(channel, transform): Hist(np.array([]))}
             for channel in self.available_channels for transform in self.transformation_names
