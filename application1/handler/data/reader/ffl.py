@@ -47,14 +47,10 @@ class FrameFileReader(BaseReader):
         segment = ChannelSegment(channel=channel, data=frame.data, gps_time=frame.gps)
         return segment
 
-    def get_channel_data(self, channel, t_start):
+    def get_channel_data(self, channel, t_start, t_stop):
         with FrameFile(self.source).get_frame(t_start) as ff:
-            for adc in ff.iter_adc():
-                if str(adc.contents.name) == channel:
-                    print(channel)
-                    return FrVect2array(adc.contents.data)
-
-        return None
+            data = ff.getChannel(channel, t_start, t_stop).data
+        return data
 
     def get_available_channels(self, t0=None, f_target=None) -> [Channel]:
         t0 = t0 if t0 else self.gps_start
@@ -89,7 +85,7 @@ class FrameFileReader(BaseReader):
 
         all_data = []
         for seg in request_segments:
-            channel_data = self.get_channel_data(channel_name, seg[0])
+            channel_data = self.get_channel_data(channel_name, *seg)
             if not channel_data:
                 continue
             all_data.append(channel_data)
