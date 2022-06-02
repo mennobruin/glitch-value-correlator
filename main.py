@@ -100,9 +100,8 @@ class Excavator:
         fom_ad = AndersonDarling()
         for channel in self.available_channels:
             for transformation_name in self.transformation_names:
-                h_aux, h_trig = Hist(np.array([])), Hist(np.array([]))
-                for label in self.h_aux_cum:
-                    h_aux += self.h_aux_cum[label][channel, transformation_name]
+                h_aux = self.h_aux_cum[channel, transformation_name]
+                h_trig = Hist(np.array([]))
                 for label in self.h_trig_cum:
                     h_trig += self.h_trig_cum[label][channel, transformation_name]
                 try:
