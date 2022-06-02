@@ -47,11 +47,6 @@ class FrameFileReader(BaseReader):
         segment = ChannelSegment(channel=channel, data=frame.data, gps_time=frame.gps)
         return segment
 
-    def get_channel_data(self, channel, t_start, t_stop):
-        with FrameFile(self.source).get_frame(t_start) as ff:
-            data = ff.getChannel(channel, t_start, t_stop).data
-        return data
-
     def get_available_channels(self, t0=None, f_target=None) -> [Channel]:
         t0 = t0 if t0 else self.gps_start
         with FrameFile(self.source).get_frame(t0) as f:
@@ -84,11 +79,12 @@ class FrameFileReader(BaseReader):
         request_segments = segments.segmentlist([request_segment]) & self.segments
 
         all_data = []
-        for seg in request_segments:
-            channel_data = self.get_channel_data(channel_name, *seg)
-            if not channel_data:
-                continue
-            all_data.append(channel_data)
+        with FrameFile(self.source) as ff:
+            for seg in request_segments:
+                channel_data = ff.getChannel(channel_name, *seg).data
+                if not channel_data:
+                    continue
+                all_data.append(channel_data)
 
         if all_data:
             return np.concatenate(all_data)
