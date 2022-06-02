@@ -202,8 +202,11 @@ class Excavator:
 
     def construct_histograms(self, segments, triggers) -> ({str, Hist}):
         self.cum_aux_veto = [np.zeros(self.n_points, dtype=bool) for _ in segments]
-        self.cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in
-                              segments]
+        self.cum_trig_veto = {
+            label: [np.zeros(count_triggers_in_segment(triggers[triggers.label == label], *segment), dtype=bool)
+                    for segment in segments]
+            for label in self.labels
+        }
 
         self.h_aux_cum = {
             (channel, transform): Hist(np.array([]))
@@ -253,7 +256,7 @@ class Excavator:
 
                 for label, i_trigger in self.i_trigger.items():
                     trig_hist = self.get_histogram(data=x_transform[i_trigger],
-                                                   cumulative_veto=self.cum_trig_veto[i],
+                                                   cumulative_veto=self.cum_trig_veto[label][i],
                                                    spanlike=aux_hist)
                     print(label)
                     print(i_trigger)
@@ -264,6 +267,7 @@ class Excavator:
             except (OverflowError, AssertionError, IndexError) as e:
                 LOG.debug(f'Exception caught for channel {channel}: {e}, discarding.')
                 self.available_channels.remove(channel)
+                exit(0)
                 return
 
     @staticmethod
