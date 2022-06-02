@@ -49,9 +49,8 @@ class FrameFileReader(BaseReader):
         segment = ChannelSegment(channel=channel, data=frame.data, gps_time=frame.gps)
         return segment
 
-    @staticmethod
-    def get_channel_data(gwf_file, channel, t_start, t_stop):
-        with FrameFile(gwf_file) as ff:
+    def get_channel_data(self, channel, t_start, t_stop):
+        with FrameFile(self.source) as ff:
             frame = ff.getChannel(channel, t_start, t_stop)
         return frame.data
 
