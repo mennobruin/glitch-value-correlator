@@ -213,21 +213,6 @@ class Excavator:
             return h_aux_cum, h_trig_cum
         return None, None
 
-    def _store_hists(self):
-        aux, trig, chan = self._load_hists()
-
-        if aux and trig and chan:
-            self.h_aux_cum = self._combine_cumulative_hist(aux)
-            self.h_trig_cum = self._combine_cumulative_hist(trig)
-
-        with open(self.histogram_file, 'wb') as f:
-            pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum, 'channels': self.available_channels}, f)
-
-    def _combine_cumulative_hist(self, hist):
-
-        for
-
-
     def _init_cumulative_hists(self, segments, triggers):
         self.cum_aux_veto = [np.zeros(self.n_points, dtype=bool) for _ in segments]
         self.cum_trig_veto = {
