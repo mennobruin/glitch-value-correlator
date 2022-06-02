@@ -1,9 +1,9 @@
 *max
 *min
+*rms*
 *VAC*
 *Daq*
-*rms*
-*mean
+*DAQ*
 *DS
 *notsafe*
 *elapsed_time*

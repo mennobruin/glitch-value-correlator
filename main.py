@@ -19,7 +19,7 @@ from application1.model.transformation import do_transformations, GaussianDiffer
 from application1.plotting.plot import plot_histogram_cdf
 from application1.plotting.report import HTMLReport
 from application1.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments
-from resources.constants import CONFIG_FILE
+from resources.constants import CONFIG_FILE, RESOURCE_DIR
 
 LOG = config_manager.get_logger(__name__)
 
@@ -56,6 +56,7 @@ class Excavator:
         self.n_points = int(round(abs(self.reader.segments[0]) * self.f_target))
         self.writer = DataWriter()
         self.report = HTMLReport()
+        self.histogram_file = RESOURCE_DIR + 'histograms.pickle'
 
         self.available_channels = None
         self.labels = None
@@ -203,7 +204,31 @@ class Excavator:
                     if isinstance(transformation, type):
                         self.transformation_states[channel][name][i] = transformation(f_target=self.f_cutoff)
 
-    def construct_histograms(self, segments, triggers) -> ({str, Hist}):
+    def _load_hists(self):
+        if os.path.exists(self.histogram_file):
+            with open(self.histogram_file, 'rb') as f:
+                data = pickle.load(f)
+                h_aux_cum = data['aux']
+                h_trig_cum = data['trig']
+            return h_aux_cum, h_trig_cum
+        return None, None
+
+    def _store_hists(self):
+        aux, trig, chan = self._load_hists()
+
+        if aux and trig and chan:
+            self.h_aux_cum = self._combine_cumulative_hist(aux)
+            self.h_trig_cum = self._combine_cumulative_hist(trig)
+
+        with open(self.histogram_file, 'wb') as f:
+            pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum, 'channels': self.available_channels}, f)
+
+    def _combine_cumulative_hist(self, hist):
+
+        for
+
+
+    def _init_cumulative_hists(self, segments, triggers):
         self.cum_aux_veto = [np.zeros(self.n_points, dtype=bool) for _ in segments]
         self.cum_trig_veto = {
             label: [np.zeros(count_triggers_in_segment(triggers[triggers.label == label], *segment), dtype=bool)
@@ -220,6 +245,9 @@ class Excavator:
                     for channel in self.available_channels for transform in self.transformation_names}
             for label in self.labels
         }
+
+    def construct_histograms(self, segments, triggers) -> ({str, Hist}):
+        self._init_cumulative_hists(segments, triggers)
 
         LOG.info('Constructing histograms...')
         for i_segment, segment, gap in iter_segments(segments):

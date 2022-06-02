@@ -41,8 +41,9 @@ class FrameFileReader(BaseReader):
             zip(self.records.gps_start, self.records.gps_end)
         )
 
-    def get_channel_segment(self, channel_name, t_start, t_stop) -> ChannelSegment:
-        with FrameFile(self.source) as ff:
+    @staticmethod
+    def get_channel_segment(file, channel_name, t_start, t_stop) -> ChannelSegment:
+        with FrameFile(file) as ff:
             frame = ff.getChannel(channel_name, t_start, t_stop)
         channel = Channel(name=channel_name, f_sample=frame.fsample, unit=frame.unit)
         segment = ChannelSegment(channel=channel, data=frame.data, gps_time=frame.gps)
@@ -50,8 +51,9 @@ class FrameFileReader(BaseReader):
 
     @staticmethod
     def get_channel_data(gwf_file, channel, t_start, t_stop):
-        data, *_ = frgetvect1d(gwf_file, channel.name, start=t_start, span=t_stop - t_start)
-        return data.astype(float)
+        with FrameFile(gwf_file) as ff:
+            frame = ff.getChannel(channel, t_start, t_stop)
+        return frame.data
 
     def get_available_channels(self, t0=None, f_target=None) -> [Channel]:
         t0 = t0 if t0 else self.gps_start
