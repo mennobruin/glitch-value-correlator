@@ -100,8 +100,11 @@ class Excavator:
         fom_ad = AndersonDarling()
         for channel in self.available_channels:
             for transformation_name in self.transformation_names:
-                h_aux = self.h_aux_cum[channel, transformation_name]  # todo: add trigger labels to dict
-                h_trig = self.h_trig_cum[channel, transformation_name]
+                h_aux, h_trig = Hist(np.array([])), Hist(np.array([]))
+                for label in self.h_aux_cum:
+                    h_aux += self.h_aux_cum[label][channel, transformation_name]
+                for label in self.h_trig_cum:
+                    h_trig += self.h_trig_cum[label][channel, transformation_name]
                 try:
                     h_aux.align(h_trig)
 
@@ -266,7 +269,7 @@ class Excavator:
 if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
     excavator = Excavator()
-    excavator.run(load_existing=False)
+    excavator.run(load_existing=True)
     excavator.generate_report()
     # excavator.decimate_data()
     LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")
