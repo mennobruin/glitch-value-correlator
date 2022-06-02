@@ -54,7 +54,7 @@ class FrameFileReader(BaseReader):
                     print(channel)
                     return FrVect2array(adc.contents.data)
 
-        return None
+        return np.ndarray([])
 
     def get_available_channels(self, t0=None, f_target=None) -> [Channel]:
         t0 = t0 if t0 else self.gps_start
