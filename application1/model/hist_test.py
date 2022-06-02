@@ -1,52 +1,93 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from histogram import Hist
+import sys
+import collections
 
 
-def merge(a, b):
-    def extract_vals(hist):
-        values = [[y] * x for x, y in zip(hist[0], hist[1])]
-        return [z for s in values for z in s]
+class Bin:
 
-    def extract_bin_resolution(hist):
-        return hist[1][1] - hist[1][0]
+    __slots__ = ["left", "right", "center", "count"]
 
-    def generate_num_bins(minval, maxval, bin_resolution):
-        # Generate number of bins necessary to satisfy assumption 2
-        return int(np.ceil((maxval - minval) / bin_resolution))
+    def __init__(self, left, right, count=0):
+        self.left = left
+        self.right = right
+        self.center = (left + right) / 2
+        self.count = count
 
-    vals = extract_vals(a) + extract_vals(b)
-    bin_resolution = min(map(extract_bin_resolution, [a, b]))
+    def __iadd__(self, other):
+        if other.left < self.left:
+            self.left = other.left
+        if other.right > self.right:
+            self.right = other.right
+        self.count += other.count
+        return self
 
-    print(a[0].size)
-    return np.histogram(vals, bins=a[0].size)
+    def __lt__(self, other):
+        return self.right < other.left
+
+    def __eq__(self, other):
+        return self.center == other.center
 
 
-def test():
-    x = np.array([[0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.3, 0.5, 0.5, 0.5, 0.5] for _ in range(10)]).flatten()
-    y = np.array([[0.3, 0.3, 0.3, 0.4, 0.4, 0.4, 0.5, 0.5, 0.6, 0.6, 0.7, 0.8, 0.8, 0.8, 0.8] for _ in range(10)]).flatten()
+class Histogram(collections.UserList):
+    def __init__(self, max_bins):
+        super(Histogram, self).__init__()
+        self.max_bins = max_bins
+        self.n_samples = 0
 
-    l2_nbin = 4
-    nbin = 2 ** l2_nbin
+    def update(self, sample):
+        self.n_samples += 1
 
-    hist1 = Hist(x, l2_nbin=l2_nbin)
-    hist2 = Hist(y, l2_nbin=l2_nbin)
+        sample_bin = Bin(left=sample, right=sample, count=1)
 
-    hist3 = np.histogram(x, bins=nbin)
-    hist4 = np.histogram(y, bins=nbin)
+        if not self:
+            self.append(sample_bin)
+            return self
 
-    hist1 += hist2
+        low, high = 0, len(self)
+        i = (low + high) // 2
+        while low < high:
+            if self[i] < sample_bin:
+                low = i + 1
+            else:
+                high = i
+            i = (low + high) // 2
 
-    h = hist1
-    plt.bar(h.xgrid, h.counts, width=h.span / h.n_bin)
-    plt.xlim([h.offset, h.offset + h.span])
+        if i == len(self):
+            self.append(sample_bin)
+        else:
+            if sample >= self[i].left:
+                self[i].count += 1
+            else:
+                self.insert(i, sample_bin)
+
+        if len(self) > self.max_bins:
+            self._trim()
+
+        return self
+
+    def _trim(self):
+        min_delta = sys.maxsize
+        min_i = None
+        for i in range(len(self)-1):
+            delta = self[i+1].center - self[i].center
+            if delta < min_delta:
+                min_delta = delta
+                min_i = i
+        self[min_i] += self.pop(min_i + 1)
+
+
+if __name__ == '__main__':
+    import numpy as np
+    import matplotlib.pyplot as plt
+    hist = Histogram(max_bins=512)
+    samples = np.random.normal(size=16384)
+    for s in samples:
+        hist.update(sample=s)
+
+    counts = [b.count for b in hist]
+    values = [b.center for b in hist]
+    edges = [b.left for b in hist] + [hist[-1].right]
+    plt.hist(values, weights=counts, bins=edges)
+    plt.show(block=False)
+
+    plt.hist(samples, bins=len(counts), alpha=0.5)
     plt.show()
-
-    hist, bins = merge(hist3, hist4)
-    width = bins[1] - bins[0]
-    center = (bins[:-1] + bins[1:]) / 2
-    plt.bar(center, hist, align='center', width=width)
-    plt.show()
-
-
-test()

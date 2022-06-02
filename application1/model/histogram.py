@@ -360,4 +360,4 @@ def testme(nrep, size):
 
 
 if __name__ == '__main__':
-    testme(nrep=1, size=1024)
+    testme(nrep=1, size=16384)
