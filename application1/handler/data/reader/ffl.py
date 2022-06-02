@@ -94,4 +94,6 @@ class FrameFileReader(BaseReader):
                 continue
             all_data.append(channel_data)
 
-        return np.concatenate(all_data)
+        if all_data:
+            return np.concatenate(all_data)
+        return None
