@@ -254,6 +254,7 @@ class Excavator:
                                               spanlike=self.h_aux_cum[channel, transformation_name])
                 self.h_aux_cum[channel, transformation_name] += aux_hist
 
+                print(self.h_trig_cum)
                 for label, i_trigger in self.i_trigger.items():
                     trig_hist = self.get_histogram(data=x_transform[i_trigger],
                                                    cumulative_veto=self.cum_trig_veto[label][i],
