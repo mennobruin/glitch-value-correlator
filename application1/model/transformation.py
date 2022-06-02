@@ -89,6 +89,8 @@ class SavitzkyGolayDifferentiator(Transformation):
 class Abs(Transformation):
     NAME = 'abs'
 
+    def __init__(self, **kwargs):
+
     def calculate(self, x):
         return np.abs(x)
 
