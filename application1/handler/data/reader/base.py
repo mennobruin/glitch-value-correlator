@@ -1,8 +1,6 @@
 import os
 import numpy as np
 
-from ligo import segments
-
 from application1.utils import split_file_name
 from resources.constants import RESOURCE_DIR
 
@@ -37,10 +35,3 @@ class BaseReader:
                 LOG.error(f"Unable to load file: {file}, check if the file exists.")
                 raise FileNotFoundError
         return file
-
-    @staticmethod
-    def _get_segments(records):
-        return segments.segmentlist(
-            segments.segment(gs, ge) for gs, ge in
-            zip(records.gps_start, records.gps_end)
-        )

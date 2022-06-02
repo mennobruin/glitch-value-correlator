@@ -58,6 +58,7 @@ class Excavator:
         self.report = HTMLReport()
 
         self.available_channels = None
+        self.labels = None
         self.cum_aux_veto = None
         self.cum_trig_veto = None
         self.transformation_names = None
@@ -75,6 +76,7 @@ class Excavator:
 
         # trigger_pipeline = Omicron(channel=self.available_channels[0])
         trigger_pipeline = DefaultPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final')#, trigger_type="Scattered_Light")
+        self.labels = trigger_pipeline.labels
         triggers = trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
         if triggers.size == 0:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
@@ -199,10 +201,15 @@ class Excavator:
         self.cum_trig_veto = [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool) for segment in
                               segments]
 
-        self.h_aux_cum = dict(
-            ((c, t), Hist(np.array([]))) for c in self.available_channels for t in self.transformation_names)
-        self.h_trig_cum = dict(
-            ((c, t), Hist(np.array([]))) for c in self.available_channels for t in self.transformation_names)
+        self.h_aux_cum = {
+            (channel, transform): Hist(np.array([]))
+            for channel in self.available_channels for transform in self.transformation_names
+        }
+        self.h_trig_cum = {
+            label: {(channel, transform): Hist(np.array([]))}
+            for channel in self.available_channels for transform in self.transformation_names
+            for label in self.labels
+        }
 
         LOG.info('Constructing histograms...')
         for i_segment, segment, gap in iter_segments(segments):
@@ -216,7 +223,10 @@ class Excavator:
                 LOG.info(f'No triggers found from {gps_start} to {gps_end}')
                 continue
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
-            self.i_trigger = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
+            self.i_trigger = {}
+            for label in self.labels:
+                label_triggers = seg_triggers[seg_triggers.label == label]
+                self.i_trigger[label] = np.floor((label_triggers.GPStime - gps_start) * self.f_target).astype(np.int32)
             for channel in tqdm(self.available_channels, position=0, leave=True, desc=f'{segment[0]} -> {segment[1]}'):
                 self.update_channel_histogram(i_segment, segment, channel)
             self.reader._reset_cache()
@@ -235,11 +245,13 @@ class Excavator:
                 aux_hist = self.get_histogram(data=x_transform,
                                               cumulative_veto=self.cum_aux_veto[i],
                                               spanlike=self.h_aux_cum[channel, transformation_name])
-                trig_hist = self.get_histogram(data=x_transform[self.i_trigger],
-                                               cumulative_veto=self.cum_trig_veto[i],
-                                               spanlike=aux_hist)
                 self.h_aux_cum[channel, transformation_name] += aux_hist
-                self.h_trig_cum[channel, transformation_name] += trig_hist
+
+                for label, i_trigger in self.i_trigger.items():
+                    trig_hist = self.get_histogram(data=x_transform[i_trigger],
+                                                   cumulative_veto=self.cum_trig_veto[i],
+                                                   spanlike=aux_hist)
+                    self.h_trig_cum[label][channel, transformation_name] += trig_hist
             except (OverflowError, AssertionError, IndexError) as e:
                 LOG.debug(f'Exception caught for channel {channel}: {e}, discarding.')
                 self.available_channels.remove(channel)

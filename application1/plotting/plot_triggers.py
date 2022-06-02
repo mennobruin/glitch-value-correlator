@@ -34,11 +34,26 @@ for _label in set(triggers.label):
 
 def plot_trigger_density(trigger):
     pipeline = DefaultPipeline(trigger_file=file, trigger_type=trigger)
-    triggers = pipeline.get_segment(gps_start=1262680000, gps_end=1262690000)
-    # triggers = pipeline.triggers
-    print(f'{triggers.size} triggers found')
-    plt.hist(triggers, bins=100)
-    plt.show()
+    labels = list(pipeline.labels)
+    ts, te = 1256688000, 1256774400
+    segment_triggers = pipeline.get_segment(gps_start=ts, gps_end=te)
+    label_triggers = []
+    for label in labels[::-1]:
+        label_triggers.append((label, segment_triggers[segment_triggers.label == label]))
+    label_triggers = sorted(label_triggers, key=lambda x: len(x[1]), reverse=True)
+
+    fig = plt.figure(figsize=(16, 6.4), dpi=300)
+    ax = fig.gca()
+    cm1 = plt.cm.get_cmap('tab20')
+    cm2 = plt.cm.get_cmap('tab20b')
+    colors = [cm1(i) for i in np.linspace(0, 1, 20)] + [cm2(i) for i in np.linspace(0, 1, 20)[0:4]]
+    ax.hist([t.GPStime for l, t in label_triggers], stacked=True, bins=100, color=colors, label=[l for l, t in label_triggers])
+    ax.set_xlim(ts, te)
+    ax.set_ylim(0, 70)
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.45), ncol=4, fancybox=True, shadow=True)
+    ax.set_xlabel('GPS Time', labelpad=10)
+    ax.set_ylabel('Counts (#)', labelpad=10)
+    plt.savefig(RESULTS_DIR + 'trigger_density.png', dpi=300, transparent=False, bbox_inches='tight')
 
 
 def plot_trigger_times():
@@ -116,8 +131,8 @@ def plot_trigger_distribution_2d():
     plt.show()
 
 
-# plot_trigger_density(trigger='Scattered_Light')
+plot_trigger_density(trigger=None)
 # plot_trigger_spectrogram(channel='V1:Hrec_hoft_2_200Hz', trigger_type='Scattered_Light')
 # plot_trigger_spectrogram(channel='V1:Hrec_hoft_2_200Hz', trigger_type='Scattered_Light', i=-1)
 # plot_trigger_times()
-plot_trigger_distribution_2d()
+# plot_trigger_distribution_2d()

@@ -23,7 +23,7 @@ class FrameFileReader(BaseReader):
         self.source = source
         self.records = self._get_records(self.source)
         self.files = self.records.file
-        self.segments = self._get_segments(self.records)
+        self.segments = self._get_segments()
 
     def _get_records(self, file):
         records = np.loadtxt(file, dtype=self.RECORD_STRUCTURE)
@@ -34,6 +34,12 @@ class FrameFileReader(BaseReader):
     # @lru_cache(maxsize=None)
     # def _load_cache(self, t):
     #     self.cache = FrameFile(self.source).get_frame(t)
+
+    def _get_segments(self):
+        return segments.segmentlist(
+            segments.segment(gs, ge) for gs, ge in
+            zip(self.records.gps_start, self.records.gps_end)
+        )
 
     def get_channel_segment(self, channel_name, t_start, t_stop) -> ChannelSegment:
         with FrameFile(self.source) as ff:

@@ -22,7 +22,7 @@ class H5Reader(BaseReader):
         super(H5Reader, self).__init__(gps_start, gps_end, exclude_patterns)
         self.records = self._get_records(loc=self.default_path + self.H5_DIR, ext=self.H5)
         self.files = self.records.file
-        self.segments = self._get_segments(self.records)
+        self.segments = self._get_segments()
 
     def _get_records(self, loc, ext):
         files = sorted([f for f in os.listdir(loc) if f.endswith(ext)])
@@ -33,6 +33,12 @@ class H5Reader(BaseReader):
         records = np.array(records, dtype=self.RECORD_STRUCTURE)
         records = records.view(dtype=(np.record, records.dtype), type=np.recarray)
         return records[(records.gps_end > self.gps_start) & (records.gps_start < self.gps_end)]
+
+    def _get_segments(self):
+        return segments.segmentlist(
+            segments.segment(gs, ge) for gs, ge in
+            zip(self.records.gps_start, self.records.gps_end)
+        )
 
     def load(self, file, channel=None):
         if self.records.size == 0:
