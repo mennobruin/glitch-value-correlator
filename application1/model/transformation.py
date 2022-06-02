@@ -90,6 +90,7 @@ class Abs(Transformation):
     NAME = 'abs'
 
     def __init__(self, **kwargs):
+        pass
 
     def calculate(self, x):
         return np.abs(x)
