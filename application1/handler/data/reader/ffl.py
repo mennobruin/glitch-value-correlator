@@ -4,6 +4,7 @@ from fnmatch import fnmatch
 import numpy as np
 from ligo import segments
 from virgotools.frame_lib import FrameFile, FrVect2array
+from framel import frgetvect1d
 
 from application1.config import config_manager
 from application1.model.channel import Channel, ChannelSegment
@@ -21,6 +22,7 @@ class FrameFileReader(BaseReader):
         super(FrameFileReader, self).__init__(gps_start, gps_end, exclude_patterns)
         self.source = source
         self.records = self._get_records(self.source)
+        self.files = self.records.file
         self.segments = self._get_segments()
 
     def _get_records(self, file):
@@ -46,6 +48,10 @@ class FrameFileReader(BaseReader):
         channel = Channel(name=channel_name, f_sample=frame.fsample, unit=frame.unit)
         segment = ChannelSegment(channel=channel, data=frame.data, gps_time=frame.gps)
         return segment
+
+    @staticmethod
+    def get_channel_data(gwf_file, segment, channel):
+        return frgetvect1d(gwf_file, channel, segment[0], abs(segment))[0].astype(float)
 
     def get_available_channels(self, t0=None, f_target=None) -> [Channel]:
         t0 = t0 if t0 else self.gps_start
@@ -79,13 +85,10 @@ class FrameFileReader(BaseReader):
         request_segments = segments.segmentlist([request_segment]) & self.segments
 
         all_data = []
-        with FrameFile(self.source) as ff:
-            for seg in request_segments:
-                channel_data = ff.getChannel(channel_name, *seg).data
-                if not channel_data:
-                    continue
-                all_data.append(channel_data)
+        for seg in request_segments:
+            i_segment = self.segments.find(seg)
+            file = self.files[i_segment]
+            channel_data = self.get_channel_data(gwf_file=file, segment=seg, channel=channel_name)
+            all_data.append(channel_data)
 
-        if all_data:
-            return np.concatenate(all_data)
-        return None
+        return np.concatenate(all_data)

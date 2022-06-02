@@ -15,7 +15,7 @@ from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov, AndersonDarling
 from application1.model.histogram import Hist
 from application1.model.transformation import do_transformations, GaussianDifferentiator, \
-    SavitzkyGolayDifferentiator, HighPass
+    SavitzkyGolayDifferentiator, HighPass, Abs
 from application1.plotting.plot import plot_histogram_cdf
 from application1.plotting.report import HTMLReport
 from application1.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments
@@ -186,10 +186,11 @@ class Excavator:
             [],  # also do a run untransformed
             # [savitzky_golay],
             # [savitzky_golay, AbsMean],
-            [gauss],
+            # [gauss],
             # [gauss, Abs],
+            [Abs]
             # [AbsMean],
-            [HighPass]
+            # [HighPass]
         ]
 
         join_names = lambda c: '_'.join(t.NAME for t in c)
