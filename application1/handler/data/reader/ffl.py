@@ -51,7 +51,8 @@ class FrameFileReader(BaseReader):
 
     @staticmethod
     def get_channel_data(gwf_file, segment, channel):
-        return frgetvect1d(gwf_file, channel, segment[0], abs(segment))[0].astype(float)
+        data, *_ = frgetvect1d(gwf_file, channel.name, start=segment[0], span=abs(segment))
+        return data.astype(float)
 
     def get_available_channels(self, t0=None, f_target=None) -> [Channel]:
         t0 = t0 if t0 else self.gps_start
