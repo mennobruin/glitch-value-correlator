@@ -89,6 +89,8 @@ class Excavator:
             with open(test_file, 'rb') as pkf:
                 data = pickle.load(pkf)
                 self.h_trig_cum = data['trig']
+                print(self.h_trig_cum.values())
+                print(self.h_trig_cum.keys())
                 self.h_aux_cum = data['aux']
                 self.available_channels = data['channels']
         else:
