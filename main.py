@@ -247,7 +247,11 @@ class Excavator:
             self.reader._reset_cache()
 
     def update_channel_histogram(self, i, segment, channel):
-        x_aux = self.reader.get_data_from_segments(request_segment=segment, channel_name=channel)
+        try:
+            x_aux = self.reader.get_data_from_segments(request_segment=segment, channel_name=channel)
+        except UnicodeDecodeError:
+            self.available_channels.remove(channel)
+            return
         if x_aux is None:
             self.available_channels.remove(channel)
             LOG.debug(f'Discarded {channel} due to disappearance.')
