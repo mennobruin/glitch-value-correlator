@@ -35,7 +35,7 @@ for _label in set(triggers.label):
 def plot_trigger_density(trigger):
     pipeline = DefaultPipeline(trigger_file=file, trigger_type=trigger)
     labels = list(pipeline.labels)
-    ts, te = 1256688000, 1256774400
+    ts, te = 1264550418, 1264723218
     segment_triggers = pipeline.get_segment(gps_start=ts, gps_end=te)
     label_triggers = []
     for label in labels[::-1]:
@@ -47,9 +47,9 @@ def plot_trigger_density(trigger):
     cm1 = plt.cm.get_cmap('tab20')
     cm2 = plt.cm.get_cmap('tab20b')
     colors = [cm1(i) for i in np.linspace(0, 1, 20)] + [cm2(i) for i in np.linspace(0, 1, 20)[0:4]]
-    ax.hist([t.GPStime for l, t in label_triggers], stacked=True, bins=100, color=colors, label=[l for l, t in label_triggers])
+    ax.hist([t.GPStime for l, t in label_triggers], stacked=True, bins=192, color=colors, label=[l for l, t in label_triggers])
     ax.set_xlim(ts, te)
-    ax.set_ylim(0, 70)
+    ax.set_ylim(0, 100)
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.45), ncol=4, fancybox=True, shadow=True)
     ax.set_xlabel('GPS Time', labelpad=10)
     ax.set_ylabel('Counts (#)', labelpad=10)

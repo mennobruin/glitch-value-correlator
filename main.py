@@ -246,14 +246,24 @@ class Excavator:
                 self.update_channel_histogram(i_segment, segment, channel)
             self.reader._reset_cache()
 
+    def _discard_channel(self, channel):
+        self.available_channels.remove(channel)
+        for label in self.labels:
+            for transform in self.transformation_names:
+                self.cum_aux_veto[label].pop((channel, transform))
+                self.cum_trig_veto[label].pop((channel, transform))
+                self.h_aux_cum[label].pop((channel, transform))
+                self.h_trig_cum[label].pop((channel, transform))
+
     def update_channel_histogram(self, i, segment, channel):
         try:
             x_aux = self.reader.get_data_from_segments(request_segment=segment, channel_name=channel)
         except UnicodeDecodeError:
-            self.available_channels.remove(channel)
+            self._discard_channel(channel)
+            LOG.debug(f'Discarded {channel} due to decoding error.')
             return
         if x_aux is None:
-            self.available_channels.remove(channel)
+            self._discard_channel(channel)
             LOG.debug(f'Discarded {channel} due to disappearance.')
             return
         for transformation_name in self.transformation_names:
@@ -273,7 +283,7 @@ class Excavator:
                     self.h_trig_cum[label][channel, transformation_name] += trig_hist
             except (OverflowError, AssertionError, IndexError) as e:
                 LOG.debug(f'Exception caught for channel {channel}: {e}, discarding.')
-                self.available_channels.remove(channel)
+                self._discard_channel(channel)
                 return
 
     @staticmethod
