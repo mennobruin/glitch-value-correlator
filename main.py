@@ -106,7 +106,7 @@ class Excavator:
             for transformation_name in self.transformation_names:
                 h_aux = self.h_aux_cum[channel, transformation_name]
                 h_trig = Hist(np.array([]))
-                for label in self.h_trig_cum:
+                for label in self.labels:
                     h_trig += self.h_trig_cum[channel, transformation_name, label]
                 try:
                     h_aux.align(h_trig)
@@ -298,7 +298,7 @@ class Excavator:
 if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
     excavator = Excavator()
-    excavator.run(load_existing=False)
+    excavator.run(load_existing=True)
     excavator.generate_report()
     # excavator.decimate_data()
     LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")
