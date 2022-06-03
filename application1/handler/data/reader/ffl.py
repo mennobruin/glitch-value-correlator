@@ -52,7 +52,7 @@ class FrameFileReader(BaseReader):
         with FrameFile(gwf_file) as ff:
             frame = ff.getChannel(channel.name, *segment)
         np.set_printoptions(threshold=np.inf)
-        print(frame.data)
+        print(frgetvect1d(gwf_file, channel, segment[0], abs(segment))[0].astype(float))
         exit(0)
         return frame.data
 
