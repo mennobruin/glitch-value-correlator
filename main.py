@@ -280,9 +280,12 @@ class Excavator:
                                                    cumulative_veto=self.cum_trig_veto[label][i],
                                                    spanlike=aux_hist)
                     self.h_trig_cum[channel, transformation_name, label] += trig_hist
-            except (OverflowError, AssertionError, IndexError, KeyError) as e:
+            except (OverflowError, AssertionError, IndexError) as e:
                 LOG.debug(f'Exception caught for channel {channel}: {e}, discarding.')
                 self._discard_channel(channel)
+                return
+            except KeyError:
+                self.available_channels.remove(channel)
                 return
 
     @staticmethod
