@@ -249,10 +249,8 @@ class Excavator:
     def _discard_channel(self, channel):
         self.available_channels.remove(channel)
         for transform in self.transformation_names:
-            del self.cum_aux_veto[(channel, transform)]
             del self.h_aux_cum[(channel, transform)]
             for label in self.labels:
-                del self.cum_trig_veto[label][(channel, transform)]
                 del self.h_trig_cum[label][(channel, transform)]
 
     def update_channel_histogram(self, i, segment, channel):
