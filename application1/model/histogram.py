@@ -77,7 +77,9 @@ class Hist:
         x_max = x.max()
 
         if not np.isfinite(x_max - x_min):
-            x = np.nan_to_num(x, copy=False, nan=np.nanmean(x))
+            mean = np.nanmean(x)
+            assert mean != np.nan
+            x = np.nan_to_num(x, copy=False, nan=mean)
             x_min = x.min()
             x_max = x.max()
 
@@ -88,18 +90,13 @@ class Hist:
         self.const_val = None
 
         margin = (self.nbin + 2) / self.nbin
-        try:
-            self.l2_span = int(np.ceil(np.log2((x_max - x_min) * margin)))
-        except ValueError:
-            np.set_printoptions(threshold=np.inf)
-            print(x)
+        self.l2_span = int(np.ceil(np.log2((x_max - x_min) * margin)))
 
         if spanlike:
             if spanlike.isexpanded:
                 self.l2_span = max(self.l2_span, spanlike.l2_span)
             else:
                 spanlike = None
-
       
         self.i_min = myfloor(x_min, self.l2_nbin - self.l2_span)
         self.i_max = myfloor(x_max, self.l2_nbin - self.l2_span)
