@@ -23,7 +23,7 @@ class FrameFileReader(BaseReader):
         super(FrameFileReader, self).__init__(gps_start, gps_end, exclude_patterns)
         self.source = source
         self.records = self._get_records(self.source)
-        self.files = self.records.file
+        self.files = [str(f) for f in self.records.file]
         self.segments = self._get_segments()
 
     def _get_records(self, file):

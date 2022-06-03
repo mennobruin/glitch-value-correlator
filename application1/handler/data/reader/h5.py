@@ -21,7 +21,7 @@ class H5Reader(BaseReader):
     def __init__(self, gps_start, gps_end, exclude_patterns=None):
         super(H5Reader, self).__init__(gps_start, gps_end, exclude_patterns)
         self.records = self._get_records(loc=self.default_path + self.H5_DIR, ext=self.H5)
-        self.files = self.records.file
+        self.files = [str(f) for f in self.records.file]
         self.segments = self._get_segments()
 
     def _get_records(self, loc, ext):
