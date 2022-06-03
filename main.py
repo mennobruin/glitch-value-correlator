@@ -250,7 +250,7 @@ class Excavator:
     def _discard_channel(self, channel):
         self.available_channels.remove(channel)
         for transform in self.transformation_names:
-            del self.h_aux_cum[(channel, transform)]
+            del self.h_aux_cum[channel, transform]
             for label in self.labels:
                 del self.h_trig_cum[channel, transform, label]
 
@@ -280,7 +280,7 @@ class Excavator:
                                                    cumulative_veto=self.cum_trig_veto[label][i],
                                                    spanlike=aux_hist)
                     self.h_trig_cum[channel, transformation_name, label] += trig_hist
-            except (OverflowError, AssertionError, IndexError) as e:
+            except (OverflowError, AssertionError, IndexError, KeyError) as e:
                 LOG.debug(f'Exception caught for channel {channel}: {e}, discarding.')
                 self._discard_channel(channel)
                 return
