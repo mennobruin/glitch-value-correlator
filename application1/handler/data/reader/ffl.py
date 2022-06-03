@@ -51,6 +51,7 @@ class FrameFileReader(BaseReader):
     def get_channel_data(gwf_file, segment, channel):
         with FrameFile(gwf_file) as ff:
             frame = ff.getChannel(channel.name, *segment)
+        np.set_printoptions(threshold=np.inf)
         print(frame.data)
         exit(0)
         return frame.data
