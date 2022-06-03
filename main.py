@@ -205,15 +205,6 @@ class Excavator:
                     if isinstance(transformation, type):
                         self.transformation_states[channel][name][i] = transformation(f_target=self.f_cutoff)
 
-    def _load_hists(self):
-        if os.path.exists(self.histogram_file):
-            with open(self.histogram_file, 'rb') as f:
-                data = pickle.load(f)
-                h_aux_cum = data['aux']
-                h_trig_cum = data['trig']
-            return h_aux_cum, h_trig_cum
-        return None, None
-
     def _init_cumulative_hists(self, segments, triggers):
         self.cum_aux_veto = [np.zeros(self.n_points, dtype=bool) for _ in segments]
         self.cum_trig_veto = {
