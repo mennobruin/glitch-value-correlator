@@ -285,6 +285,7 @@ class Excavator:
                 self._discard_channel(channel)
                 return
             except KeyError:
+                LOG.debug(f'KeyError for {(channel, transformation_name)}, discarding.')
                 self.available_channels.remove(channel)
                 return
 
