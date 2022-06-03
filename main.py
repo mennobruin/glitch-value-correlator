@@ -88,6 +88,7 @@ class Excavator:
 
         test_file = f'test_{self.t_start}_{self.t_stop}.pickle'
         if load_existing and os.path.exists(test_file):
+            LOG.info("Loading existing histogram data...")
             with open(test_file, 'rb') as pkf:
                 data = pickle.load(pkf)
                 self.h_trig_cum = data['trig']
@@ -100,6 +101,8 @@ class Excavator:
 
         fom_ks = KolgomorovSmirnov()
         fom_ad = AndersonDarling()
+        LOG.info("Computing results...")
+        h_trig_combined = {}
         for channel in self.available_channels:
             for transformation_name in self.transformation_names:
                 try:
@@ -107,6 +110,7 @@ class Excavator:
                     h_trig = Hist(np.array([]))
                     for label in self.labels:
                         h_trig += self.h_trig_cum[channel, transformation_name, label]
+                    h_trig_combined[channel, transformation_name] = h_trig
                     try:
                         h_aux.align(h_trig)
 
@@ -118,6 +122,8 @@ class Excavator:
                 except KeyError:
                     print(f'KeyError: {channel}')
                     continue
+
+        LOG.info("Constructing report of results...")
         ks_table_cols = ['Channel', 'Transformation', 'KS', 'p-value']
         ks_table = 'KS_table'
         self.report.add_tag(tag_type='table', tag_id=ks_table)
@@ -147,7 +153,7 @@ class Excavator:
                                              data_type='aux',
                                              return_fig=True,
                                              rank=i)
-                cdf_fname = plot_histogram_cdf(histogram=self.h_trig_cum[channel, transformation],
+                cdf_fname = plot_histogram_cdf(histogram=h_trig_combined[channel, transformation],
                                                channel=channel,
                                                transformation=transformation,
                                                data_type='trig',
