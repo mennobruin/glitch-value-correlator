@@ -75,6 +75,7 @@ class Hist:
 
         x_min = x.min()
         x_max = x.max()
+        print(x_max, x_min)
 
         if not np.isfinite(x_max - x_min):  # no need to do np.isfinite(x).any()
             raise ValueError('Can not yet handle non-finite samples')
