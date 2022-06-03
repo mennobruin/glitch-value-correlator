@@ -52,7 +52,7 @@ class FrameFileReader(BaseReader):
 
     @staticmethod
     def get_channel_data(gwf_file, segment, channel):
-        with getChannel(gwf_file, channel, *segment) as channel:
+        with getChannel(gwf_file, channel.name, *segment) as channel:
             return channel.data
 
     def get_available_channels(self, t0=None, f_target=None) -> [Channel]:
