@@ -100,22 +100,24 @@ class Excavator:
 
         fom_ks = KolgomorovSmirnov()
         fom_ad = AndersonDarling()
-        print(len(self.available_channels))
         for channel in self.available_channels:
             for transformation_name in self.transformation_names:
-                h_aux = self.h_aux_cum[channel, transformation_name]
-                h_trig = Hist(np.array([]))
-                for label in self.labels:
-                    h_trig += self.h_trig_cum[channel, transformation_name, label]
                 try:
-                    h_aux.align(h_trig)
+                    h_aux = self.h_aux_cum[channel, transformation_name]
+                    h_trig = Hist(np.array([]))
+                    for label in self.labels:
+                        h_trig += self.h_trig_cum[channel, transformation_name, label]
+                    try:
+                        h_aux.align(h_trig)
 
-                    fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
-                    fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
-                except AssertionError:
-                    print(channel, transformation_name)
-                    print('-------------------------')
-
+                        fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
+                        fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
+                    except AssertionError as e:
+                        print(channel, transformation_name, e)
+                        continue
+                except KeyError:
+                    print(f'KeyError: {channel}')
+                    continue
         ks_table_cols = ['Channel', 'Transformation', 'KS', 'p-value']
         ks_table = 'KS_table'
         self.report.add_tag(tag_type='table', tag_id=ks_table)
