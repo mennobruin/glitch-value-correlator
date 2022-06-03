@@ -91,8 +91,6 @@ class Excavator:
             with open(test_file, 'rb') as pkf:
                 data = pickle.load(pkf)
                 self.h_trig_cum = data['trig']
-                print(len(self.h_trig_cum.values()))
-                print(self.h_trig_cum.keys())
                 self.h_aux_cum = data['aux']
                 self.available_channels = data['channels']
         else:
@@ -102,6 +100,7 @@ class Excavator:
 
         fom_ks = KolgomorovSmirnov()
         fom_ad = AndersonDarling()
+        print(len(self.available_channels))
         for channel in self.available_channels:
             for transformation_name in self.transformation_names:
                 h_aux = self.h_aux_cum[channel, transformation_name]
