@@ -24,7 +24,10 @@ class FFLCache:
         if self.frames.size == 0:
             LOG.error(f'No data found from {gps_start} to {gps_end} in {ffl_file}.')
             exit_on_error()
-        self.reader = FrameFileReader(source=self.ffl_file, exclude_patterns=bl_patterns)
+        self.reader = FrameFileReader(source=self.ffl_file,
+                                      gps_start=gps_start,
+                                      gps_end=gps_end,
+                                      exclude_patterns=bl_patterns)
 
         self.gwf_files = [str(f) for f in self.frames.gwf]
         self.segments = segments.segmentlist(
