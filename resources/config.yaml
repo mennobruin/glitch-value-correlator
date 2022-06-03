@@ -1,9 +1,10 @@
 # Inputs
-project.source: '/virgoData/ffl/raw_O3b_arch'
+#project.source: '/virgoData/ffl/raw_O3b_arch'
 #project.source: '/virgoData/ffl/trend.ffl'
-project.decimate: true
+project.source: 'local'
+project.decimate: false
 project.start_time: 1264625000
-project.end_time: 1264640000
+project.end_time: 1264637000
 project.target_frequency: 50
 project.cutoff_frequency: 50
 project.blacklist_patterns: './resources/blacklist_patterns.txt'

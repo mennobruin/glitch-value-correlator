@@ -47,6 +47,7 @@ class Excavator:
         if self.config['project.decimate']:
             LOG.info(f"Downsampling data to {self.f_target}Hz.")
             self.decimate_data()
+        if self.source == 'local':
             self.reader = H5Reader(gps_start=self.t_start,
                                    gps_end=self.t_stop,
                                    exclude_patterns=bl_patterns)
