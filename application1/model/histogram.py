@@ -77,8 +77,8 @@ class Hist:
         x_max = x.max()
 
         if not np.isfinite(x_max - x_min):
+            assert not np.isnan(x).all()
             mean = np.nanmean(x)
-            assert mean != np.nan
             x = np.nan_to_num(x, copy=False, nan=mean)
             x_min = x.min()
             x_max = x.max()
