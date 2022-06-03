@@ -32,10 +32,6 @@ class FrameFileReader(BaseReader):
         records.gps_end = records.gps_start + records.gps_end
         return records[(records.gps_end > self.gps_start) & (records.gps_start < self.gps_end)]
 
-    # @lru_cache(maxsize=None)
-    # def _load_cache(self, t):
-    #     self.cache = FrameFile(self.source).get_frame(t)
-
     def _get_segments(self):
         return segments.segmentlist(
             segments.segment(gs, ge) for gs, ge in
@@ -52,8 +48,9 @@ class FrameFileReader(BaseReader):
 
     @staticmethod
     def get_channel_data(gwf_file, segment, channel):
-        with getChannel(gwf_file, channel.name, *segment) as channel:
-            return channel.data
+        with FrameFile(gwf_file) as ff:
+            frame = ff.getChannel(channel.name, *segment)
+        return frame.data
 
     def get_available_channels(self, t0=None, f_target=None) -> [Channel]:
         t0 = t0 if t0 else self.gps_start
@@ -66,22 +63,6 @@ class FrameFileReader(BaseReader):
             if self.exclude_patterns:
                 channels = [c for c in channels if not any(fnmatch(c.name, p) for p in self.exclude_patterns)]
             return channels
-
-    # def load(self, file, channel, t):
-    #     if self.records.size == 0:
-    #         LOG.error(f'No data found from {self.gps_start} to {self.gps_end} in {self.FFL_DIR + file}')
-    #         exit_on_error()
-    #     if not self.cache:
-    #         file = check_extension(file, extension=self.FFL)
-    #         file = self._check_path_exists(file_loc=self.FFL_DIR, file=file)
-    #         self._load_cache()
-    #     elif channel not in self.cache:
-    #         self._reset_cache()
-    #         self.load(file, channel, t)
-
-    # def get_channel_from_file(self, file, channel_name):
-    #     self.load(file)
-    #     return self.cache[channel_name]
 
     def get_data_from_segments(self, request_segment, channel_name):
         request_segments = segments.segmentlist([request_segment]) & self.segments
