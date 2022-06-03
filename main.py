@@ -107,7 +107,7 @@ class Excavator:
                 h_aux = self.h_aux_cum[channel, transformation_name]
                 h_trig = Hist(np.array([]))
                 for label in self.h_trig_cum:
-                    h_trig += self.h_trig_cum[label][channel, transformation_name]
+                    h_trig += self.h_trig_cum[channel, transformation_name, label]
                 try:
                     h_aux.align(h_trig)
 
@@ -218,8 +218,9 @@ class Excavator:
             for channel in self.available_channels for transform in self.transformation_names
         }
         self.h_trig_cum = {
-            label: {(channel, transform): Hist(np.array([]))
-                    for channel in self.available_channels for transform in self.transformation_names}
+            (channel, transform, label): Hist(np.array([]))
+            for channel in self.available_channels
+            for transform in self.transformation_names
             for label in self.labels
         }
 
@@ -251,7 +252,7 @@ class Excavator:
         for transform in self.transformation_names:
             del self.h_aux_cum[(channel, transform)]
             for label in self.labels:
-                del self.h_trig_cum[label][(channel, transform)]
+                del self.h_trig_cum[channel, transform, label]
 
     def update_channel_histogram(self, i, segment, channel):
         try:
@@ -278,7 +279,7 @@ class Excavator:
                     trig_hist = self.get_histogram(data=x_transform[i_trigger],
                                                    cumulative_veto=self.cum_trig_veto[label][i],
                                                    spanlike=aux_hist)
-                    self.h_trig_cum[label][channel, transformation_name] += trig_hist
+                    self.h_trig_cum[channel, transformation_name, label] += trig_hist
             except (OverflowError, AssertionError, IndexError) as e:
                 LOG.debug(f'Exception caught for channel {channel}: {e}, discarding.')
                 self._discard_channel(channel)
