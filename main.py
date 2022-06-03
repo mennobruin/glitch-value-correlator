@@ -72,7 +72,7 @@ class Excavator:
     def run(self, n_iter=1, load_existing=False):
 
         self.available_channels = self.reader.get_available_channels()
-        self.available_channels = list(np.random.choice(self.available_channels, size=5000))
+        # self.available_channels = list(np.random.choice(self.available_channels, size=5000))
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
         # trigger_pipeline = Omicron(channel=self.available_channels[0])
@@ -86,7 +86,7 @@ class Excavator:
 
         self.init_transformations()
 
-        test_file = f'test_{self.t_start}_{self.t_stop}.pickle'
+        test_file = f'test_{self.t_start}_{self.t_stop}_f{self.f_target}.pickle'
         if load_existing and os.path.exists(test_file):
             LOG.info("Loading existing histogram data...")
             with open(test_file, 'rb') as pkf:
@@ -95,6 +95,7 @@ class Excavator:
                 self.h_aux_cum = data['aux']
                 self.available_channels = data['channels']
         else:
+            LOG.info("Generating new histogram data...")
             self.construct_histograms(segments=self.reader.segments, triggers=triggers)
             with open(test_file, 'wb') as pkf:
                 pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum, 'channels': self.available_channels}, pkf)
@@ -193,9 +194,9 @@ class Excavator:
             # [savitzky_golay, AbsMean],
             # [gauss],
             # [gauss, Abs],
-            [Abs]
+            # [Abs]
             # [AbsMean],
-            # [HighPass]
+            [HighPass]
         ]
 
         join_names = lambda c: '_'.join(t.NAME for t in c)
@@ -303,7 +304,7 @@ class Excavator:
 if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
     excavator = Excavator()
-    excavator.run(load_existing=True)
+    excavator.decimate_data()
+    excavator.run(load_existing=False)
     excavator.generate_report()
-    # excavator.decimate_data()
     LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")
