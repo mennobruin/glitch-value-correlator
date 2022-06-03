@@ -115,8 +115,6 @@ class Excavator:
                     fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
                 except AssertionError:
                     print(channel, transformation_name)
-                    print(h_aux)
-                    print(h_trig)
                     print('-------------------------')
 
         ks_table_cols = ['Channel', 'Transformation', 'KS', 'p-value']
