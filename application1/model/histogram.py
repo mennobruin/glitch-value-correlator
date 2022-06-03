@@ -88,7 +88,11 @@ class Hist:
         self.const_val = None
 
         margin = (self.nbin + 2) / self.nbin
-        self.l2_span = int(np.ceil(np.log2((x_max - x_min) * margin)))
+        try:
+            self.l2_span = int(np.ceil(np.log2((x_max - x_min) * margin)))
+        except ValueError:
+            np.set_printoptions(threshold=np.inf)
+            print(x)
 
         if spanlike:
             if spanlike.isexpanded:
