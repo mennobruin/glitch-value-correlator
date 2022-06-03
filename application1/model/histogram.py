@@ -77,7 +77,9 @@ class Hist:
         x_max = x.max()
 
         if not np.isfinite(x_max - x_min):
-            raise OverflowError('NAN encountered')
+            x = np.nan_to_num(x, copy=False, nan=np.nanmean(x))
+            x_min = x.min()
+            x_max = x.max()
 
         if x_min == x_max:
             self.const_val = x_min
