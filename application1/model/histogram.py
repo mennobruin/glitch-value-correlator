@@ -56,7 +56,7 @@ class Hist:
     plot(cum_hist.xgrid, cum_hist.cdf)
     """
 
-    def __init__(self, x: np.ndarray, l2_nbin=14, spanlike=None):
+    def __init__(self, x: np.ndarray, l2_nbin=12, spanlike=None):
         """calculates histogram of vector x with 2**l2nbin number of bins. If another histogram spanlike is given,
         its span will be used to avoid useless resizing when merging or comparing later.
         """
