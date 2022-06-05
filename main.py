@@ -33,7 +33,7 @@ LOG = config_manager.get_logger(__name__)
 
 class Excavator:
 
-    def __init__(self):
+    def __init__(self, load_existing=False):
         LOG.info(f"Loading configuration from {CONFIG_FILE}.")
         self.config = config_manager.load_config()
         self.source = self.config['project.source']
@@ -71,6 +71,9 @@ class Excavator:
         self.h_aux_cum = None
         self.h_trig_cum = None
         self.i_trigger = None
+
+        if self.config['project.run']:
+            excavator.run(load_existing=load_existing)
 
     def run(self, n_iter=1, load_existing=False):
 
@@ -307,6 +310,5 @@ class Excavator:
 if __name__ == '__main__':
     LOG.info("-+-+-+-+-+- RUN START -+-+-+-+-+-")
     excavator = Excavator()
-    excavator.run(load_existing=False)
     excavator.generate_report()
     LOG.info("-+-+-+-+-+- RUN END -+-+-+-+-+-")
