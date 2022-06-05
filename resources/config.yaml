@@ -1,9 +1,9 @@
 # Inputs
-#project.source: '/virgoData/ffl/raw_O3b_arch'
+project.source: '/virgoData/ffl/raw_O3b_arch'
 #project.source: '/virgoData/ffl/trend.ffl'
-project.source: 'local'
-project.decimate: true
-project.run: false
+#project.source: 'local'
+project.decimate: false
+project.run: true
 project.start_time: 1264631000
 project.end_time: 1264637000
 project.target_frequency: 50
