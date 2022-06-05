@@ -10,6 +10,7 @@ from framel import frgetvect1d
 
 from application1.config import config_manager
 from application1.model.channel import Channel, ChannelSegment
+from application1.utils import check_extension
 from .base import BaseReader
 
 LOG = config_manager.get_logger(__name__)
@@ -22,7 +23,7 @@ class FrameFileReader(BaseReader):
 
     def __init__(self, source, gps_start, gps_end, exclude_patterns=None):
         super(FrameFileReader, self).__init__(gps_start, gps_end, exclude_patterns)
-        self.source = source
+        self.source = check_extension(source, extension='.ffl')
         self.records = self._get_records(self.source)
         self.files = [str(f) for f in self.records.file]
         self.segments = self._get_segments()
