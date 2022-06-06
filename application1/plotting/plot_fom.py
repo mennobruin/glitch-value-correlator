@@ -26,6 +26,7 @@ fom_ad = AndersonDarling()
 
 def anderson_darling(h1, h2):
     d_n = fom_ad._get_distances(h1, h2)
+    print(d_n)
     combined = fom_ad._combine_hist(h1, h2)
     combined_ecdf = combined.cdf * (1 - combined.cdf)
     ad = np.sum(np.divide(d_n, combined_ecdf, out=np.zeros_like(d_n), where=combined_ecdf != 0))
@@ -132,9 +133,6 @@ if __name__ == '__main__':
         h_trig += h_trig_cum[channel, transformation, label]
     ad, distances, ecdf, combined_hist = anderson_darling(h_aux, h_trig)
     print(ad)
-    print(combined_hist)
-    print(distances)
-    print(ecdf)
     # cdf_fig = plot_histogram_cdf(histogram=h_aux,
     #                              channel=channel,
     #                              transformation=transformation,
