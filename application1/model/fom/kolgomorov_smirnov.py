@@ -90,6 +90,7 @@ class KolgomorovSmirnov:
             distances.append(d_n)
             probabilities.append(p)
 
+        print(distances)
         return np.mean(distances), np.mean(probabilities)
 
 
