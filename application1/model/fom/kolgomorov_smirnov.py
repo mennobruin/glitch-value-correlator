@@ -81,12 +81,18 @@ class KolgomorovSmirnov:
 
             hist1, _ = np.histogram(sample1, bins=bin_edges1)
             hist2, _ = np.histogram(sample2, bins=bin_edges2)
+            print(hist1)
+            print(hist2)
 
             cdf1 = hist1.cumsum() / size1
             cdf2 = hist2.cumsum() / size2
+            print(cdf1)
+            print(cdf2)
 
             d_n = np.amax(np.abs(cdf1 - cdf2))
             p = self._get_p_value(d_n, size1, size2)
+            print(d_n, p)
+            raise SystemExit
 
             distances.append(d_n)
             probabilities.append(p)

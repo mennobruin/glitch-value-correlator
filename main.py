@@ -143,24 +143,24 @@ class Excavator:
         self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
         self.writer.write_csv(ad_results, 'ad_results.csv', file_path=self.writer.default_path + 'results/')
 
-        fom_ks_bootstrap = KolgomorovSmirnov()
-        for i, (k, v) in tqdm(enumerate(ks_results[0:10]), desc=f'Bootstrapping KS'):
-            channel, transformation = k
-            h_aux = self.h_aux_cum[channel, transformation]
-            h_trig = Hist(np.array([]))
-            for label in self.labels:
-                h_trig += self.h_trig_cum[channel, transformation, label]
-
-            fom_ks_bootstrap.calculate(channel, transformation, h_aux, h_trig, bootstrap=True)
-
-        ks_results_bootstrap = sorted(fom_ks_bootstrap.scores.items(), key=lambda f: f[1].d_n, reverse=True)
-        print(ks_results_bootstrap)
+        # fom_ks_bootstrap = KolgomorovSmirnov()
+        # for i, (k, v) in tqdm(enumerate(ks_results[0:10]), desc=f'Bootstrapping KS'):
+        #     channel, transformation = k
+        #     h_aux = self.h_aux_cum[channel, transformation]
+        #     h_trig = Hist(np.array([]))
+        #     for label in self.labels:
+        #         h_trig += self.h_trig_cum[channel, transformation, label]
+        #
+        #     fom_ks_bootstrap.calculate(channel, transformation, h_aux, h_trig, bootstrap=True)
+        #
+        # ks_results_bootstrap = sorted(fom_ks_bootstrap.scores.items(), key=lambda f: f[1].d_n, reverse=True)
+        # print(ks_results_bootstrap)
 
         ks_images_div = 'ks_images'
         self.report.add_tag(tag_type='div', tag_id=ks_images_div)
         for i, (k, v) in enumerate(ks_results[0:10]):
             channel, transformation = k
-            statistic, p_value = v
+            statistic, _, p_value, _ = v
             try:
                 div_id = f'ks_rank_{i}'
                 self.report.add_tag(tag_type='div', tag_id=div_id, parent_div=ks_images_div)
