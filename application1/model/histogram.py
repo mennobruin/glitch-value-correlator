@@ -177,6 +177,7 @@ class Hist:
         else:
             newcounts[:self.nbin // 2] = self.counts[::2] + self.counts[1::2]
         self.counts = newcounts
+        print(f'{sum(newcounts.cumsum())=}')
 
         """
       
