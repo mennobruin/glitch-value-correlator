@@ -70,9 +70,13 @@ class KolgomorovSmirnov:
             np.random.uniform(low=edge1, high=edge2, size=counts2[i])
             for i, (edge1, edge2) in enumerate(zip(bin_edges2[0:-1], bin_edges2[1:]))
         ])
+        print(points1.shape)
+        print(points2.shape)
 
-        size1 = h_aux.ntot // 5
-        size2 = h_trig.ntot // 5
+        size1 = h_aux.ntot
+        size2 = h_trig.ntot
+        print(size1)
+        print(size2)
         distances, probabilities = [], []
         for _ in range(n_cycles):
             sample1 = np.random.choice(points1, size=size1, replace=True)
@@ -104,9 +108,5 @@ if __name__ == '__main__':
     h2 = Hist(x[m:], l2_nbin=6, spanlike=h1)
 
     d, p = fom.bootstrap(h_aux=h2, h_trig=h1, n_cycles=100)
-    d_avg = np.mean(d)
-    d_std = np.std(d)
-    p_avg = np.mean(p)
-    p_std = np.std(p)
-    print(f'D_n = {d_avg:.3f} +/- {d_std:.3f}')
-    print(f'P = {p_avg:.3f} +/- {p_std:.3f}')
+    print(f'D_n = {d}')
+    print(f'P = {p}')
