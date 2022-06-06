@@ -7,6 +7,7 @@ from application1.handler.data.reader.csv import CSVReader
 from application1.model.fom import AndersonDarling, KolgomorovSmirnov
 from application1.model.histogram import Hist
 from application1.plotting.plot import plot_histogram_cdf
+
 plt.rcParams['font.size'] = 16
 
 t_start = 1264625000
@@ -43,8 +44,10 @@ def test_anderson_darling():
             _, distances, ecdf, combined_hist = anderson_darling(h1=h_aux, h2=h_trig)
             y_values = np.array([min(v) for v in zip(h_aux.cdf, h_trig.cdf)])
 
-            fig = plot_histogram_cdf(histogram=h_aux, channel=channel, transformation=transformation, data_type=r'$\hat{F}$', return_fig=True)
-            plot_histogram_cdf(histogram=h_trig, channel=channel, transformation=transformation, data_type=r'$\hat{G}$', fig=fig, return_fig=True)
+            fig = plot_histogram_cdf(histogram=h_aux, channel=channel, transformation=transformation,
+                                     data_type=r'$\hat{F}$', return_fig=True)
+            plot_histogram_cdf(histogram=h_trig, channel=channel, transformation=transformation, data_type=r'$\hat{G}$',
+                               fig=fig, return_fig=True)
             # plt.vlines(x=h_aux.xgrid, ymin=y_values, ymax=y_values + distances, lw=1/ecdf/100)
             plt.xlim(min(h_aux.xgrid), max(h_aux.xgrid))
             plt.xlabel('x')
@@ -59,14 +62,16 @@ def test_anderson_darling():
             plt.title(channel)
             plt.xlabel('x')
             plt.ylabel('CDF')
-            plt.savefig(RESULTS_DIR + 'anderson_darling_combined_cdf.png', dpi=300, transparent=False, bbox_inches='tight')
+            plt.savefig(RESULTS_DIR + 'anderson_darling_combined_cdf.png', dpi=300, transparent=False,
+                        bbox_inches='tight')
             plt.show()
             plt.plot(combined_hist.xgrid, combined_hist.cdf - h_aux_cp)
             plt.xlim(min(h_aux.xgrid), max(h_aux.xgrid))
             plt.xlabel('x')
             plt.ylabel(r'$\Delta$ CDF')
             plt.title(channel)
-            plt.savefig(RESULTS_DIR + 'anderson_darling_diff_combined_cdf.png', dpi=300, transparent=False, bbox_inches='tight')
+            plt.savefig(RESULTS_DIR + 'anderson_darling_diff_combined_cdf.png', dpi=300, transparent=False,
+                        bbox_inches='tight')
             plt.show()
             break
 
@@ -74,7 +79,6 @@ def test_anderson_darling():
 # test_anderson_darling()
 
 def test_bootstrap(h_aux, h_trig, n_cycles=1):
-
     counts1, dx1 = h_aux.counts, (h_aux.x_max - h_aux.x_min) / h_aux.nbin
     counts2, dx2 = h_trig.counts, (h_trig.x_max - h_trig.x_min) / h_trig.nbin
 
@@ -105,6 +109,7 @@ def test_bootstrap(h_aux, h_trig, n_cycles=1):
 
 
 if __name__ == '__main__':
+    np.set_printoptions(threshold=np.inf)
     # n = 8192
     # x = np.random.normal(loc=0, scale=100, size=n)
     #
@@ -127,3 +132,13 @@ if __name__ == '__main__':
         h_trig += h_trig_cum[channel, transformation, label]
     ad, *_ = anderson_darling(h_aux, h_trig)
     print(ad)
+    cdf_fig = plot_histogram_cdf(histogram=h_aux,
+                                 channel=channel,
+                                 transformation=transformation,
+                                 data_type='ad_aux',
+                                 return_fig=True)
+    plot_histogram_cdf(histogram=h_trig,
+                       channel=channel,
+                       transformation=transformation,
+                       data_type='ad_trig',
+                       fig=cdf_fig)
