@@ -148,6 +148,7 @@ class Excavator:
             channel, transformation = k
             h_aux = self.h_aux_cum[channel, transformation]
             h_trig = h_trig_combined[channel, transformation]
+            h_aux.align(h_trig)
 
             print(channel, transformation)
             print(h_trig.const_val)
