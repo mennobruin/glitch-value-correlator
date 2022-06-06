@@ -81,6 +81,7 @@ class KolgomorovSmirnov:
 
             hist1, _ = np.histogram(sample1, bins=bin_edges1)
             hist2, _ = np.histogram(sample2, bins=bin_edges2)
+            np.set_printoptions(threshold=np.inf)
             print(hist1)
             print(hist2)
 
