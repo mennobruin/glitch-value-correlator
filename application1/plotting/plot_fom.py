@@ -134,6 +134,8 @@ if __name__ == '__main__':
     h_trig = Hist(np.array([]))
     for label in labels:
         h_trig += h_trig_cum[channel, transformation, label]
+    print(h_trig.x_min, h_trig.x_max)
+    print(sum(h_trig.counts))
     ad, distances, ecdf, combined_hist = anderson_darling(h_aux, h_trig)
     print(ad)
     # cdf_fig = plot_histogram_cdf(histogram=h_aux,
