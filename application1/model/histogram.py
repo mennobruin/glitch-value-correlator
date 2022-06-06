@@ -221,7 +221,7 @@ class Hist:
         self.i_offset = self.i_min - self.nbin // 2
         self.counts = np.zeros(self.nbin, dtype=np.uint32)
         self.counts[self.nbin // 2] = self.ntot
-        print(f'{self.counts.cumsum()[-1]=}')
+        print(f'{sum(self.counts.cumsum())=}')
         self.const_val = None
         self.check()
 
