@@ -56,12 +56,16 @@ class KolgomorovSmirnov:
     #     return int(2 * std * std * z * z / (delta_mean * delta_mean))
 
     def bootstrap(self, h_aux, h_trig, n_cycles=5000):
+        np.set_printoptions(threshold=np.inf)
 
         counts1, dx1 = h_aux.counts, (h_aux.x_max - h_aux.x_min) / h_aux.nbin
         counts2, dx2 = h_trig.counts, (h_trig.x_max - h_trig.x_min) / h_trig.nbin
+        print(counts2)
+        print(dx2)
 
         bin_edges1 = h_aux.x_min + dx1 * np.arange(h_aux.nbin)
         bin_edges2 = h_trig.x_min + dx2 * np.arange(h_trig.nbin)
+        print(bin_edges2)
 
         points1 = np.concatenate([
             np.random.uniform(low=edge1, high=edge2, size=counts1[i])
@@ -71,6 +75,7 @@ class KolgomorovSmirnov:
             np.random.uniform(low=edge1, high=edge2, size=counts2[i])
             for i, (edge1, edge2) in enumerate(zip(bin_edges2[0:-1], bin_edges2[1:]))
         ])
+        print(points2)
 
         size1 = h_aux.ntot // 5
         size2 = h_trig.ntot // 5
@@ -78,16 +83,14 @@ class KolgomorovSmirnov:
         for _ in range(n_cycles):
             sample1 = np.random.choice(points1, size=size1, replace=True)
             sample2 = np.random.choice(points2, size=size2, replace=True)
+            print(sample2)
 
             hist1, _ = np.histogram(sample1, bins=bin_edges1)
             hist2, _ = np.histogram(sample2, bins=bin_edges2)
-            np.set_printoptions(threshold=np.inf)
-            print(hist1)
             print(hist2)
 
             cdf1 = hist1.cumsum() / size1
             cdf2 = hist2.cumsum() / size2
-            print(cdf1)
             print(cdf2)
 
             d_n = np.amax(np.abs(cdf1 - cdf2))
