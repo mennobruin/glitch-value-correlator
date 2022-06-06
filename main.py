@@ -122,7 +122,8 @@ class Excavator:
 
                         fom_ks.calculate(channel, transformation_name, h_aux, h_trig, bootstrap=True)
                         fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
-                    except (AssertionError, AttributeError):
+                    except (AssertionError, AttributeError) as e:
+                        LOG.debug(f'Exception caught trying to compute FOM for ({channel, transformation_name}): {e}')
                         continue
                 except KeyError:
                     continue
