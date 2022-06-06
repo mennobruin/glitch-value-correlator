@@ -139,7 +139,7 @@ if __name__ == '__main__':
         h_trig += h_trig_cum[channel, transformation, label]
         print(label)
         try:
-            print(sum(h_trig.counts.cumsum()))
+            print(h_trig.counts.cumsum()[-1])
             print(h_trig.ntot)
         except AttributeError:
             continue
