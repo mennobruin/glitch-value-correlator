@@ -109,7 +109,7 @@ class Excavator:
         fom_ad = AndersonDarling()
         LOG.info("Computing results...")
         h_trig_combined = {}
-        for channel in self.available_channels:
+        for channel in tqdm(self.available_channels):
             for transformation_name in self.transformation_names:
                 try:
                     h_aux = self.h_aux_cum[channel, transformation_name]
@@ -122,7 +122,7 @@ class Excavator:
 
                         fom_ks.calculate(channel, transformation_name, h_aux, h_trig, bootstrap=True)
                         fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
-                    except AssertionError as e:
+                    except (AssertionError, AttributeError) as e:
                         print(channel, transformation_name, e)
                         continue
                 except KeyError:

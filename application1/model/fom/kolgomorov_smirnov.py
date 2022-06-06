@@ -24,11 +24,11 @@ class KolgomorovSmirnov:
 
     def calculate(self, channel, transformation, h_aux, h_trig, bootstrap=False):
         if h_aux.const_val is None:
-            if not bootstrap:
+            if bootstrap:
+                d_n, p = self.bootstrap(h_aux=h_aux, h_trig=h_trig)
+            else:
                 d_n = self._get_distance(h_aux, h_trig)
                 p = self._get_p_value(d_n, h_aux.ntot, h_trig.ntot)
-            else:
-                d_n, p = self.bootstrap(h_aux=h_aux, h_trig=h_trig)
             self.scores[channel, transformation] = KSResult(d_n, p)
 
     @staticmethod
@@ -54,7 +54,7 @@ class KolgomorovSmirnov:
     #     std = np.std(np.concatenate([p1, p2]))
     #     return int(2 * std * std * z * z / (delta_mean * delta_mean))
 
-    def bootstrap(self, h_aux, h_trig, n_cycles=500):
+    def bootstrap(self, h_aux, h_trig, n_cycles=200):
 
         counts1, dx1 = h_aux.counts, (h_aux.x_max - h_aux.x_min) / h_aux.nbin
         counts2, dx2 = h_trig.counts, (h_trig.x_max - h_trig.x_min) / h_trig.nbin
@@ -65,7 +65,7 @@ class KolgomorovSmirnov:
         size1 = h_aux.ntot // 5
         size2 = h_trig.ntot // 5
         distances, probabilities = [], []
-        for _ in tqdm(range(n_cycles), desc='Bootstrapping KS:'):
+        for _ in range(n_cycles):
             points1 = np.concatenate([
                 np.random.uniform(low=edge1, high=edge2, size=counts1[i])
                 for i, (edge1, edge2) in enumerate(zip(bin_edges1[0:-1], bin_edges1[1:]))
