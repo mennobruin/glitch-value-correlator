@@ -60,9 +60,6 @@ class KolgomorovSmirnov:
 
         counts1, dx1 = h_aux.counts, (h_aux.x_max - h_aux.x_min) / h_aux.nbin
         counts2, dx2 = h_trig.counts, (h_trig.x_max - h_trig.x_min) / h_trig.nbin
-        print(h_trig.x_max, h_trig.x_min, h_trig.nbin)
-        print(h_trig.x_min == h_trig.x_max)
-        print(dx2)
 
         bin_edges1 = h_aux.x_min + dx1 * np.arange(h_aux.nbin)
         bin_edges2 = h_trig.x_min + dx2 * np.arange(h_trig.nbin)
@@ -91,8 +88,6 @@ class KolgomorovSmirnov:
 
             d_n = np.amax(np.abs(cdf1 - cdf2))
             p = self._get_p_value(d_n, size1, size2)
-            print(d_n, p)
-            raise SystemExit
 
             distances.append(d_n)
             probabilities.append(p)

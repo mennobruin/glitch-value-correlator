@@ -148,11 +148,6 @@ class Excavator:
             channel, transformation = k
             h_aux = self.h_aux_cum[channel, transformation]
             h_trig = h_trig_combined[channel, transformation]
-
-            print(channel, transformation)
-            print(h_trig.x_min, h_trig.x_max)
-            print(h_trig.const_val)
-            print(h_trig.ntot)
             fom_ks_bootstrap.calculate(channel, transformation, h_aux, h_trig, bootstrap=True)
 
         ks_results_bootstrap = sorted(fom_ks_bootstrap.scores.items(), key=lambda f: f[1].d_n, reverse=True)
