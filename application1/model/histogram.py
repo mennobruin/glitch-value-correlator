@@ -274,6 +274,8 @@ class Hist:
         else:
             assert self.const_val == other.const_val
         self.ntot += other.ntot
+        self.x_min = min(self.x_min, other.x_min)
+        self.x_max = max(self.x_max, other.x_max)
         self.check()
         return self
 
