@@ -147,9 +147,7 @@ class Excavator:
         for i, (k, v) in tqdm(enumerate(ks_results[0:10]), desc=f'Bootstrapping KS'):
             channel, transformation = k
             h_aux = self.h_aux_cum[channel, transformation]
-            h_trig = Hist(np.array([]))
-            for label in self.labels:
-                h_trig += self.h_trig_cum[channel, transformation, label]
+            h_trig = h_trig_combined[channel, transformation]
 
             print(channel, transformation)
             print(h_trig.const_val)
