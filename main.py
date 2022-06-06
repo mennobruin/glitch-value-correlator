@@ -122,8 +122,7 @@ class Excavator:
 
                         fom_ks.calculate(channel, transformation_name, h_aux, h_trig, bootstrap=True)
                         fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
-                    except (AssertionError, AttributeError) as e:
-                        print(channel, transformation_name, e)
+                    except (AssertionError, AttributeError):
                         continue
                 except KeyError:
                     continue
