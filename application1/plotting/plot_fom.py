@@ -130,15 +130,18 @@ if __name__ == '__main__':
     h_trig = Hist(np.array([]))
     for label in labels:
         h_trig += h_trig_cum[channel, transformation, label]
-    ad, *_ = anderson_darling(h_aux, h_trig)
+    ad, distances, ecdf, combined_hist = anderson_darling(h_aux, h_trig)
     print(ad)
-    cdf_fig = plot_histogram_cdf(histogram=h_aux,
-                                 channel=channel,
-                                 transformation=transformation,
-                                 data_type='ad_aux',
-                                 return_fig=True)
-    plot_histogram_cdf(histogram=h_trig,
-                       channel=channel,
-                       transformation=transformation,
-                       data_type='ad_trig',
-                       fig=cdf_fig)
+    print(combined_hist)
+    print(distances)
+    print(ecdf)
+    # cdf_fig = plot_histogram_cdf(histogram=h_aux,
+    #                              channel=channel,
+    #                              transformation=transformation,
+    #                              data_type='ad_aux',
+    #                              return_fig=True)
+    # plot_histogram_cdf(histogram=h_trig,
+    #                    channel=channel,
+    #                    transformation=transformation,
+    #                    data_type='ad_trig',
+    #                    fig=cdf_fig)
