@@ -20,7 +20,8 @@ if os.path.exists(test_file):
         h_trig_cum = data['trig']
         h_aux_cum = data['aux']
         channels_transformations = list(h_aux_cum.keys())
-
+else:
+    print(f'file {test_file} not found')
 
 fom_ad = AndersonDarling()
 
