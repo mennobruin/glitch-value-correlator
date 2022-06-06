@@ -3,22 +3,23 @@ import pickle
 import matplotlib.pyplot as plt
 import os
 
+from application1.handler.data.reader.csv import CSVReader
 from application1.model.fom import AndersonDarling, KolgomorovSmirnov
 from application1.model.histogram import Hist
 from application1.plotting.plot import plot_histogram_cdf
 plt.rcParams['font.size'] = 16
 
-t_start = 1262649600
-t_stop = 1262655700
+t_start = 1264625000
+t_stop = 1264635000
 RESULTS_DIR = 'results/'
 
-test_file = f'../../test_{t_start}_{t_stop}.pickle'
+test_file = f'../../test_{t_start}_{t_stop}_f50.pickle'
 if os.path.exists(test_file):
     with open(test_file, 'rb') as pkf:
         data = pickle.load(pkf)
         h_trig_cum = data['trig']
         h_aux_cum = data['aux']
-        channels_transformations = list(h_trig_cum.keys())
+        channels_transformations = list(h_aux_cum.keys())
 
 
 fom_ad = AndersonDarling()
@@ -106,10 +107,26 @@ def test_bootstrap(h_aux, h_trig, n_cycles=1):
 
 
 if __name__ == '__main__':
-    n = 8192
-    x = np.random.normal(loc=0, scale=100, size=n)
+    # n = 8192
+    # x = np.random.normal(loc=0, scale=100, size=n)
+    #
+    # h1 = Hist(x[:32], l2_nbin=6)
+    # h2 = Hist(x[32:], l2_nbin=6, spanlike=h1)
+    #
+    # test_bootstrap(h_aux=h2, h_trig=h1, n_cycles=1)
+    channel = "V1:SDB2_B1pP_PD1_VBias"
+    transformation = ""
 
-    h1 = Hist(x[:32], l2_nbin=6)
-    h2 = Hist(x[32:], l2_nbin=6, spanlike=h1)
+    GPS_TIME = 'GPStime'
+    LABEL = 'label'
+    reader = CSVReader()
+    triggers = reader.load_csv('GSpy_ALLIFO_O3b_0921_final', usecols=[GPS_TIME, LABEL])
+    labels = set(triggers[LABEL].values)
 
-    test_bootstrap(h_aux=h2, h_trig=h1, n_cycles=1)
+    h_aux = h_aux_cum[channel, transformation]
+    h_trig = Hist(np.array([]))
+    for label in labels:
+        h_trig += h_trig_cum[channel, transformation, label]
+    print(h_trig)
+
+    print(anderson_darling(h_aux, h_trig))
