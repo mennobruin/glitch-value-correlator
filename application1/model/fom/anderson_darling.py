@@ -21,13 +21,6 @@ class AndersonDarling(BaseFOM):
 
     def calculate(self, channel, transformation, h_aux, h_trig):
         if h_aux.const_val is None:
-            ad, _, p_value = anderson_ksamp([h_aux.counts, h_trig.counts])
-            result = ADResult(ad, ad < self.critical_value)
-            self.scores[channel, transformation] = result
-            return result
-
-    def _calculate(self, channel, transformation, h_aux, h_trig):
-        if h_aux.const_val is None:
             d_n = self._get_distances(h_aux, h_trig)
             combined = self._combine_hist(h_aux, h_trig)
             combined_ecdf = combined.cdf * (1 - combined.cdf)

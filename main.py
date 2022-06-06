@@ -120,13 +120,12 @@ class Excavator:
                     try:
                         h_aux.align(h_trig)
 
-                        fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
+                        fom_ks.calculate(channel, transformation_name, h_aux, h_trig, bootstrap=True)
                         fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
                     except AssertionError as e:
                         print(channel, transformation_name, e)
                         continue
                 except KeyError:
-                    print(f'KeyError: {channel}')
                     continue
 
         LOG.info("Constructing report of results...")
@@ -151,7 +150,7 @@ class Excavator:
             channel, transformation = k
             statistic, p_value = v
             try:
-                div_id = f'rank_{i}'
+                div_id = f'ks_rank_{i}'
                 self.report.add_tag(tag_type='div', tag_id=div_id, parent_div=ks_images_div)
                 cdf_fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
                                              channel=channel,
@@ -178,7 +177,7 @@ class Excavator:
             channel, transformation = k
             statistic, threshold = v
             try:
-                div_id = f'rank_{i}'
+                div_id = f'ad_rank_{i}'
                 self.report.add_tag(tag_type='div', tag_id=div_id, parent_div=ad_images_div)
                 cdf_fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
                                              channel=channel,

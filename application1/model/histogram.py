@@ -73,60 +73,52 @@ class Hist:
             self.check()
             return
 
-        x_min = x.min()
-        x_max = x.max()
+        self.x_min = x.min()
+        self.x_max = x.max()
 
-        if not np.isfinite(x_max - x_min):
+        if not np.isfinite(self.x_max - self.x_min):
             assert not np.isnan(x).all(), "Array of only NaNs encountered"
             mean = np.nanmean(x)
             x = np.nan_to_num(x, copy=False, nan=mean)
-            x_min = x.min()
-            x_max = x.max()
+            self.x_min = x.min()
+            self.x_max = x.max()
 
-        if x_min == x_max:
-            self.const_val = x_min
+        if self.x_min == self.x_max:
+            self.const_val = self.x_min
             self.check()
             return
         self.const_val = None
 
         margin = (self.nbin + 2) / self.nbin
-        self.l2_span = int(np.ceil(np.log2((x_max - x_min) * margin)))
+        self.l2_span = int(np.ceil(np.log2((self.x_max - self.x_min) * margin)))
 
         if spanlike:
             if spanlike.isexpanded:
                 self.l2_span = max(self.l2_span, spanlike.l2_span)
             else:
                 spanlike = None
-      
-        self.i_min = myfloor(x_min, self.l2_nbin - self.l2_span)
-        self.i_max = myfloor(x_max, self.l2_nbin - self.l2_span)
+
+        self.i_min = myfloor(self.x_min, self.l2_nbin - self.l2_span)
+        self.i_max = myfloor(self.x_max, self.l2_nbin - self.l2_span)
         if max(self.i_max, -self.i_min) > flintmax:
             raise ValueError('Data are badly scaled')
         assert self.i_max - self.i_min < self.nbin
 
-      
         ind = myfloor(x, self.l2_nbin - self.l2_span)
 
         if (spanlike and self.l2_span == spanlike.l2_span and
                 spanlike.i_offset <= self.i_min and
                 self.i_max < spanlike.i_offset + self.nbin):
-          
+
             assert self.nbin == spanlike.nbin
             self.i_offset = spanlike.i_offset
         else:
             self.i_offset = (self.i_min + self.i_max + 1 - self.nbin) // 2
 
-      
-      
         self.counts = np.bincount(ind - self.i_offset, minlength=self.nbin).astype(np.uint32)
-
-      
-      
-      
 
         self.check()
 
-  
     @property
     def isempty(self):
         return self.ntot == 0
@@ -234,7 +226,7 @@ class Hist:
 
     def check(self):
         """checks various invariants of internal state of histogram"""
-      
+
         if self.isempty:
             assert self.const_val is None
         elif self.isexpanded:
@@ -268,7 +260,6 @@ class Hist:
         be either self or other.
         """
 
-      
         if other.isempty:
             return self
         if self.isempty:
@@ -296,7 +287,6 @@ class Hist:
         assert not (self.isempty or other.isempty), 'cannot align empty histos'
         assert self.nbin == other.nbin
 
-      
         if self.isconst:
             if other.isconst:
                 if self.const_val == other.const_val:
@@ -313,21 +303,18 @@ class Hist:
             other.expand(self.l2_span)
         assert self.isexpanded and other.isexpanded
 
-      
         smallest, biggest = sorted([self, other], key=lambda h: h.l2_span)
         while smallest.l2_span < biggest.l2_span:
             smallest.enlarge()
 
-      
         while (max(self.i_max, other.i_max) -
                min(self.i_min, other.i_min)) >= self.nbin:
             self.enlarge()
             other.enlarge()
         assert self.l2_span == other.l2_span
 
-      
         if self.i_offset <= other.i_min and other.i_max < self.i_offset + self.nbin:
-          
+
             other.shift(self.i_offset - other.i_offset)
         else:
             i_offset_new = (min(self.i_min, other.i_min) +
