@@ -29,7 +29,7 @@ def anderson_darling(h1, h2):
     combined_ecdf = combined.cdf * (1 - combined.cdf)
     ad = np.sum(np.divide(d_n, combined_ecdf, out=np.zeros_like(d_n), where=combined_ecdf != 0))
     ad /= combined.ntot
-    return d_n, combined_ecdf, combined
+    return ad, d_n, combined_ecdf, combined
 
 
 def test_anderson_darling():
@@ -40,7 +40,7 @@ def test_anderson_darling():
         if result and result.below_critical:
             h_aux_cp = h_aux.cdf.copy()
 
-            distances, ecdf, combined_hist = anderson_darling(h1=h_aux, h2=h_trig)
+            _, distances, ecdf, combined_hist = anderson_darling(h1=h_aux, h2=h_trig)
             y_values = np.array([min(v) for v in zip(h_aux.cdf, h_trig.cdf)])
 
             fig = plot_histogram_cdf(histogram=h_aux, channel=channel, transformation=transformation, data_type=r'$\hat{F}$', return_fig=True)
@@ -125,6 +125,5 @@ if __name__ == '__main__':
     h_trig = Hist(np.array([]))
     for label in labels:
         h_trig += h_trig_cum[channel, transformation, label]
-    print(h_trig)
-
-    print(anderson_darling(h_aux, h_trig))
+    ad, *_ = anderson_darling(h_aux, h_trig)
+    print(ad)
