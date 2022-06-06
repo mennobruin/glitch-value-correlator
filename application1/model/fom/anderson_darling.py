@@ -20,10 +20,11 @@ class AndersonDarling(BaseFOM):
         self.scores = {}
 
     def calculate(self, channel, transformation, h_aux, h_trig):
-        ad, _, p_value = anderson_ksamp([h_aux.counts, h_trig.counts])
-        result = ADResult(ad, ad < self.critical_value)
-        self.scores[channel, transformation] = result
-        return result
+        if h_aux.const_val is None:
+            ad, _, p_value = anderson_ksamp([h_aux.counts, h_trig.counts])
+            result = ADResult(ad, ad < self.critical_value)
+            self.scores[channel, transformation] = result
+            return result
 
     def _calculate(self, channel, transformation, h_aux, h_trig):
         if h_aux.const_val is None:
