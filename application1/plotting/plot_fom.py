@@ -135,9 +135,14 @@ if __name__ == '__main__':
     h_aux = h_aux_cum[channel, transformation]
     h_trig = Hist(np.array([]))
     for label in labels:
+        print('------')
         h_trig += h_trig_cum[channel, transformation, label]
-        print(sum(h_trig.counts))
-        print(h_trig.ntot)
+        print(label)
+        try:
+            print(sum(h_trig.counts))
+            print(h_trig.ntot)
+        except AttributeError:
+            continue
     print('------')
     print(h_trig.x_min, h_trig.x_max)
     print(sum(h_trig.counts))
