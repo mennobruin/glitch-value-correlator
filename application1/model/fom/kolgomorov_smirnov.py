@@ -59,8 +59,8 @@ class KolgomorovSmirnov:
         counts1, dx1 = h_aux.counts, (h_aux.x.max() - h_aux.x.min()) / h_aux.nbin
         counts2, dx2 = h_trig.counts, (h_trig.x.max() - h_trig.x.min()) / h_trig.nbin
 
-        bin_edges1 = h_aux.x_min + dx1 * np.arange(h_aux.nbin)
-        bin_edges2 = h_trig.x_min + dx2 * np.arange(h_trig.nbin)
+        bin_edges1 = h_aux.x.min() + dx1 * np.arange(h_aux.nbin)
+        bin_edges2 = h_trig.x.min() + dx2 * np.arange(h_trig.nbin)
 
         size1 = h_aux.ntot // 5
         size2 = h_trig.ntot // 5
