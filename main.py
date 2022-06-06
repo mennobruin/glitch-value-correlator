@@ -74,7 +74,7 @@ class Excavator:
         if self.config['project.run']:
             self.run(load_existing=self.config['project.load_existing'])
 
-    def run(self, n_iter=1, load_existing=True):
+    def run(self, n_iter=1, load_existing=True, bootstrap=False):
 
         self.available_channels = self.reader.get_available_channels()
         # self.available_channels = list(np.random.choice(self.available_channels, size=5000))
@@ -143,15 +143,17 @@ class Excavator:
         self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
         self.writer.write_csv(ad_results, 'ad_results.csv', file_path=self.writer.default_path + 'results/')
 
-        fom_ks_bootstrap = KolgomorovSmirnov()
-        for i, (k, v) in tqdm(enumerate(ks_results[0:10]), desc=f'Bootstrapping KS'):
-            channel, transformation = k
-            h_aux = self.h_aux_cum[channel, transformation]
-            h_trig = h_trig_combined[channel, transformation]
-            fom_ks_bootstrap.calculate(channel, transformation, h_aux, h_trig, bootstrap=True)
+        if bootstrap:
+            fom_ks_bootstrap = KolgomorovSmirnov()
+            for i, (k, v) in tqdm(enumerate(ks_results[0:10]), desc=f'Bootstrapping KS'):
+                channel, transformation = k
+                h_aux = self.h_aux_cum[channel, transformation]
+                h_trig = h_trig_combined[channel, transformation]
+                fom_ks_bootstrap.calculate(channel, transformation, h_aux, h_trig, bootstrap=True)
 
-        ks_results_bootstrap = sorted(fom_ks_bootstrap.scores.items(), key=lambda f: f[1].d_n, reverse=True)
-        print(ks_results_bootstrap)
+            ks_results_bootstrap = sorted(fom_ks_bootstrap.scores.items(), key=lambda f: f[1].d_n, reverse=True)
+            for result in ks_results_bootstrap:
+                print(result)
 
         ks_images_div = 'ks_images'
         self.report.add_tag(tag_type='div', tag_id=ks_images_div)
@@ -164,13 +166,13 @@ class Excavator:
                 cdf_fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
                                              channel=channel,
                                              transformation=transformation,
-                                             data_type='aux',
+                                             data_type='ks_aux',
                                              return_fig=True,
                                              rank=i)
                 cdf_fname = plot_histogram_cdf(histogram=h_trig_combined[channel, transformation],
                                                channel=channel,
                                                transformation=transformation,
-                                               data_type='trig',
+                                               data_type='ks_trig',
                                                fig=cdf_fig,
                                                save=True,
                                                rank=i)
@@ -191,13 +193,13 @@ class Excavator:
                 cdf_fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
                                              channel=channel,
                                              transformation=transformation,
-                                             data_type='aux',
+                                             data_type='ad_aux',
                                              return_fig=True,
                                              rank=i)
                 cdf_fname = plot_histogram_cdf(histogram=h_trig_combined[channel, transformation],
                                                channel=channel,
                                                transformation=transformation,
-                                               data_type='trig',
+                                               data_type='ad_trig',
                                                fig=cdf_fig,
                                                save=True,
                                                rank=i)
