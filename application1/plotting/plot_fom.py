@@ -14,14 +14,11 @@ t_stop = 1264635000
 RESULTS_DIR = 'results/'
 
 test_file = f'../../test_{t_start}_{t_stop}_f50.pickle'
-if os.path.exists(test_file):
-    with open(test_file, 'rb') as pkf:
-        data = pickle.load(pkf)
-        h_trig_cum = data['trig']
-        h_aux_cum = data['aux']
-        channels_transformations = list(h_aux_cum.keys())
-else:
-    print(f'file {test_file} not found')
+with open(test_file, 'rb') as pkf:
+    data = pickle.load(pkf)
+    h_trig_cum = data['trig']
+    h_aux_cum = data['aux']
+    channels_transformations = list(h_aux_cum.keys())
 
 fom_ad = AndersonDarling()
 
