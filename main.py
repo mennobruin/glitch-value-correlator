@@ -107,9 +107,8 @@ class Excavator:
 
         fom_ks = KolgomorovSmirnov()
         fom_ad = AndersonDarling()
-        LOG.info("Computing results...")
         h_trig_combined = {}
-        for channel in tqdm(self.available_channels):
+        for channel in tqdm(self.available_channels, desc="Computing Results"):
             for transformation_name in self.transformation_names:
                 try:
                     h_aux = self.h_aux_cum[channel, transformation_name]
@@ -120,7 +119,7 @@ class Excavator:
                     try:
                         h_aux.align(h_trig)
 
-                        fom_ks.calculate(channel, transformation_name, h_aux, h_trig, bootstrap=True)
+                        fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
                         fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
                     except (AssertionError, AttributeError) as e:
                         LOG.debug(f'Exception caught trying to compute FOM for ({channel, transformation_name}): {e}')
@@ -143,6 +142,19 @@ class Excavator:
         ad_results = sorted(fom_ad.scores.items(), key=lambda f: f[1].ad, reverse=True)
         self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
         self.writer.write_csv(ad_results, 'ad_results.csv', file_path=self.writer.default_path + 'results/')
+
+        fom_ks_bootstrap = KolgomorovSmirnov()
+        for i, (k, v) in tqdm(enumerate(ks_results[0:10]), desc=f'Bootstrapping KS'):
+            channel, transformation = k
+            h_aux = self.h_aux_cum[channel, transformation]
+            h_trig = Hist(np.array([]))
+            for label in self.labels:
+                h_trig += self.h_trig_cum[channel, transformation, label]
+
+            fom_ks_bootstrap.calculate(channel, transformation, h_aux, h_trig, bootstrap=True)
+
+        ks_results_bootstrap = sorted(fom_ks_bootstrap.scores.items(), key=lambda f: f[1].d_n, reverse=True)
+        print(ks_results_bootstrap)
 
         ks_images_div = 'ks_images'
         self.report.add_tag(tag_type='div', tag_id=ks_images_div)
