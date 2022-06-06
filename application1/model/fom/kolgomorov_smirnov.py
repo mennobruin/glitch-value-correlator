@@ -13,7 +13,7 @@ from application1.config import config_manager
 LOG = config_manager.get_logger(__name__)
 
 
-KSResult = namedtuple('KSResult', ['d_n', 'p'])
+KSResult = namedtuple('KSResult', ['d_n', 'std_d_n', 'p', 'std_p'])
 
 
 class KolgomorovSmirnov:
@@ -25,11 +25,12 @@ class KolgomorovSmirnov:
     def calculate(self, channel, transformation, h_aux, h_trig, bootstrap=False):
         if h_aux.const_val is None:
             if bootstrap:
-                d_n, p = self.bootstrap(h_aux=h_aux, h_trig=h_trig)
+                d_n, std_d_n, p, std_p = self.bootstrap(h_aux=h_aux, h_trig=h_trig)
+                self.scores[channel, transformation] = KSResult(d_n, std_d_n, p, std_p)
             else:
                 d_n = self._get_distance(h_aux, h_trig)
                 p = self._get_p_value(d_n, h_aux.ntot, h_trig.ntot)
-            self.scores[channel, transformation] = KSResult(d_n, p)
+                self.scores[channel, transformation] = KSResult(d_n, None, p, None)
 
     @staticmethod
     def _get_distance(h_aux, h_trig):
@@ -54,7 +55,7 @@ class KolgomorovSmirnov:
     #     std = np.std(np.concatenate([p1, p2]))
     #     return int(2 * std * std * z * z / (delta_mean * delta_mean))
 
-    def bootstrap(self, h_aux, h_trig, n_cycles=100):
+    def bootstrap(self, h_aux, h_trig, n_cycles=5000):
 
         counts1, dx1 = h_aux.counts, (h_aux.x_max - h_aux.x_min) / h_aux.nbin
         counts2, dx2 = h_trig.counts, (h_trig.x_max - h_trig.x_min) / h_trig.nbin
@@ -70,13 +71,9 @@ class KolgomorovSmirnov:
             np.random.uniform(low=edge1, high=edge2, size=counts2[i])
             for i, (edge1, edge2) in enumerate(zip(bin_edges2[0:-1], bin_edges2[1:]))
         ])
-        print(points1.shape)
-        print(points2.shape)
 
-        size1 = h_aux.ntot
-        size2 = h_trig.ntot
-        print(size1)
-        print(size2)
+        size1 = h_aux.ntot // 5
+        size2 = h_trig.ntot // 5
         distances, probabilities = [], []
         for _ in range(n_cycles):
             sample1 = np.random.choice(points1, size=size1, replace=True)
@@ -94,14 +91,13 @@ class KolgomorovSmirnov:
             distances.append(d_n)
             probabilities.append(p)
 
-        print(distances)
-        return np.mean(distances), np.mean(probabilities)
+        return np.mean(distances), np.std(distances), np.mean(probabilities), np.std(probabilities)
 
 
 if __name__ == '__main__':
     fom = KolgomorovSmirnov()
-    n = 8192
-    m = n // 10
+    n = 485672
+    m = 1341
     x = np.random.normal(loc=0, scale=100, size=n)
 
     h1 = Hist(x[:m], l2_nbin=6)
