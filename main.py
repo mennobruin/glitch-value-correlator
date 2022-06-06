@@ -151,6 +151,8 @@ class Excavator:
             for label in self.labels:
                 h_trig += self.h_trig_cum[channel, transformation, label]
 
+            print(channel, transformation)
+            print(h_trig.const_val)
             fom_ks_bootstrap.calculate(channel, transformation, h_aux, h_trig, bootstrap=True)
 
         ks_results_bootstrap = sorted(fom_ks_bootstrap.scores.items(), key=lambda f: f[1].d_n, reverse=True)
