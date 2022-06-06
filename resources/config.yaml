@@ -3,7 +3,7 @@
 #project.source: '/virgoData/ffl/trend.ffl'
 project.source: 'local'
 project.decimate: false
-project.load_existing: false
+project.load_existing: true
 project.run: true
 project.start_time: 1264625000
 project.end_time: 1264635000

@@ -54,7 +54,7 @@ class KolgomorovSmirnov:
     #     std = np.std(np.concatenate([p1, p2]))
     #     return int(2 * std * std * z * z / (delta_mean * delta_mean))
 
-    def bootstrap(self, h_aux, h_trig, n_cycles=200):
+    def bootstrap(self, h_aux, h_trig, n_cycles=100):
 
         counts1, dx1 = h_aux.counts, (h_aux.x_max - h_aux.x_min) / h_aux.nbin
         counts2, dx2 = h_trig.counts, (h_trig.x_max - h_trig.x_min) / h_trig.nbin
@@ -62,19 +62,19 @@ class KolgomorovSmirnov:
         bin_edges1 = h_aux.x_min + dx1 * np.arange(h_aux.nbin)
         bin_edges2 = h_trig.x_min + dx2 * np.arange(h_trig.nbin)
 
+        points1 = np.concatenate([
+            np.random.uniform(low=edge1, high=edge2, size=counts1[i])
+            for i, (edge1, edge2) in enumerate(zip(bin_edges1[0:-1], bin_edges1[1:]))
+        ])
+        points2 = np.concatenate([
+            np.random.uniform(low=edge1, high=edge2, size=counts2[i])
+            for i, (edge1, edge2) in enumerate(zip(bin_edges2[0:-1], bin_edges2[1:]))
+        ])
+
         size1 = h_aux.ntot // 5
         size2 = h_trig.ntot // 5
         distances, probabilities = [], []
         for _ in range(n_cycles):
-            points1 = np.concatenate([
-                np.random.uniform(low=edge1, high=edge2, size=counts1[i])
-                for i, (edge1, edge2) in enumerate(zip(bin_edges1[0:-1], bin_edges1[1:]))
-            ])
-            points2 = np.concatenate([
-                np.random.uniform(low=edge1, high=edge2, size=counts2[i])
-                for i, (edge1, edge2) in enumerate(zip(bin_edges2[0:-1], bin_edges2[1:]))
-            ])
-
             sample1 = np.random.choice(points1, size=size1, replace=True)
             sample2 = np.random.choice(points2, size=size2, replace=True)
 
