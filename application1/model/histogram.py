@@ -270,12 +270,12 @@ class Hist:
         if self.isexpanded:
             self.counts += other.counts
             self.i_min = min(self.i_min, other.i_min)
+            self.x_min = min(self.x_min, other.x_min)
             self.i_max = max(self.i_max, other.i_max)
+            self.x_max = max(self.x_max, other.x_max)
         else:
             assert self.const_val == other.const_val
         self.ntot += other.ntot
-        self.x_min = min(self.x_min, other.x_min)
-        self.x_max = max(self.x_max, other.x_max)
         self.check()
         return self
 
