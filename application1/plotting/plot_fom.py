@@ -13,7 +13,7 @@ t_start = 1264625000
 t_stop = 1264635000
 RESULTS_DIR = 'results/'
 
-test_file = f'../../test_{t_start}_{t_stop}_f50.pickle'
+test_file = f'test_{t_start}_{t_stop}_f50.pickle'
 with open(test_file, 'rb') as pkf:
     data = pickle.load(pkf)
     h_trig_cum = data['trig']
