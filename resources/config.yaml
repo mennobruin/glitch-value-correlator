@@ -3,11 +3,11 @@
 #project.source: '/virgoData/ffl/trend.ffl'
 project.source: 'local'
 project.decimate: false
+project.load_existing: true
 project.run: true
 project.start_time: 1264625000
 project.end_time: 1264635000
 project.target_frequency: 50
-project.cutoff_frequency: 50
 project.blacklist_patterns: './resources/blacklist_patterns.txt'
 
 # Kerberos config

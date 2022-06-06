@@ -33,13 +33,12 @@ LOG = config_manager.get_logger(__name__)
 
 class Excavator:
 
-    def __init__(self, load_existing=False):
+    def __init__(self):
         LOG.info(f"Loading configuration from {CONFIG_FILE}.")
         self.config = config_manager.load_config()
         self.source = self.config['project.source']
         self.t_start = self.config['project.start_time']
         self.t_stop = self.config['project.end_time']
-        self.f_cutoff = self.config['project.cutoff_frequency']
         self.f_target = self.config['project.target_frequency']
         with open(self.config['project.blacklist_patterns'], 'r') as f:
             bl_patterns: list = f.read().splitlines()
@@ -73,9 +72,9 @@ class Excavator:
         self.i_trigger = None
 
         if self.config['project.run']:
-            self.run(load_existing=load_existing)
+            self.run(load_existing=self.config['project.load_existing'])
 
-    def run(self, n_iter=1, load_existing=False):
+    def run(self, n_iter=1, load_existing=True):
 
         self.available_channels = self.reader.get_available_channels()
         # self.available_channels = list(np.random.choice(self.available_channels, size=5000))
@@ -146,14 +145,14 @@ class Excavator:
         self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
         self.writer.write_csv(ad_results, 'ad_results.csv', file_path=self.writer.default_path + 'results/')
 
-        images_div = 'images'
-        self.report.add_tag(tag_type='div', tag_id=images_div)
+        ks_images_div = 'ks_images'
+        self.report.add_tag(tag_type='div', tag_id=ks_images_div)
         for i, (k, v) in enumerate(ks_results[0:10]):
             channel, transformation = k
             statistic, p_value = v
             try:
                 div_id = f'rank_{i}'
-                self.report.add_tag(tag_type='div', tag_id=div_id, parent_div=images_div)
+                self.report.add_tag(tag_type='div', tag_id=div_id, parent_div=ks_images_div)
                 cdf_fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
                                              channel=channel,
                                              transformation=transformation,
@@ -173,9 +172,30 @@ class Excavator:
             self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), f'{p_value:.2E}'],
                                          table_id=ks_table)
 
+        ad_images_div = 'ad_images'
+        self.report.add_tag(tag_type='div', tag_id=ad_images_div)
         for i, (k, v) in enumerate(ad_results[0:10]):
             channel, transformation = k
             statistic, threshold = v
+            try:
+                div_id = f'rank_{i}'
+                self.report.add_tag(tag_type='div', tag_id=div_id, parent_div=ad_images_div)
+                cdf_fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
+                                             channel=channel,
+                                             transformation=transformation,
+                                             data_type='aux',
+                                             return_fig=True,
+                                             rank=i)
+                cdf_fname = plot_histogram_cdf(histogram=h_trig_combined[channel, transformation],
+                                               channel=channel,
+                                               transformation=transformation,
+                                               data_type='trig',
+                                               fig=cdf_fig,
+                                               save=True,
+                                               rank=i)
+                self.report.add_image(img=cdf_fname, div_id=div_id)
+            except AttributeError as e:
+                LOG.debug(e)
             self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), str(threshold)],
                                          table_id=ad_table)
 
@@ -198,11 +218,11 @@ class Excavator:
             [],  # also do a run untransformed
             # [savitzky_golay],
             # [savitzky_golay, AbsMean],
-            # [gauss],
+            [gauss],
             # [gauss, Abs],
             # [Abs]
             # [AbsMean],
-            [HighPass]
+            # [HighPass]
         ]
 
         join_names = lambda c: '_'.join(t.NAME for t in c)
@@ -215,7 +235,7 @@ class Excavator:
             for name, transformations in self.transformation_states[channel].items():
                 for i, transformation in enumerate(transformations):
                     if isinstance(transformation, type):
-                        self.transformation_states[channel][name][i] = transformation(f_target=self.f_cutoff)
+                        self.transformation_states[channel][name][i] = transformation()
 
     def _init_cumulative_hists(self, segments, triggers):
         self.cum_aux_veto = [np.zeros(self.n_points, dtype=bool) for _ in segments]
