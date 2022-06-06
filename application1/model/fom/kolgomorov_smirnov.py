@@ -62,7 +62,6 @@ class KolgomorovSmirnov:
         counts2, dx2 = h_trig.counts, (h_trig.x_max - h_trig.x_min) / h_trig.nbin
         print(h_trig.x_max, h_trig.x_min, h_trig.nbin)
         print(h_trig.x_min == h_trig.x_max)
-        print(counts2)
         print(dx2)
 
         bin_edges1 = h_aux.x_min + dx1 * np.arange(h_aux.nbin)
