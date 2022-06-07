@@ -26,6 +26,7 @@ fom_ad = AndersonDarling()
 
 def anderson_darling(h_aux, h_trig):
     d_n = fom_ad._get_distances(h_aux=h_aux, h_trig=h_trig)
+    print(2, sum(d_n))
     combined = fom_ad._combine_hist(h_aux, h_trig)
     combined_ecdf = combined.cdf * (1 - combined.cdf)
     print(2, sum(combined_ecdf))
