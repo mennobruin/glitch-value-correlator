@@ -26,12 +26,6 @@ fom_ad = AndersonDarling()
 
 def anderson_darling(h_aux, h_trig):
     d_n = fom_ad._get_distances(h_aux=h_aux, h_trig=h_trig)
-    print(h_aux)
-    print(h_trig)
-    print(sum(h_aux.cdf))
-    print(sum(h_trig.cdf))
-    print(h_aux.ntot)
-    print(h_trig.ntot)
     combined = fom_ad._combine_hist(h_aux, h_trig)
     combined_ecdf = combined.cdf * (1 - combined.cdf)
     ad = np.sum(np.divide(d_n, combined_ecdf, out=np.zeros_like(d_n), where=combined_ecdf != 0))
@@ -135,27 +129,17 @@ if __name__ == '__main__':
     h_aux = h_aux_cum[channel, transformation]
     h_trig = Hist(np.array([]))
     for label in labels:
-        print('------')
         h_trig += h_trig_cum[channel, transformation, label]
-        print(label)
-        try:
-            print(f'{sum(h_trig.counts.cumsum())=}')
-            print(h_trig.ntot)
-        except AttributeError:
-            continue
-    print('------')
-    print(h_trig.x_min, h_trig.x_max)
-    print(sum(h_trig.counts))
     plot_histogram_cdf(h_trig, channel, transformation, 'trig')
     ad, distances, ecdf, combined_hist = anderson_darling(h_aux, h_trig)
     print(ad)
-    # cdf_fig = plot_histogram_cdf(histogram=h_aux,
-    #                              channel=channel,
-    #                              transformation=transformation,
-    #                              data_type='ad_aux',
-    #                              return_fig=True)
-    # plot_histogram_cdf(histogram=h_trig,
-    #                    channel=channel,
-    #                    transformation=transformation,
-    #                    data_type='ad_trig',
-    #                    fig=cdf_fig)
+    cdf_fig = plot_histogram_cdf(histogram=h_aux,
+                                 channel=channel,
+                                 transformation=transformation,
+                                 data_type='ad_aux',
+                                 return_fig=True)
+    plot_histogram_cdf(histogram=h_trig,
+                       channel=channel,
+                       transformation=transformation,
+                       data_type='ad_trig',
+                       fig=cdf_fig)
