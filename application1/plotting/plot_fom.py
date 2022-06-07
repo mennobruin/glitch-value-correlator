@@ -132,13 +132,15 @@ if __name__ == '__main__':
         h_trig += h_trig_cum[channel, transformation, label]
     plot_histogram_cdf(h_trig, channel, transformation, 'trig')
     ad, distances, ecdf, combined_hist = anderson_darling(h_aux, h_trig)
-    cdf_fig = plot_histogram_cdf(histogram=h_aux,
-                                 channel=channel,
-                                 transformation=transformation,
-                                 data_type='ad_aux',
-                                 return_fig=True)
-    plot_histogram_cdf(histogram=h_trig,
-                       channel=channel,
-                       transformation=transformation,
-                       data_type='ad_trig',
-                       fig=cdf_fig)
+    print(ad)
+    print(fom_ad.calculate(channel, transformation, h_aux=h_aux, h_trig=h_trig).ad)
+    # cdf_fig = plot_histogram_cdf(histogram=h_aux,
+    #                              channel=channel,
+    #                              transformation=transformation,
+    #                              data_type='ad_aux',
+    #                              return_fig=True)
+    # plot_histogram_cdf(histogram=h_trig,
+    #                    channel=channel,
+    #                    transformation=transformation,
+    #                    data_type='ad_trig',
+    #                    fig=cdf_fig)
