@@ -53,7 +53,7 @@ def test_anderson_darling(channel, transformation):
         plt.xlabel('x')
         plt.ylabel('CDF')
         # plt.savefig(RESULTS_DIR + 'combined_cdf.png', dpi=300, transparent=False, bbox_inches='tight')
-        plt.show()
+        plt.show(block=False)
         plt.figure(figsize=(10, 8), dpi=300)
         plt.plot(h_aux.xgrid, combined_hist.cdf, label=r'$\hat{C}$')
         plt.plot(h_aux.xgrid, ecdf, 'g--', label=r'$\hat{C} (1 - \hat{C})$')
@@ -64,7 +64,7 @@ def test_anderson_darling(channel, transformation):
         plt.ylabel('CDF')
         # plt.savefig(RESULTS_DIR + 'anderson_darling_combined_cdf.png', dpi=300, transparent=False,
         #             bbox_inches='tight')
-        plt.show()
+        plt.show(block=False)
         plt.plot(combined_hist.xgrid, combined_hist.cdf - h_aux_cp)
         plt.xlim(min(h_aux.xgrid), max(h_aux.xgrid))
         plt.xlabel('x')
@@ -74,8 +74,6 @@ def test_anderson_darling(channel, transformation):
         #             bbox_inches='tight')
         plt.show()
 
-
-test_anderson_darling()
 
 def test_bootstrap(h_aux, h_trig, n_cycles=1):
     counts1, dx1 = h_aux.counts, (h_aux.x_max - h_aux.x_min) / h_aux.nbin
