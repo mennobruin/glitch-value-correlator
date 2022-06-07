@@ -42,6 +42,6 @@ class AndersonDarling(BaseFOM):
     @staticmethod
     def _combine_hist(h1, h2):
         h1_cp = cp.deepcopy(h1)
-        h2_cp = cp.deepcopy(h2.copy())
+        h2_cp = cp.deepcopy(h2)
         h1_cp += h2_cp
         return h1_cp
