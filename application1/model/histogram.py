@@ -178,19 +178,6 @@ class Hist:
             newcounts[:self.nbin // 2] = self.counts[::2] + self.counts[1::2]
         self.counts = newcounts
 
-        """
-      
-        mid = self.nbin // 2
-        cnt = self.counts
-        if self.i_offset % 2:
-            np.add(cnt[1:-1:2], cnt[2:-1:2], out=cnt[1:mid])
-            cnt[mid] = cnt[-1]
-            cnt[mid+1:] = 0
-        else:
-            np.add(cnt[::2], cnt[1::2], out=cnt[:mid])
-            cnt[mid:] = 0
-        """
-
         self.l2_span += 1
         self.i_offset //= 2
         self.i_min //= 2
@@ -221,7 +208,6 @@ class Hist:
         self.i_offset = self.i_min - self.nbin // 2
         self.counts = np.zeros(self.nbin, dtype=np.uint32)
         self.counts[self.nbin // 2] = self.ntot
-        print(f'{sum(self.counts.cumsum())=}')
         self.const_val = None
         self.check()
 
@@ -296,7 +282,8 @@ class Hist:
                     return
                 else:
                     l2_span = int(np.ceil(np.log2(abs(
-                        self.const_val - other.const_val))))
+                        self.const_val - other.const_val
+                    ))))
                     self.expand(l2_span)
                     other.expand(l2_span)
 
@@ -310,19 +297,20 @@ class Hist:
         while smallest.l2_span < biggest.l2_span:
             smallest.enlarge()
 
-        while (max(self.i_max, other.i_max) -
-               min(self.i_min, other.i_min)) >= self.nbin:
+        while (max(self.i_max, other.i_max) - min(self.i_min, other.i_min)) >= self.nbin:
             self.enlarge()
             other.enlarge()
         assert self.l2_span == other.l2_span
 
+        """
+        todo: wtf is going on here man
+              why is the behavior dependent on which histogram is self and which is other
+              fix by finding out wtf this does and making it the same regardless of self and other    
+        """
         if self.i_offset <= other.i_min and other.i_max < self.i_offset + self.nbin:
-
             other.shift(self.i_offset - other.i_offset)
         else:
-            i_offset_new = (min(self.i_min, other.i_min) +
-                            max(self.i_max, other.i_max) +
-                            1 - self.nbin) // 2
+            i_offset_new = (min(self.i_min, other.i_min) + max(self.i_max, other.i_max) + 1 - self.nbin) // 2
             self.shift(i_offset_new - self.i_offset)
             other.shift(i_offset_new - other.i_offset)
         assert self.i_offset == other.i_offset
@@ -339,16 +327,26 @@ def plot_hist(h, **kwargs):
 def testme(nrep, size):
     for i in range(nrep):
         n = np.random.randint(1, size)
-        m = np.random.randint(n)
+        m = n//4
         x = 10 ** (20 * np.random.rand(1) - 10) * np.random.randn(n)
         h1 = Hist(x[:m], l2_nbin=10)
-        h2 = Hist(x[m:], l2_nbin=10, spanlike=h1)
-        plot_hist(h1)
-        h1 += h2
-        plot_hist(h1)
-        h = Hist(x, l2_nbin=10)
-        assert h1 == h
+        h2 = Hist(x[m:int(2*m)], l2_nbin=10)
+        h3 = Hist(x[int(2*m):], l2_nbin=10)
+        # plot_hist(h1)
+        # h1 += h2
+        h1 += h3
+        print(h1.counts.cumsum())
+        h1 = Hist(x[:m], l2_nbin=10)
+        h2 = Hist(x[m:int(2*m)], l2_nbin=10)
+        h3 = Hist(x[int(2*m):], l2_nbin=10)
+        h3 += h1
+        # h3 += h2
+        print(h3.counts.cumsum())
+        # plot_hist(h1)
+        # h = Hist(x, l2_nbin=10)
+        # assert h1 == h
 
 
 if __name__ == '__main__':
-    testme(nrep=1, size=16384)
+    np.set_printoptions(threshold=np.inf)
+    testme(nrep=1, size=256)
