@@ -5,6 +5,7 @@ from collections import namedtuple
 
 from .base import BaseFOM
 from application1.config import config_manager
+from ..histogram import Hist
 
 LOG = config_manager.get_logger(__name__)
 
@@ -39,5 +40,7 @@ class AndersonDarling(BaseFOM):
 
     @staticmethod
     def _combine_hist(h1, h2):
-        h1 += h2
-        return h1
+        combined = Hist(np.array([]))
+        combined += h1
+        combined += h2
+        return combined
