@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 from resources.constants import PLOT_DIR
 from application1.config import config_manager
 
-plt.rcParams['font.size'] = 16
 
 LOG = config_manager.get_logger(__name__)
 
@@ -16,6 +15,7 @@ def plot_histogram(channel, transformation, histogram, data_type, xlabel='x', yl
     if not fig:
         fig = plt.figure(figsize=(10, 8))
 
+    plt.rcParams['font.size'] = 16
     plt.title(channel)
     plt.bar(histogram.xgrid, histogram.counts, width=histogram.span / histogram.nbin, label=label)
     plt.xlim([histogram.offset, histogram.offset + histogram.span])
@@ -44,6 +44,7 @@ def plot_histogram_cdf(histogram, channel, transformation, data_type, xlabel='x'
     if not fig:
         fig = plt.figure(figsize=(10, 8))
 
+    plt.rcParams['font.size'] = 16
     plt.plot(histogram.xgrid, histogram.cdf, label=label)
     plt.legend(loc='upper left')
     plt.title(channel)
