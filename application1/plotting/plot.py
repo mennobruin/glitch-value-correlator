@@ -14,7 +14,7 @@ def plot_histogram(channel, transformation, histogram, data_type, xlabel='x', yl
     LOG.info(f'Plotting {f_name}...')
 
     if not fig:
-        fig = plt.figure(figsize=(10, 8), dpi=300)
+        fig = plt.figure(figsize=(10, 8))
 
     plt.title(channel)
     plt.bar(histogram.xgrid, histogram.counts, width=histogram.span / histogram.nbin, label=label)
@@ -28,7 +28,7 @@ def plot_histogram(channel, transformation, histogram, data_type, xlabel='x', yl
 
     if save:
         save_name = f'{rank}_{transformation}_{data_type}.png'
-        fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+        fig.savefig(PLOT_DIR + save_name, dpi=300)
         return save_name
     else:
         plt.show(block=block)
@@ -42,7 +42,7 @@ def plot_histogram_cdf(histogram, channel, transformation, data_type, xlabel='x'
     LOG.info(f'Plotting {f_name}...')
 
     if not fig:
-        fig = plt.figure(figsize=(10, 8), dpi=300)
+        fig = plt.figure(figsize=(10, 8))
 
     plt.plot(histogram.xgrid, histogram.cdf, label=label)
     plt.legend(loc='upper left')
@@ -56,7 +56,7 @@ def plot_histogram_cdf(histogram, channel, transformation, data_type, xlabel='x'
 
     if save:
         save_name = f'{rank}_{transformation}_{data_type}_cdf.png'
-        fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+        fig.savefig(PLOT_DIR + save_name, dpi=300)
         return save_name
     else:
         plt.show()

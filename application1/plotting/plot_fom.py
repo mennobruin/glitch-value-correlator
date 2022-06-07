@@ -51,7 +51,7 @@ def test_anderson_darling(h_aux, h_trig):
         plt.ylabel('CDF')
         # plt.savefig(RESULTS_DIR + 'combined_cdf.png', dpi=300, transparent=False, bbox_inches='tight')
         plt.show(block=False)
-        plt.figure(figsize=(10, 8), dpi=300)
+        plt.figure(figsize=(10, 8))
         plt.plot(h_aux.xgrid, combined_hist.cdf, label=r'$\hat{C}$')
         plt.plot(h_aux.xgrid, ecdf, 'g--', label=r'$\hat{C} (1 - \hat{C})$')
         plt.xlim(min(h_aux.xgrid), max(h_aux.xgrid))
