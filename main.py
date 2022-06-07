@@ -167,12 +167,14 @@ class Excavator:
                                              channel=channel,
                                              transformation=transformation,
                                              data_type='ks_aux',
+                                             label='aux',
                                              return_fig=True,
                                              rank=i)
                 cdf_fname = plot_histogram_cdf(histogram=h_trig_combined[channel, transformation],
                                                channel=channel,
                                                transformation=transformation,
                                                data_type='ks_trig',
+                                               label='trig',
                                                fig=cdf_fig,
                                                save=True,
                                                rank=i)
@@ -194,12 +196,14 @@ class Excavator:
                                              channel=channel,
                                              transformation=transformation,
                                              data_type='ad_aux',
+                                             label='aux',
                                              return_fig=True,
                                              rank=i)
                 cdf_fname = plot_histogram_cdf(histogram=h_trig_combined[channel, transformation],
                                                channel=channel,
                                                transformation=transformation,
                                                data_type='ad_trig',
+                                               label='trig',
                                                fig=cdf_fig,
                                                save=True,
                                                rank=i)
