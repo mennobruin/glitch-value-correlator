@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from resources.constants import PLOT_DIR
 from application1.config import config_manager
 
+plt.rcParams['font.size'] = 16
 
 LOG = config_manager.get_logger(__name__)
 
