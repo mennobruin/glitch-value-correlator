@@ -33,50 +33,49 @@ def anderson_darling(h_aux, h_trig):
     return ad, d_n, combined_ecdf, combined
 
 
-def test_anderson_darling():
-    for channel, transformation in channels_transformations:
-        h_aux = h_aux_cum[channel, transformation]
-        h_trig = h_trig_cum[channel, transformation]
-        result = fom_ad.calculate(channel, transformation, h_aux, h_trig)
-        if result and result.below_critical:
-            h_aux_cp = h_aux.cdf.copy()
+def test_anderson_darling(channel, transformation):
+    # for channel, transformation in channels_transformations:
+    h_aux = h_aux_cum[channel, transformation]
+    h_trig = h_trig_cum[channel, transformation]
+    result = fom_ad.calculate(channel, transformation, h_aux, h_trig)
+    if result and result.below_critical:
+        h_aux_cp = h_aux.cdf.copy()
 
-            _, distances, ecdf, combined_hist = anderson_darling(h_aux=h_aux, h_trig=h_trig)
-            y_values = np.array([min(v) for v in zip(h_aux.cdf, h_trig.cdf)])
+        _, distances, ecdf, combined_hist = anderson_darling(h_aux=h_aux, h_trig=h_trig)
+        y_values = np.array([min(v) for v in zip(h_aux.cdf, h_trig.cdf)])
 
-            fig = plot_histogram_cdf(histogram=h_aux, channel=channel, transformation=transformation,
-                                     data_type=r'$\hat{F}$', return_fig=True)
-            plot_histogram_cdf(histogram=h_trig, channel=channel, transformation=transformation, data_type=r'$\hat{G}$',
-                               fig=fig, return_fig=True)
-            # plt.vlines(x=h_aux.xgrid, ymin=y_values, ymax=y_values + distances, lw=1/ecdf/100)
-            plt.xlim(min(h_aux.xgrid), max(h_aux.xgrid))
-            plt.xlabel('x')
-            plt.ylabel('CDF')
-            plt.savefig(RESULTS_DIR + 'combined_cdf.png', dpi=300, transparent=False, bbox_inches='tight')
-            plt.show()
-            plt.figure(figsize=(10, 8), dpi=300)
-            plt.plot(h_aux.xgrid, combined_hist.cdf, label=r'$\hat{C}$')
-            plt.plot(h_aux.xgrid, ecdf, 'g--', label=r'$\hat{C} (1 - \hat{C})$')
-            plt.xlim(min(h_aux.xgrid), max(h_aux.xgrid))
-            plt.legend()
-            plt.title(channel)
-            plt.xlabel('x')
-            plt.ylabel('CDF')
-            plt.savefig(RESULTS_DIR + 'anderson_darling_combined_cdf.png', dpi=300, transparent=False,
-                        bbox_inches='tight')
-            plt.show()
-            plt.plot(combined_hist.xgrid, combined_hist.cdf - h_aux_cp)
-            plt.xlim(min(h_aux.xgrid), max(h_aux.xgrid))
-            plt.xlabel('x')
-            plt.ylabel(r'$\Delta$ CDF')
-            plt.title(channel)
-            plt.savefig(RESULTS_DIR + 'anderson_darling_diff_combined_cdf.png', dpi=300, transparent=False,
-                        bbox_inches='tight')
-            plt.show()
-            break
+        fig = plot_histogram_cdf(histogram=h_aux, channel=channel, transformation=transformation,
+                                 data_type=r'$\hat{F}$', return_fig=True)
+        plot_histogram_cdf(histogram=h_trig, channel=channel, transformation=transformation, data_type=r'$\hat{G}$',
+                           fig=fig, return_fig=True)
+        # plt.vlines(x=h_aux.xgrid, ymin=y_values, ymax=y_values + distances, lw=1/ecdf/100)
+        plt.xlim(min(h_aux.xgrid), max(h_aux.xgrid))
+        plt.xlabel('x')
+        plt.ylabel('CDF')
+        # plt.savefig(RESULTS_DIR + 'combined_cdf.png', dpi=300, transparent=False, bbox_inches='tight')
+        plt.show()
+        plt.figure(figsize=(10, 8), dpi=300)
+        plt.plot(h_aux.xgrid, combined_hist.cdf, label=r'$\hat{C}$')
+        plt.plot(h_aux.xgrid, ecdf, 'g--', label=r'$\hat{C} (1 - \hat{C})$')
+        plt.xlim(min(h_aux.xgrid), max(h_aux.xgrid))
+        plt.legend()
+        plt.title(channel)
+        plt.xlabel('x')
+        plt.ylabel('CDF')
+        # plt.savefig(RESULTS_DIR + 'anderson_darling_combined_cdf.png', dpi=300, transparent=False,
+        #             bbox_inches='tight')
+        plt.show()
+        plt.plot(combined_hist.xgrid, combined_hist.cdf - h_aux_cp)
+        plt.xlim(min(h_aux.xgrid), max(h_aux.xgrid))
+        plt.xlabel('x')
+        plt.ylabel(r'$\Delta$ CDF')
+        plt.title(channel)
+        # plt.savefig(RESULTS_DIR + 'anderson_darling_diff_combined_cdf.png', dpi=300, transparent=False,
+        #             bbox_inches='tight')
+        plt.show()
 
 
-# test_anderson_darling()
+test_anderson_darling()
 
 def test_bootstrap(h_aux, h_trig, n_cycles=1):
     counts1, dx1 = h_aux.counts, (h_aux.x_max - h_aux.x_min) / h_aux.nbin
@@ -119,20 +118,21 @@ if __name__ == '__main__':
     # test_bootstrap(h_aux=h2, h_trig=h1, n_cycles=1)
     channel = "V1:SDB2_B1pP_PD1_VBias"
     transformation = ""
+    test_anderson_darling(channel, transformation)
 
-    GPS_TIME = 'GPStime'
-    LABEL = 'label'
-    reader = CSVReader()
-    triggers = reader.load_csv('GSpy_ALLIFO_O3b_0921_final', usecols=[GPS_TIME, LABEL])
-    labels = set(triggers[LABEL].values)
-
-    h_aux = h_aux_cum[channel, transformation]
-    h_trig = Hist(np.array([]))
-    for label in labels:
-        h_trig += h_trig_cum[channel, transformation, label]
-    print(fom_ad.calculate(channel, transformation, h_aux=h_aux, h_trig=h_trig).ad)
-    ad, distances, ecdf, combined_hist = anderson_darling(h_aux, h_trig)
-    print(ad)
+    # GPS_TIME = 'GPStime'
+    # LABEL = 'label'
+    # reader = CSVReader()
+    # triggers = reader.load_csv('GSpy_ALLIFO_O3b_0921_final', usecols=[GPS_TIME, LABEL])
+    # labels = set(triggers[LABEL].values)
+    #
+    # h_aux = h_aux_cum[channel, transformation]
+    # h_trig = Hist(np.array([]))
+    # for label in labels:
+    #     h_trig += h_trig_cum[channel, transformation, label]
+    # print(fom_ad.calculate(channel, transformation, h_aux=h_aux, h_trig=h_trig).ad)
+    # ad, distances, ecdf, combined_hist = anderson_darling(h_aux, h_trig)
+    # print(ad)
     # cdf_fig = plot_histogram_cdf(histogram=h_aux,
     #                              channel=channel,
     #                              transformation=transformation,
