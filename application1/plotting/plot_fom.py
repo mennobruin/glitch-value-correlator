@@ -33,10 +33,7 @@ def anderson_darling(h_aux, h_trig):
     return ad, d_n, combined_ecdf, combined
 
 
-def test_anderson_darling(channel, transformation):
-    # for channel, transformation in channels_transformations:
-    h_aux = h_aux_cum[channel, transformation]
-    h_trig = h_trig_cum[channel, transformation]
+def test_anderson_darling(h_aux, h_trig):
     result = fom_ad.calculate(channel, transformation, h_aux, h_trig)
     if result and result.below_critical:
         h_aux_cp = h_aux.cdf.copy()
@@ -116,18 +113,18 @@ if __name__ == '__main__':
     # test_bootstrap(h_aux=h2, h_trig=h1, n_cycles=1)
     channel = "V1:SDB2_B1pP_PD1_VBias"
     transformation = ""
-    test_anderson_darling(channel, transformation)
 
-    # GPS_TIME = 'GPStime'
-    # LABEL = 'label'
-    # reader = CSVReader()
-    # triggers = reader.load_csv('GSpy_ALLIFO_O3b_0921_final', usecols=[GPS_TIME, LABEL])
-    # labels = set(triggers[LABEL].values)
-    #
-    # h_aux = h_aux_cum[channel, transformation]
-    # h_trig = Hist(np.array([]))
-    # for label in labels:
-    #     h_trig += h_trig_cum[channel, transformation, label]
+    GPS_TIME = 'GPStime'
+    LABEL = 'label'
+    reader = CSVReader()
+    triggers = reader.load_csv('GSpy_ALLIFO_O3b_0921_final', usecols=[GPS_TIME, LABEL])
+    labels = set(triggers[LABEL].values)
+
+    h_aux = h_aux_cum[channel, transformation]
+    h_trig = Hist(np.array([]))
+    for label in labels:
+        h_trig += h_trig_cum[channel, transformation, label]
+    test_anderson_darling(h_aux, h_trig)
     # print(fom_ad.calculate(channel, transformation, h_aux=h_aux, h_trig=h_trig).ad)
     # ad, distances, ecdf, combined_hist = anderson_darling(h_aux, h_trig)
     # print(ad)
