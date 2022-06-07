@@ -41,6 +41,6 @@ class AndersonDarling(BaseFOM):
     @staticmethod
     def _combine_hist(h1, h2):
         combined = Hist(np.array([]))
-        combined += h1
         combined += h2
+        combined += h1
         return combined
