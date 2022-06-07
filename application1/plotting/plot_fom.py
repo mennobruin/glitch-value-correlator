@@ -130,7 +130,6 @@ if __name__ == '__main__':
     h_trig = Hist(np.array([]))
     for label in labels:
         h_trig += h_trig_cum[channel, transformation, label]
-    plot_histogram_cdf(h_trig, channel, transformation, 'trig')
     ad, distances, ecdf, combined_hist = anderson_darling(h_aux, h_trig)
     print(ad)
     print(fom_ad.calculate(channel, transformation, h_aux=h_aux, h_trig=h_trig).ad)
