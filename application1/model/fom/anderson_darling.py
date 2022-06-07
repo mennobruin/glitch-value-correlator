@@ -5,7 +5,6 @@ from collections import namedtuple
 
 from .base import BaseFOM
 from application1.config import config_manager
-from ..histogram import Hist
 
 LOG = config_manager.get_logger(__name__)
 
@@ -26,7 +25,9 @@ class AndersonDarling(BaseFOM):
             combined = self._combine_hist(h_aux, h_trig)
             combined_ecdf = combined.cdf * (1 - combined.cdf)
             ad = np.sum(np.divide(d_n, combined_ecdf, out=np.zeros_like(d_n), where=combined_ecdf != 0))
+            print(1, ad)
             ad /= combined.ntot
+            print(1, ad)
             result = ADResult(ad, ad < self.critical_value)
             self.scores[channel, transformation] = result
             return result
@@ -37,7 +38,5 @@ class AndersonDarling(BaseFOM):
 
     @staticmethod
     def _combine_hist(h1, h2):
-        combined = Hist(np.array([]))
-        combined += h1
-        combined += h2
-        return combined
+        h1 += h2
+        return h1

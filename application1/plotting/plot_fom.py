@@ -29,7 +29,9 @@ def anderson_darling(h_aux, h_trig):
     combined = fom_ad._combine_hist(h_aux, h_trig)
     combined_ecdf = combined.cdf * (1 - combined.cdf)
     ad = np.sum(np.divide(d_n, combined_ecdf, out=np.zeros_like(d_n), where=combined_ecdf != 0))
+    print(2, ad)
     ad /= combined.ntot
+    print(2, ad)
     return ad, d_n, combined_ecdf, combined
 
 
