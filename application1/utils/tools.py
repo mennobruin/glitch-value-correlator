@@ -4,6 +4,7 @@ import re
 import sys
 
 from application1.config import config_manager
+from application1.handler.triggers.trigger_pipeline import TriggerPipeline
 
 LOG = config_manager.get_logger(__name__)
 
@@ -20,12 +21,18 @@ def iter_segments(subsegs):
         ge_prev = ge
 
 
-def slice_triggers_in_segment(triggers, gps_start, gps_end):
-    return slice(*np.searchsorted(triggers['GPStime'], (gps_start, gps_end)))
+def slice_triggers_in_segment(triggers, gps_start, gps_end, pipeline):
+    if pipeline.NAME == TriggerPipeline.LOCAL:
+        return slice(*np.searchsorted(triggers['GPStime'], (gps_start, gps_end)))
+    else:
+        return slice(*np.searchsorted(triggers, (gps_start, gps_end)))
 
 
-def count_triggers_in_segment(triggers, gps_start, gps_end):
-    i_start, i_end = np.searchsorted(triggers['GPStime'], (gps_start, gps_end))
+def count_triggers_in_segment(triggers, label, gps_start, gps_end, pipeline):
+    if pipeline.NAME == TriggerPipeline.LOCAL:
+        i_start, i_end = np.searchsorted(triggers[triggers.label == label]['GPStime'], (gps_start, gps_end))
+    else:
+        i_start, i_end = np.searchsorted(triggers, (gps_start, gps_end))
     return i_end - i_start
 
 

@@ -255,18 +255,11 @@ class Excavator:
     def _init_cumulative_hists(self, segments, triggers):
         self.cum_aux_veto = [np.zeros(self.n_points, dtype=bool) for _ in segments]
 
-        if self.trigger_pipeline.NAME == self.trigger_pipeline.LOCAL:
-            self.cum_trig_veto = {
-                label: [np.zeros(count_triggers_in_segment(triggers[triggers.label == label], *segment), dtype=bool)
-                        for segment in segments]
-                for label in self.labels
-            }
-        else:
-            self.cum_trig_veto = {
-                label: [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool)
-                        for segment in segments]
-                for label in self.labels
-            }
+        self.cum_trig_veto = {
+            label: [np.zeros(count_triggers_in_segment(triggers, label, *segment, pipeline=self.trigger_pipeline), dtype=bool)
+                    for segment in segments]
+            for label in self.labels
+        }
 
         self.h_aux_cum = {
             (channel, transform): Hist(np.array([]))
@@ -293,7 +286,8 @@ class Excavator:
             if count_triggers_in_segment(triggers, gps_start, gps_end) == 0:
                 LOG.info(f'No triggers found from {gps_start} to {gps_end}')
                 continue
-            seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
+
+            seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end, pipeline=self.trigger_pipeline)]
             self.i_trigger = {}
             for label in self.labels:
                 if self.trigger_pipeline.NAME == self.trigger_pipeline.LOCAL:
