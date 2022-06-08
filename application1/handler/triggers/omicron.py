@@ -3,6 +3,7 @@ import os
 import numpy as np
 from subprocess import Popen, PIPE
 
+from application1.model.channel import Channel
 from application1.utils import exit_on_error
 from application1.config import config_manager
 
@@ -36,5 +37,6 @@ class Omicron:
 
 
 if __name__ == '__main__':
-    pipeline = Omicron(channel="V1:ENV_WEB_MAG_N")
+    channel = Channel(name="V1:ENV_WEB_MAG_N", f_sample=1)
+    pipeline = Omicron(channel=channel)
     pipeline.get_segment(gps_start=1262678418, gps_end=1262908818)
