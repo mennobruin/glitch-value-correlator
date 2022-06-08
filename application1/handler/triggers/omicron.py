@@ -17,6 +17,7 @@ class Omicron:
 
     def __init__(self, channel):
         self.channel = channel
+        self.labels = {'omicron'}
 
     def get_segment(self, gps_start, gps_end):
         LOG.info(f"Loading Omicron triggers from {gps_start} to {gps_end}...")

@@ -51,6 +51,7 @@ class Excavator:
             self.trigger_pipeline = Omicron(channel=self.config['project.channel'])
         else:
             self.trigger_pipeline = DefaultPipeline(trigger_file=self.config['project.trigger_file'])
+        self.labels = self.trigger_pipeline.labels
 
         if self.source == 'local':
             self.reader = H5Reader(gps_start=self.t_start,
@@ -67,7 +68,6 @@ class Excavator:
         self.histogram_file = RESOURCE_DIR + 'histograms.pickle'
 
         self.available_channels = None
-        self.labels = None
         self.cum_aux_veto = None
         self.cum_trig_veto = None
         self.transformation_names = None
@@ -85,7 +85,6 @@ class Excavator:
         self.available_channels = self.reader.get_available_channels()
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
-        self.labels = self.trigger_pipeline.labels
         triggers = self.trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
         if triggers.size == 0:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
