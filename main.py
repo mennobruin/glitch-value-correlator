@@ -83,7 +83,7 @@ class Excavator:
     def run(self, n_iter=1, load_existing=True, bootstrap=False):
 
         self.available_channels = self.reader.get_available_channels()
-        print(sorted(self.available_channels))
+        print(sorted(self.available_channels, key=lambda f: f.name))
         sys.exit(0)
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
