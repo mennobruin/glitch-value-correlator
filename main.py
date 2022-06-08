@@ -10,7 +10,7 @@ from application1.handler.data.reader.ffl import FrameFileReader
 from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.data.resampler import Resampler
 from application1.handler.data.writer import DataWriter
-from application1.handler.triggers import DefaultPipeline, Omicron
+from application1.handler.triggers import LocalPipeline, Omicron
 from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov, AndersonDarling
 from application1.model.histogram import Hist
@@ -50,7 +50,7 @@ class Excavator:
         if self.config['project.pipeline'] == 'omicron':
             self.trigger_pipeline = Omicron(channel=self.config['project.channel'])
         else:
-            self.trigger_pipeline = DefaultPipeline(trigger_file=self.config['project.trigger_file'])
+            self.trigger_pipeline = LocalPipeline(trigger_file=self.config['project.trigger_file'])
         self.labels = self.trigger_pipeline.labels
 
         if self.source == 'local':
@@ -254,11 +254,19 @@ class Excavator:
 
     def _init_cumulative_hists(self, segments, triggers):
         self.cum_aux_veto = [np.zeros(self.n_points, dtype=bool) for _ in segments]
-        self.cum_trig_veto = {
-            label: [np.zeros(count_triggers_in_segment(triggers[triggers.label == label], *segment), dtype=bool)
-                    for segment in segments]
-            for label in self.labels
-        }
+
+        if self.trigger_pipeline.NAME == self.trigger_pipeline.LOCAL:
+            self.cum_trig_veto = {
+                label: [np.zeros(count_triggers_in_segment(triggers[triggers.label == label], *segment), dtype=bool)
+                        for segment in segments]
+                for label in self.labels
+            }
+        else:
+            self.cum_trig_veto = {
+                label: [np.zeros(count_triggers_in_segment(triggers, *segment), dtype=bool)
+                        for segment in segments]
+                for label in self.labels
+            }
 
         self.h_aux_cum = {
             (channel, transform): Hist(np.array([]))
@@ -288,8 +296,12 @@ class Excavator:
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end)]
             self.i_trigger = {}
             for label in self.labels:
-                label_triggers = seg_triggers[seg_triggers.label == label]
+                if self.trigger_pipeline.NAME == self.trigger_pipeline.LOCAL:
+                    label_triggers = seg_triggers[seg_triggers.label == label]
+                else:
+                    label_triggers = seg_triggers
                 self.i_trigger[label] = np.floor((label_triggers.GPStime - gps_start) * self.f_target).astype(np.int32)
+
             for channel in tqdm(self.available_channels, position=0, leave=True, desc=f'{segment[0]} -> {segment[1]}'):
                 self.update_channel_histogram(i_segment, segment, channel)
             self.reader._reset_cache()

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from application1.handler.data.reader.csv import CSVReader
 # from application1.handler.data.reader.frame_file import FrameFileReader
 from resources.constants import RESOURCE_DIR
-from application1.handler.triggers import DefaultPipeline
+from application1.handler.triggers import LocalPipeline
 # from virgotools.frame_lib import FrameFile
 from sklearn.manifold import TSNE
 import seaborn as sns
@@ -33,7 +33,7 @@ for _label in set(triggers.label):
 
 
 def plot_trigger_density(trigger):
-    pipeline = DefaultPipeline(trigger_file=file, trigger_type=trigger)
+    pipeline = LocalPipeline(trigger_file=file, trigger_type=trigger)
     labels = list(pipeline.labels)
     ts, te = 1264550418, 1264723218
     segment_triggers = pipeline.get_segment(gps_start=ts, gps_end=te)
@@ -57,7 +57,7 @@ def plot_trigger_density(trigger):
 
 
 def plot_trigger_times():
-    pipeline = DefaultPipeline(trigger_file=file)
+    pipeline = LocalPipeline(trigger_file=file)
     triggers = pipeline.get_segment(gps_start=1238680000, gps_end=1262690000)
     times_cutoff = [t % 1 for t in triggers]
 

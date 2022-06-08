@@ -1,2 +1,2 @@
 from .omicron import Omicron
-from .default_pipeline import DefaultPipeline
+from .default_pipeline import LocalPipeline

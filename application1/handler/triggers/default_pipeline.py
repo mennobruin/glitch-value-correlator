@@ -1,18 +1,20 @@
 import numpy as np
 
+from .trigger_pipeline import TriggerPipeline
 from application1.handler.data.reader.csv import CSVReader
 from application1.config import config_manager
 
 LOG = config_manager.get_logger(__name__)
 
 
-class DefaultPipeline:
+class LocalPipeline(TriggerPipeline):
 
+    NAME = 'local'
     GPS_TIME = 'GPStime'
     LABEL = 'label'
 
     def __init__(self, trigger_file, trigger_type=None):
-        self.labels = None
+        super(LocalPipeline, self).__init__()
         self.reader = CSVReader()
         self.trigger_type = trigger_type
         self.triggers = self._load_triggers(trigger_file)

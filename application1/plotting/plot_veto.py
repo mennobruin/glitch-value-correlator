@@ -4,7 +4,7 @@ import os
 import pickle
 
 from application1.handler.data.reader.h5 import H5Reader
-from application1.handler.triggers import DefaultPipeline
+from application1.handler.triggers import LocalPipeline
 from application1.model.fom import KolgomorovSmirnov, AndersonDarling
 from application1.model.transformation import HighPass, GaussianDifferentiator
 from application1.utils import slice_triggers_in_segment, config_manager
