@@ -33,3 +33,8 @@ class Omicron:
             LOG.error(f"No triggers found / failed to load triggers between {gps_start} and {gps_end}. "
                       f"Are you in the correct environment? Try 'source /virgoDev/Omicron/vXrYpZ/cmt/setup.sh' first.")
             exit_on_error()
+
+
+if __name__ == '__main__':
+    pipeline = Omicron(channel="V1:ENV_WEB_MAG_N")
+    pipeline.get_segment(gps_start=1262678418, gps_end=1262908818)
