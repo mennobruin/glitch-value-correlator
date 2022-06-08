@@ -83,6 +83,8 @@ class Excavator:
     def run(self, n_iter=1, load_existing=True, bootstrap=False):
 
         self.available_channels = self.reader.get_available_channels()
+        print(sorted(self.available_channels))
+        sys.exit(0)
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
         triggers = self.trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
@@ -216,7 +218,6 @@ class Excavator:
 
     def generate_report(self):
         LOG.info("Generating HTML Report...")
-        print(self.report)
         self.report.run_html()
 
     def decimate_data(self):
@@ -231,7 +232,8 @@ class Excavator:
 
         self.transformation_combinations = [
             [],  # also do a run untransformed
-            # [savitzky_golay],
+            [savitzky_golay],
+            [savitzky_golay, Abs],
             # [savitzky_golay, AbsMean],
             # [gauss],
             # [gauss, Abs],

@@ -1,3 +1,5 @@
+from abc import ABC
+
 import numpy as np
 import scipy.signal as sig
 import matplotlib.pyplot as plt
@@ -9,7 +11,7 @@ LOG = config_manager.get_logger(__name__)
 
 class Transformation:
 
-    def calculate(self, x):
+    def calculate(self, *x):
         raise NotImplementedError
 
     def reset(self):
@@ -26,10 +28,23 @@ def abs_norm(x):
     return x / np.sum(np.abs(x))
 
 
+class CentralDifferenceDifferentiator(Transformation):
+    NAME = 'centraldiff'
+
+    FILTER_ORDER = 3
+
+    def __init__(self, f_sample):
+        super(CentralDifferenceDifferentiator, self).__init__()
+        f_nyquist = f_sample / 2
+        self.B, self.A = sig.butter(self.FILTER_ORDER, f_nyquist)
+
+    def calculate(self, y, x_min, x_max):
+        return np.gradient(y, np.linspace(x_min, x_max, len(y)), edge_order=2)
+
 class GaussianDifferentiator(Transformation):
     NAME = 'gauss'
 
-    def __init__(self, n_points, kernel_n_sigma=2, sigma=1, order=1):
+    def __init__(self, n_points, kernel_n_sigma=2, sigma=1, order=1, **kwargs):
         """
 
         :param n_points: number of data points in the input signal
@@ -64,10 +79,10 @@ class GaussianDifferentiator(Transformation):
 class SavitzkyGolayDifferentiator(Transformation):
     NAME = 'savitzkygolay'
 
-    POLYNOMIAL_ORDER = 3
+    POLYNOMIAL_ORDER = 10
     PADDING_MODE = 'wrap'
 
-    def __init__(self, window_length, dx, order=1):
+    def __init__(self, window_length, dx, order=1, **kwargs):
         """
 
         :param window_length: length of the filter window
@@ -82,8 +97,7 @@ class SavitzkyGolayDifferentiator(Transformation):
         return sig.savgol_filter(x, self.window_length,
                                  polyorder=self.POLYNOMIAL_ORDER,
                                  deriv=self.order,
-                                 delta=self.dx,
-                                 mode=self.PADDING_MODE)
+                                 delta=self.dx)
 
 
 class Abs(Transformation):
@@ -125,7 +139,7 @@ class HighPass(Transformation):
     FILTER_ORDER = 1
     FREQUENCY_CUTOFF = 2
 
-    def __init__(self, f_target=50):
+    def __init__(self, f_target=50, **kwargs):
         f_nyquist = f_target / 2
         f_critical = self.FREQUENCY_CUTOFF / f_nyquist
         self.B, self.A = sig.butter(self.FILTER_ORDER, f_critical, btype='highpass', fs=f_target)
