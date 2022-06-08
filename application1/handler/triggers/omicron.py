@@ -21,7 +21,7 @@ class Omicron:
 
     def get_segment(self, gps_start, gps_end):
         LOG.info(f"Loading Omicron triggers from {gps_start} to {gps_end}...")
-        command = self.COMMAND.format(self.channel.name, gps_start, gps_end)
+        command = self.COMMAND.format(self.channel, gps_start, gps_end)
         process = Popen(command, stdout=PIPE, shell=True)
         data = process.stdout
         if data.readline():
@@ -36,6 +36,5 @@ class Omicron:
 
 
 if __name__ == '__main__':
-    channel = Channel(name="V1:ENV_WEB_MAG_N", f_sample=1)
-    pipeline = Omicron(channel=channel)
+    pipeline = Omicron(channel="V1:ENV_WEB_MAG_N")
     pipeline.get_segment(gps_start=1262678418, gps_end=1262908818)
