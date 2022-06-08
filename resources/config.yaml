@@ -8,8 +8,8 @@ project.run: true
 project.channel: 'V1:ENV_WEB_MAG_N'
 project.pipeline: 'omicron'
 project.trigger_file: 'GSpy_ALLIFO_O3b_0921_final.csv'
-project.start_time: 1262678418
-project.end_time: 1262908818
+project.start_time: 1262678400
+project.end_time: 1262908800
 project.target_frequency: 1
 project.blacklist_patterns: './resources/blacklist_patterns.txt'
 
