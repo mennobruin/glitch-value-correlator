@@ -48,7 +48,7 @@ class Excavator:
             self.decimate_data()
 
         if self.config['project.pipeline'] == 'omicron':
-            self.trigger_pipeline = Omicron(channel=self.config['project.channel'])
+            self.trigger_pipeline = Omicron(channel=self.config['project.channel'], snr_threshold=self.config['project.snr_threshold'])
         else:
             self.trigger_pipeline = LocalPipeline(trigger_file=self.config['project.trigger_file'])
         self.labels = self.trigger_pipeline.labels

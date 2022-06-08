@@ -17,9 +17,10 @@ class Omicron(TriggerPipeline):
     COMMAND = 'omicron-print channel={0} gps-start={1:d} gps-end={2:d}'
     FORMAT = [('gps', float), ('freq', float), ('snr', float)]
 
-    def __init__(self, channel):
+    def __init__(self, channel, snr_threshold=None):
         super(Omicron, self).__init__()
         self.channel = channel
+        self.snr_threshold = snr_threshold
         self.labels = {self.NAME}
 
     def get_segment(self, gps_start, gps_end):
@@ -30,6 +31,8 @@ class Omicron(TriggerPipeline):
         if data.readline():
             triggers = np.loadtxt(data, dtype=self.FORMAT)
             triggers = triggers.view(dtype=(np.record, triggers.dtype), type=np.recarray)
+            if self.snr_threshold:
+                triggers = triggers[triggers.snr > self.snr_threshold]
             triggers.sort(order='gps')
             LOG.info(f'Found {triggers.shape[0]} triggers.')
             return triggers.gps

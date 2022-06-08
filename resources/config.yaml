@@ -7,6 +7,7 @@ project.load_existing: true
 project.run: true
 project.channel: 'V1:ENV_WEB_MAG_N'
 project.pipeline: 'omicron'
+project.snr_threshold: 10
 project.trigger_file: 'GSpy_ALLIFO_O3b_0921_final.csv'
 project.start_time: 1262678400
 #project.end_time: 1262736000
