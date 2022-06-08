@@ -235,8 +235,8 @@ class Excavator:
 
         self.transformation_combinations = [
             [],  # also do a run untransformed
-            [savitzky_golay],
-            [savitzky_golay, Abs],
+            # [savitzky_golay],
+            # [savitzky_golay, Abs],
             # [savitzky_golay, AbsMean],
             # [gauss],
             # [gauss, Abs],
