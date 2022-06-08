@@ -118,10 +118,6 @@ class Excavator:
                     h_trig = Hist(np.array([]))
                     for label in self.labels:
                         h_trig += self.h_trig_cum[channel, transformation_name, label]
-                    print(channel, transformation_name, label)
-                    print(h_aux)
-                    print(h_trig)
-                    sys.exit(0)
                     h_trig_combined[channel, transformation_name] = h_trig
                     try:
                         h_aux.align(h_trig)
@@ -167,6 +163,9 @@ class Excavator:
         for i, (k, v) in enumerate(ks_results[0:10]):
             channel, transformation = k
             statistic, _, p_value, _ = v
+            print(channel, transformation)
+            print(self.h_aux_cum[channel, transformation])
+            print(h_trig_combined[channel, transformation])
             try:
                 div_id = f'ks_rank_{i}'
                 self.report.add_tag(tag_type='div', tag_id=div_id, parent_div=ks_images_div)
