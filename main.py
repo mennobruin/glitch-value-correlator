@@ -83,7 +83,6 @@ class Excavator:
     def run(self, n_iter=1, load_existing=True, bootstrap=False):
 
         self.available_channels = self.reader.get_available_channels()
-        print(sorted(self.available_channels, key=lambda f: f.name))
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
         triggers = self.trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
@@ -102,6 +101,8 @@ class Excavator:
                 self.h_aux_cum = data['aux']
                 self.available_channels = data['channels']
         else:
+            if load_existing:
+                LOG.info(f"No existing data was found from {self.t_start} to {self.t_stop}.")
             LOG.info("Generating new histogram data...")
             self.construct_histograms(segments=self.reader.segments, triggers=triggers)
             with open(test_file, 'wb') as pkf:
