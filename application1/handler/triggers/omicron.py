@@ -19,17 +19,15 @@ class Omicron:
         self.channel = channel
 
     def get_segment(self, gps_start, gps_end):
+        LOG.info(f"Loading Omicron triggers from {gps_start} to {gps_end}...")
         command = self.COMMAND.format(self.channel.name, gps_start, gps_end)
-        print(command)
         process = Popen(command, stdout=PIPE, shell=True)
         data = process.stdout
         if data.readline():
             triggers = np.loadtxt(data, dtype=self.FORMAT)
             triggers = triggers.view(dtype=(np.record, triggers.dtype), type=np.recarray)
-            print(triggers.shape)
-            print(triggers)
             triggers.sort(order='gps')
-            return triggers
+            return triggers.gps
         else:
             LOG.error(f"No triggers found / failed to load triggers between {gps_start} and {gps_end}. "
                       f"Are you in the correct environment? Try 'source /virgoDev/Omicron/vXrYpZ/cmt/setup.sh' first.")

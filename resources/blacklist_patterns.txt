@@ -9,3 +9,16 @@
 *elapsed_time*
 *ProcessingTime*
 *Cfg*
+
+*SDB2*
+*Qc*
+*DQ*
+*Sc*
+*Sa*
+*SIB2*
+*LSC*
+*ASC*
+*SPRB*
+*SDB1*
+*SQZ*
+*INJ*

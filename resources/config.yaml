@@ -1,14 +1,19 @@
 # Inputs
 #project.source: '/virgoData/ffl/raw_O3b_arch.ffl'
-#project.source: '/virgoData/ffl/trend.ffl'
-project.source: 'local'
+project.source: '/virgoData/ffl/trend.ffl'
+#project.source: 'local'
 project.decimate: false
-project.load_existing: true
+project.load_existing: false
 project.run: true
-project.start_time: 1264625000
-project.end_time: 1264635000
-project.target_frequency: 50
+project.channel: 'V1:ENV_WEB_MAG_N'
+project.pipeline: 'omicron'
+project.trigger_file: 'GSpy_ALLIFO_O3b_0921_final.csv'
+project.start_time: 1262678418
+project.end_time: 1262908818
+project.target_frequency: 1
 project.blacklist_patterns: './resources/blacklist_patterns.txt'
+
+
 
 # Kerberos config
 kerberos.username: menno.bruin

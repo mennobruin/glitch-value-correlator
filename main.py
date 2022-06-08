@@ -46,6 +46,12 @@ class Excavator:
         if self.config['project.decimate']:
             LOG.info(f"Downsampling data to {self.f_target}Hz.")
             self.decimate_data()
+
+        if self.config['project.pipeline'] == 'omicron':
+            self.trigger_pipeline = Omicron(channel=self.config['project.channel'])
+        else:
+            self.trigger_pipeline = DefaultPipeline(trigger_file=self.config['project.trigger_file'])
+
         if self.source == 'local':
             self.reader = H5Reader(gps_start=self.t_start,
                                    gps_end=self.t_stop,
@@ -77,14 +83,10 @@ class Excavator:
     def run(self, n_iter=1, load_existing=True, bootstrap=False):
 
         self.available_channels = self.reader.get_available_channels()
-        # self.available_channels = list(np.random.choice(self.available_channels, size=5000))
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
-        # trigger_pipeline = Omicron(channel=self.available_channels[0])
-        trigger_pipeline = DefaultPipeline(
-            trigger_file='GSpy_ALLIFO_O3b_0921_final')  # , trigger_type="Scattered_Light")
-        self.labels = trigger_pipeline.labels
-        triggers = trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
+        self.labels = self.trigger_pipeline.labels
+        triggers = self.trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
         if triggers.size == 0:
             LOG.error(f"No triggers found between {self.t_start} and {self.t_stop}, aborting...")
             sys.exit(1)
