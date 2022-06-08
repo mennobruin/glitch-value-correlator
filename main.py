@@ -233,9 +233,9 @@ class Excavator:
             [],  # also do a run untransformed
             # [savitzky_golay],
             # [savitzky_golay, AbsMean],
-            [gauss],
+            # [gauss],
             # [gauss, Abs],
-            # [Abs]
+            # [Abs],
             # [AbsMean],
             # [HighPass]
         ]
@@ -288,9 +288,9 @@ class Excavator:
             for label in self.labels:
                 if self.trigger_pipeline.NAME == self.trigger_pipeline.LOCAL:
                     label_triggers = seg_triggers[seg_triggers.label == label]
+                    self.i_trigger[label] = np.floor((label_triggers.GPStime - gps_start) * self.f_target).astype(np.int32)
                 else:
-                    label_triggers = seg_triggers
-                self.i_trigger[label] = np.floor((label_triggers.GPStime - gps_start) * self.f_target).astype(np.int32)
+                    self.i_trigger[label] = np.floor((seg_triggers - gps_start) * self.f_target).astype(np.int32)
 
             for channel in tqdm(self.available_channels, position=0, leave=True, desc=f'{segment[0]} -> {segment[1]}'):
                 self.update_channel_histogram(i_segment, segment, channel)
