@@ -31,6 +31,7 @@ class Omicron(TriggerPipeline):
             triggers = np.loadtxt(data, dtype=self.FORMAT)
             triggers = triggers.view(dtype=(np.record, triggers.dtype), type=np.recarray)
             triggers.sort(order='gps')
+            LOG.info(f'Found {triggers.shape[0]} triggers.')
             return triggers.gps
         else:
             LOG.error(f"No triggers found / failed to load triggers between {gps_start} and {gps_end}. "
