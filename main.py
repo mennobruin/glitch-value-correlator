@@ -84,7 +84,6 @@ class Excavator:
 
         self.available_channels = self.reader.get_available_channels()
         print(sorted(self.available_channels, key=lambda f: f.name))
-        sys.exit(0)
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
         triggers = self.trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
@@ -118,6 +117,10 @@ class Excavator:
                     h_trig = Hist(np.array([]))
                     for label in self.labels:
                         h_trig += self.h_trig_cum[channel, transformation_name, label]
+                    print(channel, transformation_name, label)
+                    print(h_aux)
+                    print(h_trig)
+                    sys.exit(0)
                     h_trig_combined[channel, transformation_name] = h_trig
                     try:
                         h_aux.align(h_trig)

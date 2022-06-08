@@ -3,7 +3,7 @@
 project.source: '/virgoData/ffl/trend.ffl'
 #project.source: 'local'
 project.decimate: false
-project.load_existing: false
+project.load_existing: true
 project.run: true
 project.channel: 'V1:ENV_WEB_MAG_N'
 project.pipeline: 'omicron'
