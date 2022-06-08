@@ -283,10 +283,6 @@ class Excavator:
                     for transformation in combination:
                         transformation.reset()
 
-            if count_triggers_in_segment(triggers, gps_start, gps_end) == 0:
-                LOG.info(f'No triggers found from {gps_start} to {gps_end}')
-                continue
-
             seg_triggers = triggers[slice_triggers_in_segment(triggers, gps_start, gps_end, pipeline=self.trigger_pipeline)]
             self.i_trigger = {}
             for label in self.labels:
