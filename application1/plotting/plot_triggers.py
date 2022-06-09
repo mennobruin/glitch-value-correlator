@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from application1.handler.data.reader.csv import CSVReader
 # from application1.handler.data.reader.frame_file import FrameFileReader
 from resources.constants import RESOURCE_DIR
-from application1.handler.triggers import LocalPipeline
+from application1.handler.triggers import LocalPipeline, Omicron
 # from virgotools.frame_lib import FrameFile
 from sklearn.manifold import TSNE
 import seaborn as sns
@@ -32,7 +32,28 @@ for _label in set(triggers.label):
     dfs[_label] = triggers[triggers.label == _label]
 
 
-def plot_trigger_density(trigger):
+def ceil_to_nearest_n(num, n):
+    frac = num % n
+    return num - frac + n
+
+
+def plot_trigger_density_omicron():
+    pipeline = Omicron(channel='V1:ENV_WEB_MAG_N', snr_threshold=10)
+    ts, te = 1262678400, 1262908800
+    segment_triggers = pipeline.get_segment(gps_start=ts, gps_end=te)
+
+    fig = plt.figure(figsize=(16, 6.4), dpi=300)
+    ax = fig.gca()
+
+    bins, locs, _ = ax.hist(segment_triggers, bins=192)
+    ax.set_xlim(ts, te)
+    ax.set_ylim(0, ceil_to_nearest_n(bins.max(), n=20))
+    ax.set_xlabel('GPS Time', labelpad=10)
+    ax.set_ylabel('Counts (#)', labelpad=10)
+    plt.savefig(RESULTS_DIR + 'trigger_density_omicron.png', dpi=300, transparent=False, bbox_inches='tight')
+
+
+def plot_trigger_density_labels(trigger):
     pipeline = LocalPipeline(trigger_file=file, trigger_type=trigger)
     labels = list(pipeline.labels)
     ts, te = 1264550418, 1264723218
@@ -47,13 +68,13 @@ def plot_trigger_density(trigger):
     cm1 = plt.cm.get_cmap('tab20')
     cm2 = plt.cm.get_cmap('tab20b')
     colors = [cm1(i) for i in np.linspace(0, 1, 20)] + [cm2(i) for i in np.linspace(0, 1, 20)[0:4]]
-    ax.hist([t.GPStime for l, t in label_triggers], stacked=True, bins=192, color=colors, label=[l for l, t in label_triggers])
+    bins, locs, _ = ax.hist([t.GPStime for l, t in label_triggers], stacked=True, bins=192, color=colors, label=[l for l, t in label_triggers])
     ax.set_xlim(ts, te)
-    ax.set_ylim(0, 100)
+    ax.set_ylim(0, ceil_to_nearest_n(bins.max(), n=50))
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.45), ncol=4, fancybox=True, shadow=True)
     ax.set_xlabel('GPS Time', labelpad=10)
     ax.set_ylabel('Counts (#)', labelpad=10)
-    plt.savefig(RESULTS_DIR + 'trigger_density.png', dpi=300, transparent=False, bbox_inches='tight')
+    plt.savefig(RESULTS_DIR + 'trigger_density_labels.png', dpi=300, transparent=False, bbox_inches='tight')
 
 
 def plot_trigger_times():
@@ -131,7 +152,8 @@ def plot_trigger_distribution_2d():
     plt.show()
 
 
-plot_trigger_density(trigger=None)
+plot_trigger_density_omicron()
+# plot_trigger_density_labels(trigger=None)
 # plot_trigger_spectrogram(channel='V1:Hrec_hoft_2_200Hz', trigger_type='Scattered_Light')
 # plot_trigger_spectrogram(channel='V1:Hrec_hoft_2_200Hz', trigger_type='Scattered_Light', i=-1)
 # plot_trigger_times()
