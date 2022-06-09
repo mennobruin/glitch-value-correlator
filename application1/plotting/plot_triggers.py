@@ -17,7 +17,7 @@ plt.rcParams['font.size'] = 16
 
 source = '/virgoData/ffl/raw_O3b_arch'
 file = RESOURCE_DIR + 'csv/GSpy_ALLIFO_O3b_0921_final.csv'
-RESULTS_DIR = './results/'
+RESULTS_DIR = 'application1/plotting/results/'
 reader = CSVReader()
 # ffl_reader = FrameFileReader(source=source)
 min_start = 1262228200
