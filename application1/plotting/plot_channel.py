@@ -24,12 +24,13 @@ triggers = pipeline.get_segment(ts, te)
 
 
 def plot(channel, gs, ge):
-    fig, ax1 = plt.subplots()
+    fig = plt.figure(figsize=(20, 6))
+    ax1 = fig.gca()
     ax2 = ax1.twinx()
     with FrameFile(source) as ff:
         unsampled_data = ff.getChannel(channel, gs, ge).data
-    ax2.hist(triggers, bins=100)
-    ax1.plot(range(gs, ge), unsampled_data, '-')
+    ax2.hist(triggers, bins=100, color='g')
+    ax1.plot(range(gs, ge), unsampled_data, '-', alpha=0.4)
     plt.xlim(gs, ge)
     plt.show()
 
