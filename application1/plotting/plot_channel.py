@@ -38,5 +38,5 @@ def plot(channel, gs, ge):
     plt.savefig(RESULTS_DIR + f'channel_triggers_{channel}_{ts}_{te}.png', dpi=300, transparent=False, bbox_inches='tight')
 
 
-for channel in tqdm(channels):
-    plot(channel=channels, gs=ts, ge=te)
+for c in tqdm(channels):
+    plot(channel=c, gs=ts, ge=te)
