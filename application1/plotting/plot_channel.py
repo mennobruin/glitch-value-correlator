@@ -1,9 +1,12 @@
 import matplotlib.pyplot as plt
 
+from tqdm import tqdm
+
 from virgotools.frame_lib import FrameFile
 
 from application1.handler.triggers import Omicron
 
+RESULTS_DIR = 'application1/plotting/results/'
 source = '/virgoData/ffl/trend.ffl'
 
 channels = ['V1:INF_WEB_CHILLER_TE_IN',
@@ -24,15 +27,16 @@ triggers = pipeline.get_segment(ts, te)
 
 
 def plot(channel, gs, ge):
-    fig = plt.figure(figsize=(20, 6))
+    fig = plt.figure(figsize=(20, 6.4))
     ax1 = fig.gca()
     ax2 = ax1.twinx()
     with FrameFile(source) as ff:
         unsampled_data = ff.getChannel(channel, gs, ge).data
-    ax2.hist(triggers, bins=100, color='g')
-    ax1.plot(range(gs, ge), unsampled_data, '-', alpha=0.4)
+    ax1.hist(triggers, bins=100, color='g')
+    ax2.plot(range(gs, ge), unsampled_data, '-', alpha=0.6)
     plt.xlim(gs, ge)
-    plt.show()
+    plt.savefig(RESULTS_DIR + f'channel_triggers_{channel}_{ts}_{te}.png', dpi=300, transparent=False, bbox_inches='tight')
 
 
-plot(channel=channels[0], gs=ts, ge=te)
+for channel in tqdm(channels):
+    plot(channel=channels[0], gs=ts, ge=te)
