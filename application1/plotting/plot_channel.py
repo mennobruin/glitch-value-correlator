@@ -31,4 +31,4 @@ def plot(channel, gs, ge):
     plt.show()
 
 
-plot(channel=channels[0])
+plot(channel=channels[0], gs=ts, ge=te)
