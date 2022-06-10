@@ -14,8 +14,6 @@ project.end_time: 1262908800
 project.target_frequency: 1
 project.blacklist_patterns: './resources/blacklist_patterns.txt'
 
-
-
 # Kerberos config
 kerberos.username: menno.bruin
 kerberos.keytab: .keytab

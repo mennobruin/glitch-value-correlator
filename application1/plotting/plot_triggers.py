@@ -17,7 +17,7 @@ plt.rcParams['font.size'] = 16
 
 source = '/virgoData/ffl/raw_O3b_arch'
 file = RESOURCE_DIR + 'csv/GSpy_ALLIFO_O3b_0921_final.csv'
-RESULTS_DIR = 'application1/plotting/results/'
+RESULTS_DIR = 'results/'
 reader = CSVReader()
 # ffl_reader = FrameFileReader(source=source)
 min_start = 1262228200
@@ -33,8 +33,7 @@ for _label in set(triggers.label):
 
 
 def ceil_to_nearest_n(num, n):
-    frac = num % n
-    return num - frac + n
+    return num - (num % n) + n
 
 
 def plot_trigger_density_omicron():
@@ -50,7 +49,7 @@ def plot_trigger_density_omicron():
     ax.set_ylim(0, ceil_to_nearest_n(bins.max(), n=20))
     ax.set_xlabel('GPS Time', labelpad=10)
     ax.set_ylabel('Counts (#)', labelpad=10)
-    plt.savefig(RESULTS_DIR + 'trigger_density_omicron.png', dpi=300, transparent=False, bbox_inches='tight')
+    plt.savefig('application1/plotting/' + RESULTS_DIR + 'trigger_density_omicron.png', dpi=300, transparent=False, bbox_inches='tight')
 
 
 def plot_trigger_density_labels(trigger):
