@@ -39,4 +39,4 @@ def plot(channel, gs, ge):
 
 
 for channel in tqdm(channels):
-    plot(channel=channels[0], gs=ts, ge=te)
+    plot(channel=channels, gs=ts, ge=te)
