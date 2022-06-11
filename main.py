@@ -163,9 +163,6 @@ class Excavator:
         for i, (k, v) in enumerate(ks_results[0:10]):
             channel, transformation = k
             statistic, _, p_value, _ = v
-            print(channel, transformation)
-            print(self.h_aux_cum[channel, transformation])
-            print(h_trig_combined[channel, transformation])
             try:
                 div_id = f'ks_rank_{i}'
                 self.report.add_tag(tag_type='div', tag_id=div_id, parent_div=ks_images_div)
