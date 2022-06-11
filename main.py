@@ -78,7 +78,7 @@ class Excavator:
         self.i_trigger = None
 
         if self.config['project.run']:
-            self.run(load_existing=self.config['project.load_existing'])
+            self.run(load_existing=self.config['project.load_existing'], bootstrap=self.config['project.bootstrap'])
 
     def run(self, n_iter=1, load_existing=True, bootstrap=False):
 
