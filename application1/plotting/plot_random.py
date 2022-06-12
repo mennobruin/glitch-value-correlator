@@ -76,15 +76,14 @@ fig = plt.figure(figsize=(10, 8), dpi=300)
 ax1 = fig.gca()
 ax2 = ax1.twinx()
 
-mean = np.mean(h1.cdf)
+y_mean = np.mean(h1.cdf)
+x_mean = find_nearest_index(h1.xgrid, y_mean)
+x_new = h1.xgrid - x_mean
 
-cdf1 = np.abs(h1.cdf - mean)
-cdf2 = np.abs(h2.cdf - mean)
-
-ax1.plot(h1_cp.xgrid[::-1], 100 * cdf1, '-', label="trig",)
-ax2.plot(h1_cp.xgrid[::-1], 100 * (1-cdf2), '-', label="aux",)
-plt.plot(h1_cp.xgrid[::-1], 100 * ((1-cdf2) - (1-cdf1)), '-', label=r"$\Delta$")
-plt.xlim(min(h1_cp.xgrid), max(h1_cp.xgrid))
+ax1.plot(x_new[::-1], 100 * h1.cdf, '-', label="trig",)
+ax2.plot(x_new[::-1], 100 * (1-h2.cdf), '-', label="aux",)
+plt.plot(x_new[::-1], 100 * ((1-h2.cdf) - (1-h1.cdf)), '-', label=r"$\Delta$")
+plt.xlim(min(x_new), max(x_new))
 plt.xlabel("x")
 ax1.set_ylabel("% vetoed")
 ax2.set_ylabel("% DT")
@@ -92,3 +91,8 @@ plt.legend()
 plt.title(channel)
 save_name = f'transformed_veto_{channel}_{transformation_name}.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+
+plt.clf()
+plt.plot(x_new, h1.cdf)
+plt.xlim(min(x_new), max(x_new))
+plt.show()
