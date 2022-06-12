@@ -30,13 +30,13 @@ with open(test_file, 'rb') as pkf:
     available_channels = data['channels']
 
 for k in h_aux_cum.keys():
-    print(type(k), k)
-    print(type(k[0]), k[0])
-    print(type(k[1]), k[1])
+    if k[1] == 'absmean':
+        channel = k[0]
+        break
 
 pipeline = LocalPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final.csv')
 labels = list(pipeline.labels)
-channel = 'V1:ENV_WEB_SEIS_W'
+# channel = 'V1:ENV_WEB_SEIS_W'
 transformation_name = ''
 h1 = h_aux_cum[channel, transformation_name]
 h2 = Hist(np.array([]))
