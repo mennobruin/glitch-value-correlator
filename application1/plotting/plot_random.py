@@ -22,7 +22,7 @@ def find_nearest_index(array, value):
 # h1 = Hist(x1, l2_nbin=10)
 # h2 = Hist(x2, l2_nbin=10)
 
-test_file = f'test_1264625000_1264635000_f50.pickle'
+test_file = f'test_seis_w_1264625000_1264635000_f50.pickle'
 with open(test_file, 'rb') as pkf:
     data = pickle.load(pkf)
     h_trig_cum = data['trig']
@@ -32,7 +32,7 @@ with open(test_file, 'rb') as pkf:
 pipeline = LocalPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final.csv')
 labels = list(pipeline.labels)
 channel = 'V1:ENV_WEB_SEIS_W'
-transformation_name = ''
+transformation_name = 'absmean'
 h1 = h_aux_cum[channel, transformation_name]
 h2 = Hist(np.array([]))
 for label in labels:
@@ -74,7 +74,6 @@ plt.plot(h1_cp.xgrid[::-1], 100 * ((1-h2.cdf) - (1-h1.cdf)), 'r-')
 plt.ylabel(r"$E_{\Delta}$")
 plt.xlim(min(h1_cp.xgrid), max(h1_cp.xgrid))
 plt.xlabel("x")
-plt.legend()
 plt.title(channel)
 save_name = f'efficacy_veto_{channel}_{transformation_name}.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
