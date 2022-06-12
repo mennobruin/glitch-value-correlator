@@ -97,10 +97,10 @@ plt.plot(x_new, h1.cdf)
 plt.xlim(min(x_new), max(x_new))
 plt.show()
 
-cdf1 = h1.cdf
-find_nearest_index(h1.cdf, 50)
-left, right =
-
-plt.plot(x_new, h1.cdf)
-plt.xlim(min(x_new), max(x_new))
-plt.show()
+# cdf1 = h1.cdf
+# find_nearest_index(h1.cdf, 50)
+# left, right =
+#
+# plt.plot(x_new, h1.cdf)
+# plt.xlim(min(x_new), max(x_new))
+# plt.show()
