@@ -41,6 +41,7 @@ class CentralDifferenceDifferentiator(Transformation):
     def calculate(self, y, x_min, x_max):
         return np.gradient(y, np.linspace(x_min, x_max, len(y)), edge_order=2)
 
+
 class GaussianDifferentiator(Transformation):
     NAME = 'gauss'
 

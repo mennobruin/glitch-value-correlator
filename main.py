@@ -323,6 +323,8 @@ class Excavator:
                 transformations=self.transformation_states[channel][transformation_name],
                 data=x_aux)
             try:
+                print(x_transform.shape)
+                print(self.cum_aux_veto[i].shape)
                 aux_hist = self.get_histogram(data=x_transform,
                                               cumulative_veto=self.cum_aux_veto[i],
                                               spanlike=self.h_aux_cum[channel, transformation_name])
@@ -345,7 +347,7 @@ class Excavator:
     @staticmethod
     def get_histogram(data, cumulative_veto, spanlike):
         x_veto = data[~cumulative_veto]
-        return Hist(data, spanlike=spanlike)
+        return Hist(x_veto, spanlike=spanlike)
 
 
 if __name__ == '__main__':
