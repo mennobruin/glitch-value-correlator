@@ -11,6 +11,7 @@ from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.data.resampler import Resampler
 from application1.handler.data.writer import DataWriter
 from application1.handler.triggers import LocalPipeline, Omicron
+from application1.model.channel import Channel
 from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov, AndersonDarling
 from application1.model.histogram import Hist
@@ -83,7 +84,7 @@ class Excavator:
     def run(self, n_iter=1, load_existing=True, bootstrap=False):
 
         self.available_channels = self.reader.get_available_channels()
-        self.available_channels = 'V1:ENV_WEB_SEIS_W'
+        self.available_channels = [Channel(name='V1:ENV_WEB_SEIS_W', f_sample=50)]
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
         triggers = self.trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
