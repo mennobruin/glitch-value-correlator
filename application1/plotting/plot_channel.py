@@ -44,5 +44,7 @@ def plot(channel, gs, ge, unit=None):
                 bbox_inches='tight')
 
 
+plt.rcParams['font.size'] = 16
+
 for c, u in tqdm(channels):
     plot(channel=c, gs=ts, ge=te, unit=u)
