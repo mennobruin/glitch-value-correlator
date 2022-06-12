@@ -77,10 +77,8 @@ class H5Reader(BaseReader):
         for seg in request_segments:
             i_segment = self.segments.find(seg)
             h5_file = self.files[i_segment]
-            print(f'{h5_file=}')
             try:
                 channel_data = self.get_channel_from_file(h5_file, channel_name)
-                print(f'{channel_data.shape=}')
             except KeyError:
                 return None
             all_data.append(channel_data)

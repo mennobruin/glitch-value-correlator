@@ -309,7 +309,6 @@ class Excavator:
 
     def update_channel_histogram(self, i, segment, channel):
         try:
-            print(segment)
             x_aux = self.reader.get_data_from_segments(request_segment=segment, channel_name=channel)
         except UnicodeDecodeError:
             self._discard_channel(channel)
@@ -324,9 +323,6 @@ class Excavator:
                 transformations=self.transformation_states[channel][transformation_name],
                 data=x_aux)
             try:
-                print(transformation_name, x_transform.shape)
-                print(self.cum_aux_veto[i].shape)
-                sys.exit(1)
                 aux_hist = self.get_histogram(data=x_transform,
                                               cumulative_veto=self.cum_aux_veto[i],
                                               spanlike=self.h_aux_cum[channel, transformation_name])
