@@ -10,8 +10,8 @@ from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.triggers import Omicron, LocalPipeline
 
 RESULTS_DIR = 'application1/plotting/results/'
-# source = '/virgoData/ffl/trend.ffl'
-source = '/virgoData/ffl/raw_O3b_arch.ffl'
+source = '/virgoData/ffl/trend.ffl'
+# source = '/virgoData/ffl/raw_O3b_arch.ffl'
 
 # channels = [
 #     ('V1:INF_WEB_CHILLER_TE_IN', 'Temperature (°C)'),
@@ -20,13 +20,26 @@ source = '/virgoData/ffl/raw_O3b_arch.ffl'
 #     ('V1:INF_WEB_CHILLER_TE_OUT', 'Temperature (°C)'),
 #     ('V1:INF_WEB_CHILLER_CURR', 'Current (A)')
 # ]
+#
+# channels = [
+#     ('V1:ENV_WEB_SEIS_W', r'Velocity ($ms^{-1}$)'),
+#     ('V1:SBE_SWEB_GEO_GRWE_raw_500Hz', 'Voltage (V)'),
+#     ('V1:SBE_SWEB_act_ty_500Hz', r'$\mu$rad'),
+#     ('V1:ENV_WEB_SEIS_N', r'Velocity ($ms^{-1}$)'),
+#     ('V1:Sa_WE_F0_TZ_500Hz', 'Voltage (V)')
+# ]
 
 channels = [
-    ('V1:ENV_WEB_SEIS_W', r'Velocity ($ms^{-1}$)'),
-    ('V1:SBE_SWEB_GEO_GRWE_raw_500Hz', 'Voltage (V)'),
-    ('V1:SBE_SWEB_act_ty_500Hz', r'$\mu$rad'),
-    ('V1:ENV_WEB_SEIS_N', r'Velocity ($ms^{-1}$)'),
-    ('V1:Sa_WE_F0_TZ_500Hz', 'Voltage (V)')
+    ('V1:ENV_WEB_SEIS_W_50Hz_rms_0.03_0.1Hz', r'Velocity ($ms^{-1}$)'),
+    ('V1:ENV_WEB_SEIS_W_50Hz_rms_0.1_1Hz', r'Velocity ($ms^{-1}$)'),
+    ('V1:ENV_WEB_SEIS_W_50Hz_rms_1_5Hz', r'Velocity ($ms^{-1}$)'),
+    ('V1:ENV_WEB_SEIS_W_50Hz_rms_5_15Hz', r'Velocity ($ms^{-1}$)'),
+    ('V1:ENV_WEB_SEIS_W_50Hz_rms', r'Velocity ($ms^{-1}$)'),
+    ('V1:ENV_WEB_SEIS_N_50Hz_rms_0.03_0.1Hz', r'Velocity ($ms^{-1}$)'),
+    ('V1:ENV_WEB_SEIS_N_50Hz_rms_0.1_1Hz', r'Velocity ($ms^{-1}$)'),
+    ('V1:ENV_WEB_SEIS_N_50Hz_rms_1_5Hz', r'Velocity ($ms^{-1}$)'),
+    ('V1:ENV_WEB_SEIS_N_50Hz_rms_5_15Hz', r'Velocity ($ms^{-1}$)'),
+    ('V1:ENV_WEB_SEIS_N_50Hz_rms', r'Velocity ($ms^{-1}$)'),
 ]
 
 target = 'V1:ENV_WEB_MAG_N'
@@ -38,16 +51,16 @@ f_target = 50
 # pipeline = Omicron(channel=target, snr_threshold=20)
 pipeline = LocalPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final.csv')
 triggers = pipeline.get_segment(ts, te)
-reader = H5Reader(gps_start=ts, gps_end=te)
+# reader = H5Reader(gps_start=ts, gps_end=te)
 
 
 def plot(channel, gs, ge, ylabel=None):
     fig = plt.figure(figsize=(20, 6.4))
     ax1 = fig.gca()
     ax2 = ax1.twinx()
-    # with FrameFile(source) as ff:
-    #     data = ff.getChannel(channel, gs, ge).data
-    data = reader.get_data_from_segments(request_segment=segment(gs, ge), channel_name=channel)
+    with FrameFile(source) as ff:
+        data = ff.getChannel(channel, gs, ge).data
+    # data = reader.get_data_from_segments(request_segment=segment(gs, ge), channel_name=channel)
     ax2.hist(triggers.GPStime, bins=192, color='g', alpha=0.4)
     ax1.plot(np.linspace(gs, ge, data.shape[0]), data, '-')
     # for trigger in triggers:
