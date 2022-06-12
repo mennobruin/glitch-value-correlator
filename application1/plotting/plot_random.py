@@ -56,26 +56,23 @@ h1.align(h2)
 # plot_histogram_cdf(histogram=h2, channel=channel, transformation=transformation_name, data_type="trig", fig=fig, save=True)
 
 fig = plt.figure(figsize=(10, 8), dpi=300)
-ax = fig.gca()
 
-ax.plot(h1_cp.xgrid[::-1], 100 * h1.cdf, 'b-', label="% (1-DT)")
-ax.plot(h1_cp.xgrid[::-1], 100 * (1-h2.cdf), 'g-', label="% vetoed")
+plt.plot(h1_cp.xgrid[::-1], 100 * h1.cdf, 'b-', label="% (1-DT)")
+plt.plot(h1_cp.xgrid[::-1], 100 * (1-h2.cdf), 'g-', label="% vetoed")
 plt.xlim(min(h1_cp.xgrid), max(h1_cp.xgrid))
 plt.xlabel("x")
-ax.set_ylabel("%")
+plt.ylabel("%")
 plt.legend()
 plt.title(channel)
 save_name = f'veto_{channel}_{transformation_name}.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 fig = plt.figure(figsize=(10, 8), dpi=300)
-ax = fig.gca()
 
-ax.plot(h1_cp.xgrid[::-1], 100 * ((1-h2.cdf) - (1-h1.cdf)), 'r-')
-ax.set_ylabel(r"$E_{\Delta}$")
+plt.plot(h1_cp.xgrid[::-1], 100 * ((1-h2.cdf) - (1-h1.cdf)), 'r-')
+plt.ylabel(r"$E_{\Delta}$")
 plt.xlim(min(h1_cp.xgrid), max(h1_cp.xgrid))
 plt.xlabel("x")
-ax.set_ylabel("%")
 plt.legend()
 plt.title(channel)
 save_name = f'efficacy_veto_{channel}_{transformation_name}.png'
