@@ -47,13 +47,13 @@ i_max = find_nearest_index(h1_cp.cdf, 0.99)
 
 h1.align(h2)
 
-fig = plot_histogram(histogram=h1, channel=channel, transformation=transformation_name, data_type="aux", return_fig=True)
-plot_histogram(histogram=h2, channel=channel, transformation=transformation_name, data_type="trig", fig=fig, save=True)
-
-fig = plot_histogram_cdf(histogram=h1, channel=channel, transformation=transformation_name, data_type="aux", return_fig=True)
-# plt.axvline(x=h1_cp.xgrid[i_min], color='k', linestyle='--')
-# plt.axvline(x=h1_cp.xgrid[i_max], color='k', linestyle='--')
-plot_histogram_cdf(histogram=h2, channel=channel, transformation=transformation_name, data_type="trig", fig=fig, save=True)
+# fig = plot_histogram(histogram=h1, channel=channel, transformation=transformation_name, data_type="aux", return_fig=True)
+# plot_histogram(histogram=h2, channel=channel, transformation=transformation_name, data_type="trig", fig=fig, save=True)
+#
+# fig = plot_histogram_cdf(histogram=h1, channel=channel, transformation=transformation_name, data_type="aux", return_fig=True)
+# # plt.axvline(x=h1_cp.xgrid[i_min], color='k', linestyle='--')
+# # plt.axvline(x=h1_cp.xgrid[i_max], color='k', linestyle='--')
+# plot_histogram_cdf(histogram=h2, channel=channel, transformation=transformation_name, data_type="trig", fig=fig, save=True)
 
 fig = plt.figure(figsize=(10, 8), dpi=300)
 ax1 = fig.gca()
@@ -78,6 +78,7 @@ ax2 = ax1.twinx()
 
 i_mean = find_nearest_index(h1.cdf, 50)
 x_new = h1.xgrid - h1.xgrid[i_mean]
+print(i_mean, h1.xgrid, x_new)
 
 ax1.plot(x_new[::-1], 100 * h1.cdf, '-', label="trig",)
 ax2.plot(x_new[::-1], 100 * (1-h2.cdf), '-', label="aux",)
@@ -92,6 +93,14 @@ save_name = f'transformed_veto_{channel}_{transformation_name}.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 plt.clf()
+plt.plot(x_new, h1.cdf)
+plt.xlim(min(x_new), max(x_new))
+plt.show()
+
+cdf1 = h1.cdf
+find_nearest_index(h1.cdf, 50)
+left, right =
+
 plt.plot(x_new, h1.cdf)
 plt.xlim(min(x_new), max(x_new))
 plt.show()
