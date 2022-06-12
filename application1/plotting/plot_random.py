@@ -29,7 +29,7 @@ with open(test_file, 'rb') as pkf:
     h_aux_cum = data['aux']
     available_channels = data['channels']
 
-for k in :
+for k in h_aux_cum.keys():
     print(k)
 
 pipeline = LocalPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final.csv')
