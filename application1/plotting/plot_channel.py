@@ -7,7 +7,8 @@ from virgotools.frame_lib import FrameFile
 from application1.handler.triggers import Omicron, LocalPipeline
 
 RESULTS_DIR = 'application1/plotting/results/'
-source = '/virgoData/ffl/trend.ffl'
+# source = '/virgoData/ffl/trend.ffl'
+source = '/virgoData/ffl/raw_O3b_arch.ffl'
 
 # channels = [
 #     ('V1:INF_WEB_CHILLER_TE_IN', 'Temperature (°C)'),
