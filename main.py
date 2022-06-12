@@ -330,7 +330,7 @@ class Excavator:
 
                 for label, i_trigger in self.i_trigger.items():
                     trig_hist = self.get_histogram(data=x_transform[i_trigger],
-                                                   cumulative_veto=self.cum_trig_veto[label][i],
+                                                   cumulative_veto=self.cum_trig_veto[label][i_trigger],
                                                    spanlike=aux_hist)
                     self.h_trig_cum[channel, transformation_name, label] += trig_hist
             except (OverflowError, AssertionError, IndexError) as e:
