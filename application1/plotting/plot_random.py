@@ -96,10 +96,15 @@ plt.plot(x_new, h1.cdf)
 plt.xlim(min(x_new), max(x_new))
 plt.show()
 
-# cdf1 = h1.cdf
-# find_nearest_index(h1.cdf, 50)
-# left, right =
-#
-# plt.plot(x_new, h1.cdf)
-# plt.xlim(min(x_new), max(x_new))
-# plt.show()
+cdf1 = h1.cdf
+middle = len(x_new) // 2
+left, right = x_new[:middle], x_new[middle:]
+cdf_left = cdf1[:middle]
+cdf_right = cdf1[middle:]
+
+x_combined = right + abs(left[::-1])
+cdf_combined = cdf_right + cdf_left[::-1]
+
+plt.plot(x_combined, cdf_combined)
+plt.xlim(min(x_combined), max(x_combined))
+plt.show()
