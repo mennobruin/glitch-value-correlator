@@ -55,6 +55,7 @@ h1.align(h2)
 # # plt.axvline(x=h1_cp.xgrid[i_max], color='k', linestyle='--')
 # plot_histogram_cdf(histogram=h2, channel=channel, transformation=transformation_name, data_type="trig", fig=fig, save=True)
 
+plt.rcParams['font.size'] = 16
 fig = plt.figure(figsize=(10, 8), dpi=300)
 
 p1, = plt.plot(h1_cp.xgrid[::-1], 100 * h1.cdf, 'b-')
