@@ -9,15 +9,13 @@ from application1.handler.triggers import Omicron
 RESULTS_DIR = 'application1/plotting/results/'
 source = '/virgoData/ffl/trend.ffl'
 
-channels = ['V1:INF_WEB_CHILLER_TE_IN',
-            'V1:INF_TB_UPS_TE',
-            'V1:INF_TUNNEL_N_TE',
-            'V1:INF_NEB_TUNNEL_LUX',
-            'V1:SWEB_B8_QD2_H_mean',
-            'V1:SNEB_B7_Cam1_PosY_mean',
-            'V1:ENV_PCAL_WEB_TE2',
-            'V1:ENV_TCS_CO2_NI_TE',
-            'V1:ENV_TCS_CO2_WI_DUMP_TE']
+channels = [
+    'V1:INF_WEB_CHILLER_TE_IN',
+    'V1:INF_WEB_CHILLER_PRES_IN',
+    'V1:INF_WEB_CHILLER_PRES_OUT',
+    'V1:INF_WEB_CHILLER_TE_OUT',
+    'V1:INF_WEB_CHILLER_CURR'
+    ]
 
 target = 'V1:ENV_WEB_MAG_N'
 
@@ -38,7 +36,8 @@ def plot(channel, gs, ge):
     for trigger in triggers:
         plt.axvline(x=trigger, linestyle='--', color='red')
     plt.xlim(gs, ge)
-    plt.savefig(RESULTS_DIR + f'channel_triggers_{channel}_{ts}_{te}.png', dpi=300, transparent=False, bbox_inches='tight')
+    plt.savefig(RESULTS_DIR + f'channel_triggers_{channel}_{ts}_{te}.png', dpi=300, transparent=False,
+                bbox_inches='tight')
 
 
 for c in tqdm(channels):
