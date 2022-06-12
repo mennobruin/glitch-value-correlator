@@ -20,7 +20,7 @@ channels = [
 target = 'V1:ENV_WEB_MAG_N'
 
 # ts, te = 1262685618, 1262908800
-ts, te = 1262690000, 1262700000
+ts, te = 1262690000, 1262695000
 pipeline = Omicron(channel=target, snr_threshold=20)
 triggers = pipeline.get_segment(ts, te)
 
