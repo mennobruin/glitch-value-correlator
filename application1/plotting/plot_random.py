@@ -32,7 +32,7 @@ with open(test_file, 'rb') as pkf:
 pipeline = LocalPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final.csv')
 labels = list(pipeline.labels)
 channel = 'V1:ENV_WEB_SEIS_W'
-transformation_name = 'abs'
+transformation_name = ''
 h1 = h_aux_cum[channel, transformation_name]
 h2 = Hist(np.array([]))
 for label in labels:
