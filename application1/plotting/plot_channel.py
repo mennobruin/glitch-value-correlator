@@ -49,7 +49,7 @@ def plot(channel, gs, ge, ylabel=None):
     #     data = ff.getChannel(channel, gs, ge).data
     data = reader.get_data_from_segments(request_segment=segment(gs, ge), channel_name=channel)
     ax2.hist(triggers.GPStime, bins=192, color='g', alpha=0.4)
-    ax1.plot(np.linspace(gs, ge, int(f_target * (gs - ge))), data, '-')
+    ax1.plot(np.linspace(gs, ge, int(f_target * (ge - gs))), data, '-')
     # for trigger in triggers:
     #     plt.axvline(x=trigger, linestyle='--', color='red')
     plt.xlim(gs, ge)
