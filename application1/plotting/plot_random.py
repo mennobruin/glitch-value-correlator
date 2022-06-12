@@ -57,12 +57,12 @@ h1.align(h2)
 
 fig = plt.figure(figsize=(10, 8), dpi=300)
 
-plt.plot(h1_cp.xgrid[::-1], 100 * h1.cdf, 'b-', label="% (1-DT)")
-plt.plot(h1_cp.xgrid[::-1], 100 * (1-h2.cdf), 'g-', label="% vetoed")
+p1, = plt.plot(h1_cp.xgrid[::-1], 100 * h1.cdf, 'b-')
+p2, = plt.plot(h1_cp.xgrid[::-1], 100 * (1-h2.cdf), 'g-')
 plt.xlim(min(h1_cp.xgrid), max(h1_cp.xgrid))
 plt.xlabel("x")
 plt.ylabel("%")
-plt.legend()
+plt.legend([p1, p2], ["% (1-DT)", "% vetoed"])
 plt.title(channel)
 save_name = f'veto_{channel}_{transformation_name}.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
