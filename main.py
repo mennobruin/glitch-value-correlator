@@ -324,13 +324,13 @@ class Excavator:
                 data=x_aux)
             try:
                 aux_hist = self.get_histogram(data=x_transform,
-                                              # cumulative_veto=self.cum_aux_veto[i],
+                                              cumulative_veto=self.cum_aux_veto[i],
                                               spanlike=self.h_aux_cum[channel, transformation_name])
                 self.h_aux_cum[channel, transformation_name] += aux_hist
 
                 for label, i_trigger in self.i_trigger.items():
                     trig_hist = self.get_histogram(data=x_transform[i_trigger],
-                                                   # cumulative_veto=self.cum_trig_veto[label][i],
+                                                   cumulative_veto=self.cum_trig_veto[label][i],
                                                    spanlike=aux_hist)
                     self.h_trig_cum[channel, transformation_name, label] += trig_hist
             except (OverflowError, AssertionError, IndexError) as e:
@@ -343,8 +343,8 @@ class Excavator:
                 return
 
     @staticmethod
-    def get_histogram(data, spanlike):
-        # x_veto = data[~cumulative_veto]
+    def get_histogram(data, cumulative_veto, spanlike):
+        x_veto = data[~cumulative_veto]
         return Hist(data, spanlike=spanlike)
 
 

@@ -5,7 +5,7 @@ project.source: '/virgoData/ffl/raw_O3b_arch.ffl'
 project.decimate: false
 project.load_existing: false
 project.run: true
-project.bootstrap: true
+project.bootstrap: false
 project.channel: 'V1:ENV_WEB_MAG_N'
 project.pipeline: 'local'
 project.snr_threshold: 0
