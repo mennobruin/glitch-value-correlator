@@ -76,9 +76,8 @@ fig = plt.figure(figsize=(10, 8), dpi=300)
 ax1 = fig.gca()
 ax2 = ax1.twinx()
 
-i_mean = find_nearest_index(h1.cdf, 50)
-x_new = h1.xgrid - h1.xgrid[i_mean]
-print(i_mean, h1.xgrid, x_new)
+x_mean = (h1.xgrid[0] + h1.xgrid[-1]) / 2
+x_new = h1.xgrid - x_mean
 
 ax1.plot(x_new[::-1], 100 * h1.cdf, '-', label="trig",)
 ax2.plot(x_new[::-1], 100 * (1-h2.cdf), '-', label="aux",)
