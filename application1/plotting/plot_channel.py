@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 from tqdm import tqdm
 
@@ -33,6 +34,7 @@ target = 'V1:ENV_WEB_MAG_N'
 # ts, te = 1262685618, 1262908800
 # ts, te = 1264550418, 1264723218
 ts, te = 1264610000, 1264670000
+f_target = 50
 # pipeline = Omicron(channel=target, snr_threshold=20)
 pipeline = LocalPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final.csv')
 triggers = pipeline.get_segment(ts, te)
@@ -47,7 +49,7 @@ def plot(channel, gs, ge, ylabel=None):
     #     data = ff.getChannel(channel, gs, ge).data
     data = reader.get_data_from_segments(request_segment=segment(gs, ge), channel_name=channel)
     ax2.hist(triggers.GPStime, bins=192, color='g', alpha=0.4)
-    ax1.plot(range(gs, ge), data, '-')
+    ax1.plot(np.linspace(gs, ge, int(f_target * (gs - ge))), data, '-')
     # for trigger in triggers:
     #     plt.axvline(x=trigger, linestyle='--', color='red')
     plt.xlim(gs, ge)
