@@ -15,7 +15,7 @@ from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov, AndersonDarling
 from application1.model.histogram import Hist
 from application1.model.transformation import do_transformations, GaussianDifferentiator, \
-    SavitzkyGolayDifferentiator, HighPass, Abs
+    SavitzkyGolayDifferentiator, HighPass, Abs, AbsMean
 from application1.plotting.plot import plot_histogram_cdf
 from application1.plotting.report import HTMLReport
 from application1.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments
@@ -83,6 +83,7 @@ class Excavator:
     def run(self, n_iter=1, load_existing=True, bootstrap=False):
 
         self.available_channels = self.reader.get_available_channels()
+        self.available_channels = 'V1:ENV_WEB_SEIS_W'
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
         triggers = self.trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
@@ -92,7 +93,7 @@ class Excavator:
 
         self.init_transformations()
 
-        test_file = f'test_{self.t_start}_{self.t_stop}_f{self.f_target}.pickle'
+        test_file = f'test_seis_w_{self.t_start}_{self.t_stop}_f{self.f_target}.pickle'
         if load_existing and os.path.exists(test_file):
             LOG.info("Loading existing histogram data...")
             with open(test_file, 'rb') as pkf:
@@ -237,9 +238,9 @@ class Excavator:
             # [savitzky_golay, AbsMean],
             # [gauss],
             # [gauss, Abs],
-            # [Abs],
-            # [AbsMean],
-            # [HighPass]
+            [Abs],
+            [AbsMean],
+            [HighPass]
         ]
 
         join_names = lambda c: '_'.join(t.NAME for t in c)
@@ -252,7 +253,7 @@ class Excavator:
             for name, transformations in self.transformation_states[channel].items():
                 for i, transformation in enumerate(transformations):
                     if isinstance(transformation, type):
-                        self.transformation_states[channel][name][i] = transformation()
+                        self.transformation_states[channel][name][i] = transformation(mean=0.0000110343)
 
     def _init_cumulative_hists(self, segments, triggers):
         self.cum_aux_veto = [np.zeros(self.n_points, dtype=bool) for _ in segments]

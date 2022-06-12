@@ -118,7 +118,7 @@ class AbsMean(Transformation):
 
         :param mean: value to use as offset for the input signal
         """
-        self.mean = kwargs.pop("mean", None)
+        self.mean = kwargs.pop("mean", 0)
         self.means = []
 
     def calculate(self, x):
