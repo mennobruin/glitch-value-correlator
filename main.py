@@ -309,6 +309,7 @@ class Excavator:
 
     def update_channel_histogram(self, i, segment, channel):
         try:
+            print(segment)
             x_aux = self.reader.get_data_from_segments(request_segment=segment, channel_name=channel)
         except UnicodeDecodeError:
             self._discard_channel(channel)
