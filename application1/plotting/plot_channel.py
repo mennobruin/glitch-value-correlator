@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 from virgotools.frame_lib import FrameFile
+from ligo.segments import segment
 
+from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.triggers import Omicron, LocalPipeline
 
 RESULTS_DIR = 'application1/plotting/results/'
@@ -29,20 +31,23 @@ channels = [
 target = 'V1:ENV_WEB_MAG_N'
 
 # ts, te = 1262685618, 1262908800
-ts, te = 1264550418, 1264723218
+# ts, te = 1264550418, 1264723218
+ts, te = 1264610000, 1264670000
 # pipeline = Omicron(channel=target, snr_threshold=20)
 pipeline = LocalPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final.csv')
 triggers = pipeline.get_segment(ts, te)
+reader = H5Reader(gps_start=ts, gps_end=te)
 
 
 def plot(channel, gs, ge, ylabel=None):
     fig = plt.figure(figsize=(20, 6.4))
     ax1 = fig.gca()
     ax2 = ax1.twinx()
-    with FrameFile(source) as ff:
-        unsampled_data = ff.getChannel(channel, gs, ge).data
+    # with FrameFile(source) as ff:
+    #     data = ff.getChannel(channel, gs, ge).data
+    data = reader.get_data_from_segments(request_segment=segment(gs, ge), channel_name=channel)
     ax2.hist(triggers, bins=192, color='g', alpha=0.4)
-    ax1.plot(range(gs, ge), unsampled_data, '-')
+    ax1.plot(range(gs, ge), data, '-')
     # for trigger in triggers:
     #     plt.axvline(x=trigger, linestyle='--', color='red')
     plt.xlim(gs, ge)
