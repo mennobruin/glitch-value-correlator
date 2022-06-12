@@ -343,7 +343,7 @@ class Excavator:
                 return
 
     @staticmethod
-    def get_histogram(data, cumulative_veto, spanlike):
+    def get_histogram(data, spanlike):
         # x_veto = data[~cumulative_veto]
         return Hist(data, spanlike=spanlike)
 
