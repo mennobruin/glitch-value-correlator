@@ -37,7 +37,7 @@ for k in h_aux_cum.keys():
 pipeline = LocalPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final.csv')
 labels = list(pipeline.labels)
 # channel = 'V1:ENV_WEB_SEIS_W'
-transformation_name = ''
+transformation_name = 'absmean'
 h1 = h_aux_cum[channel, transformation_name]
 h2 = Hist(np.array([]))
 for label in labels:
@@ -82,5 +82,3 @@ plt.xlabel("x")
 plt.title(channel)
 save_name = f'transformed_efficacy_veto_{channel}_{transformation_name}.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
-
-print('hiero')
