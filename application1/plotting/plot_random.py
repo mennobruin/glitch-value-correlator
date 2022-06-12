@@ -47,23 +47,48 @@ i_max = find_nearest_index(h1_cp.cdf, 0.99)
 
 h1.align(h2)
 
-fig = plot_histogram(histogram=h1, channel="Normal Distribution", transformation="", data_type="test", label=r"$\mu = 0, \sigma = 1$", return_fig=True)
-plot_histogram(histogram=h2, channel="Normal Distribution", transformation="", data_type="test", label=r"$\mu = 1, \sigma = 1$", fig=fig, save=True)
+fig = plot_histogram(histogram=h1, channel=channel, transformation=transformation_name, data_type="aux", return_fig=True)
+plot_histogram(histogram=h2, channel=channel, transformation=transformation_name, data_type="trig", fig=fig, save=True)
 
-fig = plot_histogram_cdf(histogram=h1, channel="Normal Distribution", transformation="", data_type="test", label=r"$\mu = 0, \sigma = 1$", return_fig=True)
+fig = plot_histogram_cdf(histogram=h1, channel=channel, transformation=transformation_name, data_type="aux", return_fig=True)
 # plt.axvline(x=h1_cp.xgrid[i_min], color='k', linestyle='--')
 # plt.axvline(x=h1_cp.xgrid[i_max], color='k', linestyle='--')
-plot_histogram_cdf(histogram=h2, channel="Normal Distribution", transformation="", data_type="test", label=r"$\mu = 1, \sigma = 1$", fig=fig, save=True)
+plot_histogram_cdf(histogram=h2, channel=channel, transformation=transformation_name, data_type="trig", fig=fig, save=True)
 
 fig = plt.figure(figsize=(10, 8), dpi=300)
-plt.plot(h1_cp.xgrid[::-1], 100 * h1.cdf, '-', label=r"$\mu = 0, \sigma = 1$",)
-plt.plot(h1_cp.xgrid[::-1], 100 * (1-h2.cdf), '-', label=r"$\mu = 1, \sigma = 1$",)
+ax1 = fig.gca()
+ax2 = ax1.twinx()
+
+ax1.plot(h1_cp.xgrid[::-1], 100 * h1.cdf, '-', label="trig",)
+ax2.plot(h1_cp.xgrid[::-1], 100 * (1-h2.cdf), '-', label="aux",)
 plt.plot(h1_cp.xgrid[::-1], 100 * ((1-h2.cdf) - (1-h1.cdf)), '-', label=r"$\Delta$")
 plt.xlim(min(h1_cp.xgrid), max(h1_cp.xgrid))
 plt.xlabel("x")
-plt.ylabel("% vetoed")
+ax1.set_ylabel("% vetoed")
+ax2.set_ylabel("% DT")
 plt.legend()
-plt.title("Normal Distribution")
-save_name = f'test_normal_cdf.png'
+plt.title(channel)
+save_name = f'veto_{channel}_{transformation_name}.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
+
+fig = plt.figure(figsize=(10, 8), dpi=300)
+ax1 = fig.gca()
+ax2 = ax1.twinx()
+
+mean = np.mean(h1.cdf)
+
+cdf1 = np.abs(h1.cdf - mean)
+cdf2 = np.abs(h2.cdf - mean)
+
+ax1.plot(h1_cp.xgrid[::-1], 100 * cdf1, '-', label="trig",)
+ax2.plot(h1_cp.xgrid[::-1], 100 * (1-cdf2), '-', label="aux",)
+plt.plot(h1_cp.xgrid[::-1], 100 * ((1-cdf2) - (1-cdf1)), '-', label=r"$\Delta$")
+plt.xlim(min(h1_cp.xgrid), max(h1_cp.xgrid))
+plt.xlabel("x")
+ax1.set_ylabel("% vetoed")
+ax2.set_ylabel("% DT")
+plt.legend()
+plt.title(channel)
+save_name = f'transformed_veto_{channel}_{transformation_name}.png'
+fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
