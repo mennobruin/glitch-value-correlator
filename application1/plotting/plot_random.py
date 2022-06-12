@@ -31,6 +31,8 @@ with open(test_file, 'rb') as pkf:
 
 for k in h_aux_cum.keys():
     print(type(k), k)
+    print(type(k[0]), k[0])
+    print(type(k[1]), k[1])
 
 pipeline = LocalPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final.csv')
 labels = list(pipeline.labels)
