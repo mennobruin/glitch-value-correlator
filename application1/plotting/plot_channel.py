@@ -46,7 +46,7 @@ def plot(channel, gs, ge, ylabel=None):
     # with FrameFile(source) as ff:
     #     data = ff.getChannel(channel, gs, ge).data
     data = reader.get_data_from_segments(request_segment=segment(gs, ge), channel_name=channel)
-    ax2.hist(triggers, bins=192, color='g', alpha=0.4)
+    ax2.hist(triggers.GPStime, bins=192, color='g', alpha=0.4)
     ax1.plot(range(gs, ge), data, '-')
     # for trigger in triggers:
     #     plt.axvline(x=trigger, linestyle='--', color='red')
