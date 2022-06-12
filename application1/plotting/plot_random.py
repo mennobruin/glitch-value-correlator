@@ -70,7 +70,7 @@ plt.xlabel("x")
 plt.ylabel("%")
 plt.legend([p1, p2], ["% (1-DT)", "% vetoed"])
 plt.title(channel)
-save_name = f'veto_{channel}_{transformation_name}.png'
+save_name = f'transformed_veto_{channel}_{transformation_name}.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 fig = plt.figure(figsize=(10, 8), dpi=300)
@@ -80,5 +80,7 @@ plt.ylabel(r"$E_{\Delta}$")
 plt.xlim(min(h1_cp.xgrid), max(h1_cp.xgrid))
 plt.xlabel("x")
 plt.title(channel)
-save_name = f'efficacy_veto_{channel}_{transformation_name}.png'
+save_name = f'transformed_efficacy_veto_{channel}_{transformation_name}.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+
+print('hiero')
