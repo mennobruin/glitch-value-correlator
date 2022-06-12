@@ -28,18 +28,18 @@ triggers = pipeline.get_segment(ts, te)
 def plot(channel, gs, ge, unit=None):
     fig = plt.figure(figsize=(20, 6.4))
     ax1 = fig.gca()
-    ax2 = ax1.twinx()
+    # ax2 = ax1.twinx()
     with FrameFile(source) as ff:
         unsampled_data = ff.getChannel(channel, gs, ge).data
     # ax1.hist(triggers, bins=100, color='g')
-    ax2.plot(range(gs, ge), unsampled_data, '-', alpha=0.6)
+    ax1.plot(range(gs, ge), unsampled_data, '-', alpha=0.6)
     for trigger in triggers:
         plt.axvline(x=trigger, linestyle='--', color='red')
     plt.xlim(gs, ge)
     plt.title(channel)
-    plt.xlabel('GPS Time', labelpad=10)
+    ax1.set_xlabel('GPS Time', labelpad=10)
     if unit:
-        plt.ylabel(unit, labelpad=10)
+        ax1.set_ylabel(unit, labelpad=10)
     plt.savefig(RESULTS_DIR + f'channel_triggers_{channel}_{ts}_{te}.png', dpi=300, transparent=False,
                 bbox_inches='tight')
 
