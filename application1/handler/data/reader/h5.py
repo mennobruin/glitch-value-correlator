@@ -57,9 +57,9 @@ class H5Reader(BaseReader):
             self._reset_cache()
             self.load(file, channel)
 
-    def get_channel_from_file(self, file, channel_name):
-        self.load(file, channel_name)
-        return self.cache[channel_name]
+    def get_channel_from_file(self, file, channel):
+        self.load(file, channel.name)
+        return self.cache[channel.name]
 
     def get_available_channels(self, file=None):
         file = file if file is not None else self.files[0]
@@ -70,7 +70,7 @@ class H5Reader(BaseReader):
         else:
             return list(self.cache.keys())
 
-    def get_data_from_segments(self, request_segment, channel_name):
+    def get_data_from_segments(self, request_segment, channel):
         request_segments = segments.segmentlist([request_segment]) & self.segments
 
         all_data = []
@@ -78,7 +78,7 @@ class H5Reader(BaseReader):
             i_segment = self.segments.find(seg)
             h5_file = self.files[i_segment]
             try:
-                channel_data = self.get_channel_from_file(h5_file, channel_name)
+                channel_data = self.get_channel_from_file(h5_file, channel)
             except KeyError:
                 return None
             all_data.append(channel_data)

@@ -66,14 +66,14 @@ class FrameFileReader(BaseReader):
                 channels = [c for c in channels if not any(fnmatch(c.name, p) for p in self.exclude_patterns)]
             return channels
 
-    def get_data_from_segments(self, request_segment, channel_name):
+    def get_data_from_segments(self, request_segment, channel):
         request_segments = segments.segmentlist([request_segment]) & self.segments
 
         all_data = []
         for seg in request_segments:
             i_segment = self.segments.find(seg)
             file = self.files[i_segment]
-            channel_data = self.get_channel_data(gwf_file=file, segment=seg, channel=channel_name)
+            channel_data = self.get_channel_data(gwf_file=file, segment=seg, channel=channel)
             all_data.append(channel_data)
 
         return np.concatenate(all_data)
