@@ -94,7 +94,7 @@ class Excavator:
 
         self.init_transformations()
 
-        test_file = f'test_seis_w_{self.t_start}_{self.t_stop}_f{self.f_target}.pickle'
+        test_file = f'test_{self.t_start}_{self.t_stop}_f{self.f_target}.pickle'
         if load_existing and os.path.exists(test_file):
             LOG.info("Loading existing histogram data...")
             with open(test_file, 'rb') as pkf:
