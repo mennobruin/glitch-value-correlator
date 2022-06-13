@@ -84,7 +84,7 @@ class Excavator:
     def run(self, n_iter=1, load_existing=True, bootstrap=False):
 
         self.available_channels = self.reader.get_available_channels()
-        self.available_channels = [Channel(name='V1:ENV_WEB_SEIS_W', f_sample=50)]
+        # self.available_channels = [Channel(name='V1:ENV_WEB_SEIS_W', f_sample=50)]
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
         triggers = self.trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
