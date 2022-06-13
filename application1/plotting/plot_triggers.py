@@ -37,7 +37,7 @@ def ceil_to_nearest_n(num, n):
 
 
 def plot_trigger_density_omicron():
-    pipeline = Omicron(channel='V1:ENV_WEB_MAG_N', snr_threshold=10)
+    pipeline = Omicron(channel='V1:ENV_WEB_MAG_N', snr_threshold=20)
     ts, te = 1262678400, 1262908800
     segment_triggers = pipeline.get_segment(gps_start=ts, gps_end=te)
 
