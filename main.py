@@ -110,27 +110,43 @@ class Excavator:
             with open(test_file, 'wb') as pkf:
                 pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum, 'channels': self.available_channels}, pkf)
 
-        fom_ks = KolgomorovSmirnov()
-        fom_ad = AndersonDarling()
+        # fom_ks = KolgomorovSmirnov()
+        # fom_ad = AndersonDarling()
         h_trig_combined = {}
+        # for channel in tqdm(self.available_channels, desc="Computing Results"):
+        #     for transformation_name in self.transformation_names:
+        #         try:
+        #             h_aux = self.h_aux_cum[channel, transformation_name]
+        #             h_trig = Hist(np.array([]))
+        #             for label in self.labels:
+        #                 h_trig += self.h_trig_cum[channel, transformation_name, label]
+        #             h_trig_combined[channel, transformation_name] = h_trig
+        #             try:
+        #                 h_aux.align(h_trig)
+        #
+        #                 fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
+        #                 fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
+        #             except (AssertionError, AttributeError) as e:
+        #                 LOG.debug(f'Exception caught trying to compute FOM for ({channel, transformation_name}): {e}')
+        #                 continue
+        #         except KeyError:
+        #             continue
+
+        fom_ks = {label: KolgomorovSmirnov() for label in self.labels}
+        # fom_ad = AndersonDarling()
         for channel in tqdm(self.available_channels, desc="Computing Results"):
             for transformation_name in self.transformation_names:
-                try:
+                for label in self.labels:
                     h_aux = self.h_aux_cum[channel, transformation_name]
-                    h_trig = Hist(np.array([]))
-                    for label in self.labels:
-                        h_trig += self.h_trig_cum[channel, transformation_name, label]
-                    h_trig_combined[channel, transformation_name] = h_trig
+                    h_trig = self.h_trig_cum[channel, transformation_name, label]
                     try:
                         h_aux.align(h_trig)
 
-                        fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
-                        fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
+                        fom_ks[label].calculate(channel, transformation_name, h_aux, h_trig)
                     except (AssertionError, AttributeError) as e:
-                        LOG.debug(f'Exception caught trying to compute FOM for ({channel, transformation_name}): {e}')
+                        LOG.debug(
+                            f'Exception caught trying to compute FOM for ({channel, transformation_name}): {e}')
                         continue
-                except KeyError:
-                    continue
 
         LOG.info("Constructing report of results...")
         ks_table_cols = ['Channel', 'Transformation', 'KS', 'p-value']
@@ -138,16 +154,17 @@ class Excavator:
         self.report.add_tag(tag_type='table', tag_id=ks_table)
         self.report.add_row_to_table(content=ks_table_cols, tag='th', table_id=ks_table)
 
-        ad_table_cols = ['Channel', 'Transformation', 'AD', f'below alpha={fom_ad.critical_value}']
-        ad_table = 'AD_table'
-        self.report.add_tag(tag_type='table', tag_id=ad_table)
-        self.report.add_row_to_table(content=ad_table_cols, tag='th', table_id=ad_table)
+        # ad_table_cols = ['Channel', 'Transformation', 'AD', f'below alpha={fom_ad.critical_value}']
+        # ad_table = 'AD_table'
+        # self.report.add_tag(tag_type='table', tag_id=ad_table)
+        # self.report.add_row_to_table(content=ad_table_cols, tag='th', table_id=ad_table)
 
-        ks_results = sorted(fom_ks.scores.items(), key=lambda f: f[1].d_n, reverse=True)
-        ad_results = sorted(fom_ad.scores.items(), key=lambda f: f[1].ad, reverse=True)
-        self.writer.write_csv(ks_results, 'ks_results.csv', file_path=self.writer.default_path + 'results/')
-        self.writer.write_csv(ad_results, 'ad_results.csv', file_path=self.writer.default_path + 'results/')
-
+        for label in self.labels:
+            ks_results = sorted(fom_ks[label].scores.items(), key=lambda f: f[1].d_n, reverse=True)
+        # ad_results = sorted(fom_ad.scores.items(), key=lambda f: f[1].ad, reverse=True)
+            self.writer.write_csv(ks_results, f'ks_results_{label}.csv', file_path=self.writer.default_path + 'results/')
+        # self.writer.write_csv(ad_results, 'ad_results.csv', file_path=self.writer.default_path + 'results/')
+        sys.exit(1)
         if bootstrap:
             fom_ks_bootstrap = KolgomorovSmirnov()
             for i, (k, v) in tqdm(enumerate(ks_results[0:10]), desc=f'Bootstrapping KS'):
@@ -189,34 +206,34 @@ class Excavator:
             self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), f'{p_value:.2E}'],
                                          table_id=ks_table)
 
-        ad_images_div = 'ad_images'
-        self.report.add_tag(tag_type='div', tag_id=ad_images_div)
-        for i, (k, v) in enumerate(ad_results[0:10]):
-            channel, transformation = k
-            statistic, threshold = v
-            try:
-                div_id = f'ad_rank_{i}'
-                self.report.add_tag(tag_type='div', tag_id=div_id, parent_div=ad_images_div)
-                cdf_fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
-                                             channel=channel,
-                                             transformation=transformation,
-                                             data_type='ad_aux',
-                                             label='aux',
-                                             return_fig=True,
-                                             rank=i)
-                cdf_fname = plot_histogram_cdf(histogram=h_trig_combined[channel, transformation],
-                                               channel=channel,
-                                               transformation=transformation,
-                                               data_type='ad_trig',
-                                               label='trig',
-                                               fig=cdf_fig,
-                                               save=True,
-                                               rank=i)
-                self.report.add_image(img=cdf_fname, div_id=div_id)
-            except AttributeError as e:
-                LOG.debug(e)
-            self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), str(threshold)],
-                                         table_id=ad_table)
+        # ad_images_div = 'ad_images'
+        # self.report.add_tag(tag_type='div', tag_id=ad_images_div)
+        # for i, (k, v) in enumerate(ad_results[0:10]):
+        #     channel, transformation = k
+        #     statistic, threshold = v
+        #     try:
+        #         div_id = f'ad_rank_{i}'
+        #         self.report.add_tag(tag_type='div', tag_id=div_id, parent_div=ad_images_div)
+        #         cdf_fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
+        #                                      channel=channel,
+        #                                      transformation=transformation,
+        #                                      data_type='ad_aux',
+        #                                      label='aux',
+        #                                      return_fig=True,
+        #                                      rank=i)
+        #         cdf_fname = plot_histogram_cdf(histogram=h_trig_combined[channel, transformation],
+        #                                        channel=channel,
+        #                                        transformation=transformation,
+        #                                        data_type='ad_trig',
+        #                                        label='trig',
+        #                                        fig=cdf_fig,
+        #                                        save=True,
+        #                                        rank=i)
+        #         self.report.add_image(img=cdf_fname, div_id=div_id)
+        #     except AttributeError as e:
+        #         LOG.debug(e)
+        #     self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), str(threshold)],
+        #                                  table_id=ad_table)
 
     def generate_report(self):
         LOG.info("Generating HTML Report...")
