@@ -46,7 +46,7 @@ def plot_trigger_density_omicron():
 
     bins, locs, _ = ax.hist(segment_triggers, bins=192)
     ax.set_xlim(ts, te)
-    ax.set_ylim(0, ceil_to_nearest_n(bins.max(), n=20))
+    ax.set_ylim(0, ceil_to_nearest_n(bins.max(), n=10))
     ax.set_xlabel('GPS Time', labelpad=10)
     ax.set_ylabel('Counts (#)', labelpad=10)
     plt.savefig('application1/plotting/' + RESULTS_DIR + 'trigger_density_omicron.png', dpi=300, transparent=False, bbox_inches='tight')
