@@ -256,9 +256,9 @@ class Excavator:
             # [savitzky_golay, AbsMean],
             # [gauss],
             # [gauss, Abs],
-            [Abs],
-            [AbsMean],
-            [HighPass]
+            # [Abs],
+            # [AbsMean],
+            # [HighPass]
         ]
 
         join_names = lambda c: '_'.join(t.NAME for t in c)
