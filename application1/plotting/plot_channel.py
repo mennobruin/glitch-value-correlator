@@ -30,23 +30,24 @@ source = '/virgoData/ffl/trend.ffl'
 # ]
 
 channels = [
-    ('V1:ENV_WEB_SEIS_W_50Hz_rms_0.03_0.1Hz', r'Velocity ($ms^{-1}$)'),
-    ('V1:ENV_WEB_SEIS_W_50Hz_rms_0.1_1Hz', r'Velocity ($ms^{-1}$)'),
-    ('V1:ENV_WEB_SEIS_W_50Hz_rms_1_5Hz', r'Velocity ($ms^{-1}$)'),
-    ('V1:ENV_WEB_SEIS_W_50Hz_rms_5_15Hz', r'Velocity ($ms^{-1}$)'),
-    ('V1:ENV_WEB_SEIS_W_rms', r'Velocity ($ms^{-1}$)'),
-    ('V1:ENV_WEB_SEIS_N_50Hz_rms_0.03_0.1Hz', r'Velocity ($ms^{-1}$)'),
-    ('V1:ENV_WEB_SEIS_N_50Hz_rms_0.1_1Hz', r'Velocity ($ms^{-1}$)'),
-    ('V1:ENV_WEB_SEIS_N_50Hz_rms_1_5Hz', r'Velocity ($ms^{-1}$)'),
-    ('V1:ENV_WEB_SEIS_N_50Hz_rms_5_15Hz', r'Velocity ($ms^{-1}$)'),
-    ('V1:ENV_WEB_SEIS_N_rms', r'Velocity ($ms^{-1}$)'),
+    ('V1:ENV_WEB_SEIS_W', r'Velocity ($ms^{-1}$)'),
+    # ('V1:ENV_WEB_SEIS_W_50Hz_rms_0.03_0.1Hz', r'Velocity ($ms^{-1}$)'),
+    # ('V1:ENV_WEB_SEIS_W_50Hz_rms_0.1_1Hz', r'Velocity ($ms^{-1}$)'),
+    # ('V1:ENV_WEB_SEIS_W_50Hz_rms_1_5Hz', r'Velocity ($ms^{-1}$)'),
+    # ('V1:ENV_WEB_SEIS_W_50Hz_rms_5_15Hz', r'Velocity ($ms^{-1}$)'),
+    # ('V1:ENV_WEB_SEIS_W_rms', r'Velocity ($ms^{-1}$)'),
+    # ('V1:ENV_WEB_SEIS_N_50Hz_rms_0.03_0.1Hz', r'Velocity ($ms^{-1}$)'),
+    # ('V1:ENV_WEB_SEIS_N_50Hz_rms_0.1_1Hz', r'Velocity ($ms^{-1}$)'),
+    # ('V1:ENV_WEB_SEIS_N_50Hz_rms_1_5Hz', r'Velocity ($ms^{-1}$)'),
+    # ('V1:ENV_WEB_SEIS_N_50Hz_rms_5_15Hz', r'Velocity ($ms^{-1}$)'),
+    # ('V1:ENV_WEB_SEIS_N_rms', r'Velocity ($ms^{-1}$)'),
 ]
 
 target = 'V1:ENV_WEB_MAG_N'
 
 # ts, te = 1262685618, 1262908800
-ts, te = 1264550418, 1264723218
-# ts, te = 1264610000, 1264670000
+# ts, te = 1264550418, 1264723218
+ts, te = 1264625000, 1264635000
 f_target = 50
 # pipeline = Omicron(channel=target, snr_threshold=20)
 pipeline = LocalPipeline(trigger_file='GSpy_ALLIFO_O3b_0921_final.csv')
