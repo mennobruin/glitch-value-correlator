@@ -10,8 +10,8 @@ from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.triggers import Omicron, LocalPipeline
 
 RESULTS_DIR = 'application1/plotting/results/'
-source = '/virgoData/ffl/trend.ffl'
-# source = '/virgoData/ffl/raw_O3b_arch.ffl'
+# source = '/virgoData/ffl/trend.ffl'
+source = '/virgoData/ffl/raw_O3b_arch.ffl'
 
 # channels = [
 #     ('V1:INF_WEB_CHILLER_TE_IN', 'Temperature (°C)'),
