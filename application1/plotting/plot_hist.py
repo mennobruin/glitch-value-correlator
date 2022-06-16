@@ -58,7 +58,7 @@ plt.fill_between(x, y1, alpha=0.3)
 plt.fill_between(x, y2, alpha=0.3)
 
 plt.xlim([h_aux.offset, h_aux.offset + h_aux.span])
-plt.ylim(y1=0)
+plt.ylim(0, 1.05*np.max(y1))
 plt.xlabel('x')
 plt.ylabel('Counts (#)')
 plt.title(f'{channel} Density')
