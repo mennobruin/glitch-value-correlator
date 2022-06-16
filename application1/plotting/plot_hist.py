@@ -23,7 +23,7 @@ with open(test_file, 'rb') as pkf:
 
 
 for k in h_aux_cum.keys():
-    if k[1] == '':
+    if k[1] == 'absmean':
         channel = k[0]
         break
 transformation = ""
@@ -48,7 +48,6 @@ x = np.linspace(e1.min(), e1.max())
 middle1 = (e1[:-1] + e1[1:])/2
 samples1 = [[middle1[i]] * val for i, val in enumerate(h1)]
 samples1 = [sample for bar in samples1 for sample in bar]
-print(samples1)
 
 middle2 = (e2[:-1] + e2[1:])/2
 samples2 = [[middle2[i]] * val for i, val in enumerate(h2)]
