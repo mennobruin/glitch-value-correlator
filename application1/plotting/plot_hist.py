@@ -34,7 +34,6 @@ for k in h_aux_cum.keys():
         channel = k[0]
         break
 transformation = ""
-print(channel)
 
 h_aux = h_aux_cum[channel, transformation]
 h_trig = Hist(np.array([]))
@@ -43,8 +42,8 @@ for label in labels:
 
 h_aux.align(h_trig)
 
-plt.bar(h_aux.xgrid, h_aux.counts, width=h_aux.span / h_aux.nbin)
-plt.bar(h_trig.xgrid, h_trig.counts, width=h_trig.span / h_trig.nbin)
+plt.hist(h_aux.xgrid, weights=h_aux.counts, bins=h_aux.nbin, density=True)
+plt.hist(h_trig.xgrid, weights=h_trig.counts, bins=h_trig.nbin, density=True)
 
 plt.xlim([h_aux.offset, h_aux.offset + h_aux.span])
 plt.show()
