@@ -1,6 +1,7 @@
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import stats
 
 from application1.handler.data.reader.csv import CSVReader
 from application1.model.histogram import Hist
@@ -42,14 +43,22 @@ for label in labels:
 
 h_aux.align(h_trig)
 
-nbin = h_aux.nbin // 32
+h1, e1 = np.histogram(h_aux.xgrid, weights=h_aux.counts, bins=h_aux.nbin, density=True)
+h2, e2 = np.histogram(h_trig.xgrid, weights=h_trig.counts, bins=h_trig.nbin, density=True)
 
-xg = np.arange(nbin, dtype=float)
-xg *= 2.0 ** (h_aux.l2_span - h_aux.l2_nbin)
-xg += h_aux.offset
+plt.figure(figsize=(8,6))
+plt.bar(h_aux.xgrid, h_aux.counts, width=h_aux.span / h_aux.nbin)
+plt.bar(h_trig.xgrid, h_trig.counts, width=h_trig.span / h_trig.nbin)
 
-plt.hist(xg, weights=h_aux.counts, bins=nbin, density=True)
-plt.hist(xg, weights=h_trig.counts, bins=nbin, density=True)
+x = np.linspace(e1.min(), e1.max())
+
+samples1 = np.random.choice((e1[:-1] + e1[1:])/2, size=h_aux.ntot, p=h1/h1.sum())
+samples2 = np.random.choice((e2[:-1] + e2[1:])/2, size=h_trig.ntot, p=h2/h2.sum())
+rkde1 = stats.gaussian_kde(samples1)
+rkde2 = stats.gaussian_kde(samples2)
+
+plt.plot(x, rkde1.pdf(x), '--')
+plt.plot(x, rkde2.pdf(x), '--')
 
 plt.xlim([h_aux.offset, h_aux.offset + h_aux.span])
 plt.show()
