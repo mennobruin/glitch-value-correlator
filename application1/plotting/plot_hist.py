@@ -1,21 +1,27 @@
 import pickle
+import numpy as np
+import matplotlib.pyplot as plt
 
-from .plot import plot_histogram, plot_histogram_cdf
-from application1.model.transformation import HighPass, GaussianDifferentiator
+from application1.handler.data.reader.csv import CSVReader
+from application1.model.histogram import Hist
+
+reader = CSVReader()
+triggers = reader.load_csv('GSpy_ALLIFO_O3b_0921_final', usecols=['label'])
+labels = set(triggers['label'].values)
 
 transformation_combinations = [
     [],
-    [GaussianDifferentiator],
-    [HighPass]
+    # [GaussianDifferentiator],
+    # [HighPass]
 ]
 
 join_names = lambda c: '_'.join(t.NAME for t in c)
 transformation_names = [join_names(t) for t in transformation_combinations]
 
-t_start = 1256688000
-t_stop = 1256774400
+t_start = 1264625000
+t_stop = 1264635000
 
-test_file = f'test_{t_start}_{t_stop}.pickle'
+test_file = f'test_seis_w_1264625000_1264635000_f50.pickle'
 with open(test_file, 'rb') as pkf:
     data = pickle.load(pkf)
     h_trig_cum = data['trig']
@@ -23,20 +29,22 @@ with open(test_file, 'rb') as pkf:
     available_channels = data['channels']
 
 
-# print([c for c in available_channels if "DQ" in c])
-# channel = "V1:DQ_BRMSMon_BRMS_ALL_MIC_AIRPLANE_ENV_TCS_CO2_WI_MIC"
-channel = "V1:DQ_BRMSMon_NSIG_LVDT_100mHz_200mHz_Sa_NE_F0_X_50Hz"
-i = available_channels.index(channel)
-# i = 2
-channel = available_channels[i]
-# transformation = transformation_names[0]
-# plot_histogram(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig')
-# plot_histogram(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux')
-# fig = plot_histogram_cdf(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig', return_fig=True)
-# plot_histogram_cdf(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux', fig=fig)
+for k in h_aux_cum.keys():
+    if k[1] == '':
+        channel = k[0]
+        break
+transformation = ""
+print(channel)
 
-# transformation = transformation_names[2]
-# plot_histogram(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig')
-# plot_histogram(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux')
-# fig = plot_histogram_cdf(channel=channel, transformation=transformation, histogram=h_trig_cum[channel, transformation], data_type='trig', return_fig=True)
-# plot_histogram_cdf(channel=channel, transformation=transformation, histogram=h_aux_cum[channel, transformation], data_type='aux', fig=fig)
+h_aux = h_aux_cum[channel, transformation]
+h_trig = Hist(np.array([]))
+for label in labels:
+    h_trig += h_trig_cum[channel, transformation, label]
+
+h_aux.align(h_trig)
+
+plt.bar(h_aux.xgrid, h_aux.counts, width=h_aux.span / h_aux.nbin)
+plt.bar(h_trig.xgrid, h_trig.counts, width=h_trig.span / h_trig.nbin)
+
+plt.xlim([h_aux.offset, h_aux.offset + h_aux.span])
+plt.show()
