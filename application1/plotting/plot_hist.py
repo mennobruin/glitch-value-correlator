@@ -57,8 +57,13 @@ samples2 = np.random.choice((e2[:-1] + e2[1:])/2, size=h_trig.ntot, p=h2/h2.sum(
 rkde1 = stats.gaussian_kde(samples1)
 rkde2 = stats.gaussian_kde(samples2)
 
-plt.plot(x, rkde1.pdf(x), '--')
-plt.plot(x, rkde2.pdf(x), '--')
+y1, y2 = rkde1.pdf(2), rkde2.pdf(x)
+
+plt.plot(x, y1, '-')
+plt.plot(x, y2, '-')
+
+plt.fill_between(x, y1, alpha=0.3)
+plt.fill_between(x, y2, alpha=0.3)
 
 plt.xlim([h_aux.offset, h_aux.offset + h_aux.span])
 plt.show()
