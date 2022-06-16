@@ -47,8 +47,8 @@ h1, e1 = np.histogram(h_aux.xgrid, weights=h_aux.counts, bins=h_aux.nbin)
 h2, e2 = np.histogram(h_trig.xgrid, weights=h_trig.counts, bins=h_trig.nbin)
 
 plt.figure(figsize=(8, 6))
-plt.bar(h_aux.xgrid, h_aux.counts, width=h_aux.span / h_aux.nbin)
-plt.bar(h_trig.xgrid, h_trig.counts, width=h_trig.span / h_trig.nbin)
+# plt.bar(h_aux.xgrid, h_aux.counts, width=h_aux.span / h_aux.nbin)
+# plt.bar(h_trig.xgrid, h_trig.counts, width=h_trig.span / h_trig.nbin)
 
 x = np.linspace(e1.min(), e1.max())
 
@@ -57,7 +57,7 @@ samples2 = np.random.choice((e2[:-1] + e2[1:])/2, size=h_trig.ntot, p=h2/h2.sum(
 rkde1 = stats.gaussian_kde(samples1)
 rkde2 = stats.gaussian_kde(samples2)
 
-y1, y2 = rkde1.pdf(2), rkde2.pdf(x)
+y1, y2 = rkde1.pdf(x), rkde2.pdf(x)
 
 plt.plot(x, y1, '-')
 plt.plot(x, y2, '-')
