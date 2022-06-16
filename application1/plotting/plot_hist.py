@@ -42,8 +42,11 @@ for label in labels:
 
 h_aux.align(h_trig)
 
-plt.hist(h_aux.xgrid, weights=h_aux.counts, bins=h_aux.nbin, density=True)
-plt.hist(h_trig.xgrid, weights=h_trig.counts, bins=h_trig.nbin, density=True)
+nbin = h_aux.nbin // 128
+print(nbin)
+
+plt.hist(h_aux.xgrid[::128], weights=h_aux.counts, bins=nbin, density=True)
+plt.hist(h_trig.xgrid[::128], weights=h_trig.counts, bins=nbin, density=True)
 
 plt.xlim([h_aux.offset, h_aux.offset + h_aux.span])
 plt.show()
