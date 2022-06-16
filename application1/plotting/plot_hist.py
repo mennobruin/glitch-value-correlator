@@ -46,10 +46,12 @@ plt.rcParams['font.size'] = 16
 x = np.linspace(e1.min(), e1.max())
 
 middle1 = (e1[:-1] + e1[1:])/2
-samples1 = np.array([np.array([middle1[i]] * val) for i, val in enumerate(h1)]).flatten()
+samples1 = [[middle1[i]] * val for i, val in enumerate(h1)]
+samples1 = [sample for bar in samples1 for sample in bar]
 
 middle2 = (e2[:-1] + e2[1:])/2
-samples2 = np.array([np.array([middle2[i]] * val) for i, val in enumerate(h2)]).flatten()
+samples2 = [[middle2[i]] * val for i, val in enumerate(h2)]
+samples2 = [sample for bar in samples2 for sample in bar]
 
 rkde1 = stats.gaussian_kde(samples1)
 rkde2 = stats.gaussian_kde(samples2)
