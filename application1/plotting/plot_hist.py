@@ -69,5 +69,6 @@ plt.ylim(0, 1.05*np.max(y1))
 plt.xlabel('x')
 plt.ylabel('Density')
 plt.title(f'{channel} Density')
+plt.legend()
 save_name = f'density_{channel}_{transformation}.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi, transparent=False, bbox_inches='tight')
