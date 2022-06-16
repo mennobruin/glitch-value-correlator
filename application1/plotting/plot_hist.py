@@ -22,11 +22,11 @@ with open(test_file, 'rb') as pkf:
     available_channels = data['channels']
 
 
+transformation = "absmean"
 for k in h_aux_cum.keys():
-    if k[1] == 'absmean':
+    if k[1] == transformation:
         channel = k[0]
         break
-transformation = ""
 
 h_aux = h_aux_cum[channel, transformation]
 h_trig = Hist(np.array([]))
