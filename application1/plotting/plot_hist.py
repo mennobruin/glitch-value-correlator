@@ -44,7 +44,7 @@ h_aux.align(h_trig)
 
 nbin = h_aux.nbin // 32
 
-xg = np.arange(nbin)
+xg = np.arange(nbin, dtype=float)
 xg *= 2.0 ** (h_aux.l2_span - h_aux.l2_nbin)
 xg += h_aux.offset
 
