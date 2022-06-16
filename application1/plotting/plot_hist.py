@@ -22,7 +22,7 @@ with open(test_file, 'rb') as pkf:
     available_channels = data['channels']
 
 
-transformation = ""
+transformation = "absmean"
 for k in h_aux_cum.keys():
     if k[1] == transformation:
         channel = k[0]
