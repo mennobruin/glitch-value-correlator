@@ -38,7 +38,8 @@ h_aux.align(h_trig)
 h1, e1 = np.histogram(h_aux.xgrid, weights=h_aux.counts, bins=h_aux.nbin)
 h2, e2 = np.histogram(h_trig.xgrid, weights=h_trig.counts, bins=h_trig.nbin)
 
-fig = plt.figure(figsize=(10, 8), dpi=300)
+fig = plt.figure(figsize=(8, 6.4), dpi=300)
+plt.rcParams['font.size'] = 16
 # plt.bar(h_aux.xgrid, h_aux.counts, width=h_aux.span / h_aux.nbin)
 # plt.bar(h_trig.xgrid, h_trig.counts, width=h_trig.span / h_trig.nbin)
 
@@ -62,6 +63,5 @@ plt.ylim(0, 1.05*np.max(y1))
 plt.xlabel('x')
 plt.ylabel('Counts (#)')
 plt.title(f'{channel} Density')
-plt.show()
 save_name = f'density_{channel}_{transformation}.png'
-fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi, transparent=False, bbox_inches='tight')
