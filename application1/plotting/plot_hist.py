@@ -45,8 +45,12 @@ plt.rcParams['font.size'] = 16
 
 x = np.linspace(e1.min(), e1.max())
 
-samples1 = np.random.choice((e1[:-1] + e1[1:])/2, size=h_aux.ntot, p=h1/h1.sum())
-samples2 = np.random.choice((e2[:-1] + e2[1:])/2, size=h_trig.ntot, p=h2/h2.sum())
+middle1 = (e1[:-1] + e1[1:])/2
+samples1 = np.array([np.array([middle1[i]] * val) for i, val in enumerate(h1)]).flatten()
+
+middle2 = (e2[:-1] + e2[1:])/2
+samples2 = np.array([np.array([middle2[i]] * val) for i, val in enumerate(h2)]).flatten()
+
 rkde1 = stats.gaussian_kde(samples1)
 rkde2 = stats.gaussian_kde(samples2)
 
@@ -61,7 +65,7 @@ plt.fill_between(x, y2, alpha=0.3)
 plt.xlim([h_aux.offset, h_aux.offset + h_aux.span])
 plt.ylim(0, 1.05*np.max(y1))
 plt.xlabel('x')
-plt.ylabel('Counts (#)')
+plt.ylabel('Density')
 plt.title(f'{channel} Density')
 save_name = f'density_{channel}_{transformation}.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi, transparent=False, bbox_inches='tight')
