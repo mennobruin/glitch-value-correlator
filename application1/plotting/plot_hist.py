@@ -5,19 +5,11 @@ from scipy import stats
 
 from application1.handler.data.reader.csv import CSVReader
 from application1.model.histogram import Hist
+from resources.constants import PLOT_DIR
 
 reader = CSVReader()
 triggers = reader.load_csv('GSpy_ALLIFO_O3b_0921_final', usecols=['label'])
 labels = set(triggers['label'].values)
-
-transformation_combinations = [
-    [],
-    # [GaussianDifferentiator],
-    # [HighPass]
-]
-
-join_names = lambda c: '_'.join(t.NAME for t in c)
-transformation_names = [join_names(t) for t in transformation_combinations]
 
 t_start = 1264625000
 t_stop = 1264635000
@@ -46,7 +38,7 @@ h_aux.align(h_trig)
 h1, e1 = np.histogram(h_aux.xgrid, weights=h_aux.counts, bins=h_aux.nbin)
 h2, e2 = np.histogram(h_trig.xgrid, weights=h_trig.counts, bins=h_trig.nbin)
 
-plt.figure(figsize=(8, 6))
+fig = plt.figure(figsize=(10, 8), dpi=300)
 # plt.bar(h_aux.xgrid, h_aux.counts, width=h_aux.span / h_aux.nbin)
 # plt.bar(h_trig.xgrid, h_trig.counts, width=h_trig.span / h_trig.nbin)
 
@@ -59,11 +51,17 @@ rkde2 = stats.gaussian_kde(samples2)
 
 y1, y2 = rkde1.pdf(x), rkde2.pdf(x)
 
-plt.plot(x, y1, '-')
-plt.plot(x, y2, '-')
+plt.plot(x, y1, '-', label='aux')
+plt.plot(x, y2, '-', label='trig')
 
 plt.fill_between(x, y1, alpha=0.3)
 plt.fill_between(x, y2, alpha=0.3)
 
 plt.xlim([h_aux.offset, h_aux.offset + h_aux.span])
+plt.ylim(y1=0)
+plt.xlabel('x')
+plt.ylabel('Counts (#)')
+plt.title(f'{channel} Density')
 plt.show()
+save_name = f'density_{channel}_{transformation}.png'
+fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
