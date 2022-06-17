@@ -25,4 +25,4 @@ source = '/virgoData/ffl/raw_O3b_arch.ffl'
 
 with FrameFile(source) as ff:
     # for trigger in triggers:
-    print(ff.getChannel(channel, triggers[0].GPStime, 1))
+    print(ff.getChannel(channel, triggers.GPStime.values[0], 1))
