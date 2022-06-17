@@ -16,7 +16,7 @@ from application1.model.ffl_cache import FFLCache
 from application1.model.fom import KolgomorovSmirnov, AndersonDarling
 from application1.model.histogram import Hist
 from application1.model.transformation import do_transformations, GaussianDifferentiator, \
-    SavitzkyGolayDifferentiator, HighPass, Abs, AbsMean
+    SavitzkyGolayDifferentiator, Differentiator, Abs, AbsMean
 from application1.plotting.plot import plot_histogram_cdf
 from application1.plotting.report import HTMLReport
 from application1.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments

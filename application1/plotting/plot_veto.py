@@ -6,7 +6,7 @@ import pickle
 from application1.handler.data.reader.h5 import H5Reader
 from application1.handler.triggers import LocalPipeline
 from application1.model.fom import KolgomorovSmirnov, AndersonDarling
-from application1.model.transformation import HighPass, GaussianDifferentiator
+from application1.model.transformation import Differentiator, GaussianDifferentiator
 from application1.utils import slice_triggers_in_segment, config_manager
 
 plt.rcParams['font.size'] = 16
@@ -16,7 +16,7 @@ f_target = 50
 transformation_combinations = [
     [],
     [GaussianDifferentiator],
-    [HighPass]
+    [Differentiator]
 ]
 
 join_names = lambda c: '_'.join(t.NAME for t in c)

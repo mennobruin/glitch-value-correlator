@@ -134,8 +134,8 @@ class AbsMean(Transformation):
         self.mean = None
 
 
-class HighPass(Transformation):
-    NAME = 'highpass'
+class Differentiator(Transformation):
+    NAME = 'diff'
 
     FILTER_ORDER = 1
     FREQUENCY_CUTOFF = 2
