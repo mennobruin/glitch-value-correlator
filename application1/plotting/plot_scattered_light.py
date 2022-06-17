@@ -20,9 +20,10 @@ triggers = triggers[triggers.GPStime < t_stop]
 
 mean = 0.0000110343
 
+f_sample = 1000
 channel = "V1:ENV_WEB_SEIS_W"
 source = '/virgoData/ffl/raw_O3b_arch.ffl'
 
 with FrameFile(source) as ff:
     # for trigger in triggers:
-    print(ff.getChannel(channel, triggers.GPStime.values[0], 1).data)
+    print(ff.getChannel(channel, triggers.GPStime.values[0], 1/f_sample).data)
