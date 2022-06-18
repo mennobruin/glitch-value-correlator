@@ -35,7 +35,26 @@ with FrameFile(source) as ff:
 fig = plt.figure(figsize=(10, 8))
 plt.rcParams['font.size'] = 16
 
-sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=np.log10(triggers.snr))
+sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=3*np.log10(triggers.snr))
+plt.colorbar(sc)
+plt.xlabel('Velocity [m/s]')
+plt.ylabel('Trigger Frequency [Hz]')
+plt.xlim(0, 1.15*max(points))
+plt.ylim(0, 150)
+save_name = f'{channel}_peakFreq.png'
+fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+
+fig = plt.figure(figsize=(10, 8))
+sc = plt.scatter(points, triggers.centralFreq, c=np.log10(triggers.snr), s=3*np.log10(triggers.snr))
+plt.colorbar(sc)
+plt.xlabel('Velocity [m/s]')
+plt.ylabel('Trigger Frequency [Hz]')
+plt.xlim(0, 1.15*max(points))
+plt.ylim(0, 150)
+save_name = f'{channel}_centralFreq.png'
+fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+
+sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=3*np.log10(triggers.snr))
 plt.colorbar(sc)
 plt.xlabel('Velocity [m/s]')
 plt.ylabel('Trigger Frequency [Hz]')
@@ -44,7 +63,7 @@ save_name = f'density_{channel}_peakFreq.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 fig = plt.figure(figsize=(10, 8))
-sc = plt.scatter(points, triggers.centralFreq, c=np.log10(triggers.snr), s=np.log10(triggers.snr))
+sc = plt.scatter(points, triggers.centralFreq, c=np.log10(triggers.snr), s=3*np.log10(triggers.snr))
 plt.colorbar(sc)
 plt.xlabel('Velocity [m/s]')
 plt.ylabel('Trigger Frequency [Hz]')
