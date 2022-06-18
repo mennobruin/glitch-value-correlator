@@ -27,8 +27,8 @@ source = '/virgoData/ffl/raw_O3b_arch.ffl'
 
 points = []
 with FrameFile(source) as ff:
-    for trigger in tqdm(triggers):
-        p = ff.getChannel(channel, trigger.GPStime, 1.2/f_sample).data
+    for t in tqdm(triggers.GPStime):
+        p = ff.getChannel(channel, t, 1.2/f_sample).data
         points.append(p)
 
 
