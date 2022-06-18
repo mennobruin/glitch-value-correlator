@@ -29,13 +29,14 @@ points = []
 with FrameFile(source) as ff:
     for t in tqdm(triggers.GPStime):
         p = ff.getChannel(channel, t, 1.2/f_sample).data
-        points.append(p)
+        points.append(abs(p - mean))
 
 
 fig = plt.figure(figsize=(10, 8))
 plt.rcParams['font.size'] = 16
 
-plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr))
+sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=np.log10(triggers.snr))
+plt.colorbar(sc)
 plt.xlabel('Velocity [m/s]')
 plt.ylabel('Trigger Frequency [Hz]')
 plt.xlim(0, 1.15*max(points))
@@ -43,7 +44,8 @@ save_name = f'density_{channel}_peakFreq.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 fig = plt.figure(figsize=(10, 8))
-plt.scatter(points, triggers.centralFreq, c=np.log10(triggers.snr))
+sc = plt.scatter(points, triggers.centralFreq, c=np.log10(triggers.snr), s=np.log10(triggers.snr))
+plt.colorbar(sc)
 plt.xlabel('Velocity [m/s]')
 plt.ylabel('Trigger Frequency [Hz]')
 plt.xlim(0, 1.15*max(points))
