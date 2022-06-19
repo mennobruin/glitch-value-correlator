@@ -1,1 +1,1 @@
-# master-thesis
+# Glitch-Value Correlator
