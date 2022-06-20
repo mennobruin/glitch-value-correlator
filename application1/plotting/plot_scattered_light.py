@@ -19,6 +19,12 @@ t_stop = 1264635000
 triggers = triggers[triggers.GPStime > t_start]
 triggers = triggers[triggers.GPStime < t_stop]
 
+i_scattered_light = np.flatnonzero(triggers[triggers.label == 'Scattered_Light'])
+i_other = np.flatnonzero(triggers[triggers.label != 'Scattered_Light'])
+
+print(min(i_scattered_light), max(i_scattered_light), i_scattered_light.shape)
+print(min(i_other), max(i_other), i_other.shape)
+
 mean = 0.0000110343
 
 f_sample = 1000
@@ -31,9 +37,6 @@ with FrameFile(source) as ff:
         p = ff.getChannel(channel, t, 1.2/f_sample).data
         points.append(abs(p - mean))
 points = np.array(points)
-
-i_scattered_light = np.flatnonzero(triggers[triggers.label == 'Scattered_Light'])
-i_other = np.flatnonzero(triggers[triggers.label != 'Scattered_Light'])
 
 plt.rcParams['font.size'] = 16
 
@@ -77,8 +80,8 @@ plt.rcParams['font.size'] = 16
 
 p_scattered_light = points[i_scattered_light]
 t_scattered_light = triggers[i_scattered_light]
-p_other = points[i_scattered_light]
-t_other = triggers[i_scattered_light]
+p_other = points[i_other]
+t_other = triggers[i_other]
 
 fig = plt.figure(figsize=(10, 8))
 plt.scatter(p_other, t_other.peakFreq, s=5*np.log10(t_other.snr), a=0.7)
