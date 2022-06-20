@@ -170,7 +170,7 @@ class Excavator:
             for label in self.labels:
                 if label in ('Low_Frequency_Burst', 'Low_Frequency_Lines', 'Scattered_Light'):
                     fom_ks_bootstrap = KolgomorovSmirnov()
-                    for i, (k, v) in tqdm(enumerate(ks_results[label]), desc=f'Bootstrapping KS'):
+                    for i, (k, v) in tqdm(enumerate(ks_results[label][0:3]), desc=f'Bootstrapping KS'):
                         channel, transformation = k
                         h_aux = self.h_aux_cum[channel, transformation]
                         h_trig = self.h_trig_cum[channel, transformation, label]
