@@ -22,7 +22,7 @@ wavelength = 1064E-9
 triggers = triggers[triggers.GPStime > t_start]
 triggers = triggers[triggers.GPStime < t_stop]
 
-glitch_type = 'Low_Frequency_Lines'
+glitch_type = 'Low_Frequency_Burst'
 i_glitch = triggers.index[triggers.label == glitch_type]
 i_other = triggers.index[triggers.label != glitch_type]
 
