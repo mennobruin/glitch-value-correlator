@@ -90,10 +90,20 @@ save_name = f'{channel}_seperate_peakFreq.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 fig = plt.figure(figsize=(10, 8))
-plt.scatter(p_other, t_other.centralFreq, s=5*np.log10(t_other.snr))
-plt.scatter(p_scattered_light, t_scattered_light.centralFreq, s=5*np.log10(t_scattered_light.snr))
+plt.scatter(p_other, t_other.peakFreq, s=10*np.log10(t_other.snr))
+plt.scatter(p_scattered_light, t_scattered_light.peakFreq, s=10*np.log10(t_scattered_light.snr))
 plt.xlabel('Velocity [m/s]')
 plt.ylabel('Trigger Frequency [Hz]')
 plt.xlim(0, 1.15*max(points))
-save_name = f'{channel}_seperate_centralFreq.png'
+plt.ylim(0, 150)
+save_name = f'{channel}_seperate_peakFreq.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+
+# fig = plt.figure(figsize=(10, 8))
+# plt.scatter(p_other, t_other.centralFreq, s=5*np.log10(t_other.snr))
+# plt.scatter(p_scattered_light, t_scattered_light.centralFreq, s=5*np.log10(t_scattered_light.snr))
+# plt.xlabel('Velocity [m/s]')
+# plt.ylabel('Trigger Frequency [Hz]')
+# plt.xlim(0, 1.15*max(points))
+# save_name = f'{channel}_seperate_centralFreq.png'
+# fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
