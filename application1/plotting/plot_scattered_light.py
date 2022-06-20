@@ -38,8 +38,8 @@ with FrameFile(source) as ff:
         points.append(abs(p - mean))
 points = np.array(points)
 
-# x_max = 1.15*max(points)
-x_max = 3.5
+x_max = 1.15*max(points)
+y_max = 1.15*max(triggers.peakFreq)
 y = 2 * x_max / wavelength
 
 plt.rcParams['font.size'] = 16
@@ -68,6 +68,7 @@ cbar.set_label(r'$log_{10} SNR$', rotation=90)
 plt.xlabel('Velocity [m/s]')
 plt.ylabel('Trigger Frequency [Hz]')
 plt.xlim(0, x_max)
+plt.ylim(0, y_max)
 plt.legend()
 save_name = f'density_{channel}_peakFreq.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
@@ -100,6 +101,7 @@ plt.scatter(p_scattered_light, t_scattered_light.peakFreq, s=5*np.log10(t_scatte
 plt.xlabel('Velocity [m/s]')
 plt.ylabel('Trigger Frequency [Hz]')
 plt.xlim(0, x_max)
+plt.ylim(0, y_max)
 plt.legend()
 save_name = f'density_{channel}_seperate_peakFreq.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
