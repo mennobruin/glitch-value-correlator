@@ -19,8 +19,8 @@ t_stop = 1264635000
 triggers = triggers[triggers.GPStime > t_start]
 triggers = triggers[triggers.GPStime < t_stop]
 
-i_scattered_light = triggers.index[triggers.label == 'Scattered_Light']
-i_other = triggers.index[triggers.label != 'Scattered_Light']
+i_scattered_light = triggers.index[triggers.label == 'Scattered_Light'] - 336497
+i_other = triggers.index[triggers.label != 'Scattered_Light'] - 336497
 
 print(min(i_scattered_light), max(i_scattered_light), i_scattered_light.shape)
 print(min(i_other), max(i_other), i_other.shape)
