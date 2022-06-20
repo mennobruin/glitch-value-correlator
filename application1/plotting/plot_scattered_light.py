@@ -19,10 +19,8 @@ t_stop = 1264635000
 triggers = triggers[triggers.GPStime > t_start]
 triggers = triggers[triggers.GPStime < t_stop]
 
-i_scattered_light = np.array(triggers.index[triggers.label == 'Scattered_Light'] - 336497)
-i_other = np.array(triggers.index[triggers.label != 'Scattered_Light'] - 336497)
-
-print(type(i_scattered_light), i_scattered_light)
+i_scattered_light = triggers.index[triggers.label == 'Scattered_Light']
+i_other = triggers.index[triggers.label != 'Scattered_Light']
 
 mean = 0.0000110343
 
@@ -78,9 +76,9 @@ plt.rcParams['font.size'] = 16
 # fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 p_scattered_light = points[i_scattered_light]
-t_scattered_light = triggers[i_scattered_light]
+t_scattered_light = triggers.loc[i_scattered_light]
 p_other = points[i_other]
-t_other = triggers[i_other]
+t_other = triggers.loc[i_other]
 
 fig = plt.figure(figsize=(10, 8))
 plt.scatter(p_other, t_other.peakFreq, s=5*np.log10(t_other.snr), a=0.7)
