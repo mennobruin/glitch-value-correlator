@@ -38,7 +38,8 @@ with FrameFile(source) as ff:
         points.append(abs(p - mean))
 points = np.array(points)
 
-x_max = 1.15*max(points)
+# x_max = 1.15*max(points)
+x_max = 3.5
 y = 2 * x_max / wavelength
 
 plt.rcParams['font.size'] = 16
@@ -62,7 +63,8 @@ fig = plt.figure(figsize=(10, 8))
 plt.plot([0, x_max], [0, y], 'k--', label='Single-bounce')
 plt.plot([0, x_max], [0, 2*y], 'k-.', label='Double-bounce')
 sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=10*np.log10(triggers.snr), cmap='rainbow')
-plt.colorbar(sc)
+cbar = plt.colorbar(sc)
+cbar.set_label(r'$log_{10} SNR$', rotation=90)
 plt.xlabel('Velocity [m/s]')
 plt.ylabel('Trigger Frequency [Hz]')
 plt.xlim(0, x_max)
@@ -86,7 +88,7 @@ plt.ylabel('Trigger Frequency [Hz]')
 plt.xlim(0, x_max)
 plt.ylim(0, 150)
 plt.legend()
-save_name = f'{channel}_seperate_peakFreq_.png'
+save_name = f'{channel}_seperate_peakFreq.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 fig = plt.figure(figsize=(10, 8))
