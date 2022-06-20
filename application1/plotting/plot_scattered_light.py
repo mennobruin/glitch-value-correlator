@@ -73,8 +73,8 @@ fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 # save_name = f'density_{channel}_peakFreq.png'
 # fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
-p_scattered_light = points[i_glitch - 336497]
-t_scattered_light = triggers.loc[i_glitch]
+p_glitch = points[i_glitch - 336497]
+t_glitch = triggers.loc[i_glitch]
 p_other = points[i_other - 336497]
 t_other = triggers.loc[i_other]
 
@@ -82,7 +82,7 @@ fig = plt.figure(figsize=(10, 8))
 plt.plot([0, x_max], [0, y], 'k--', label='Single-bounce')
 plt.plot([0, x_max], [0, 2*y], 'k-.', label='Double-bounce')
 plt.scatter(p_other, t_other.peakFreq, s=10*np.log10(t_other.snr))
-plt.scatter(p_scattered_light, t_scattered_light.peakFreq, s=10*np.log10(t_scattered_light.snr))
+plt.scatter(p_glitch, t_glitch.peakFreq, s=10 * np.log10(t_glitch.snr))
 plt.xlabel('Velocity [m/s]')
 plt.ylabel('Trigger Frequency [Hz]')
 plt.xlim(0, x_max)
