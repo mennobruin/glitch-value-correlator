@@ -168,7 +168,7 @@ class Excavator:
 
         if bootstrap:
             for label in self.labels:
-                fom_ks_bootstrap = KolgomorovSirnov()
+                fom_ks_bootstrap = KolgomorovSmirnov()
                 for i, (k, v) in tqdm(enumerate(ks_results[label][0:3]), desc=f'Bootstrapping KS'):
                     channel, transformation = k
                     h_aux = self.h_aux_cum[channel, transformation]
