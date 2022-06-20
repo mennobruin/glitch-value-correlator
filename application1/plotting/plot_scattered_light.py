@@ -11,7 +11,7 @@ from resources.constants import PLOT_DIR
 from virgotools.frame_lib import FrameFile
 
 reader = CSVReader()
-triggers = reader.load_csv('GSpy_ALLIFO_O3b_0921_final', usecols=['GPStime', 'peakFreq', 'centralFreq', 'snr'])
+triggers = reader.load_csv('GSpy_ALLIFO_O3b_0921_final', usecols=['GPStime', 'peakFreq', 'centralFreq', 'snr', 'label'])
 
 t_start = 1264625000
 t_stop = 1264635000
