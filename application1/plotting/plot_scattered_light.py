@@ -22,7 +22,7 @@ wavelength = 1064E-9
 triggers = triggers[triggers.GPStime > t_start]
 triggers = triggers[triggers.GPStime < t_stop]
 
-glitch_type = 'Low_Frequency_Burst'
+glitch_type = 'Scattered_Light'
 i_glitch = triggers.index[triggers.label == glitch_type]
 i_other = triggers.index[triggers.label != glitch_type]
 
@@ -45,19 +45,19 @@ y = 2 * x_max / wavelength
 
 plt.rcParams['font.size'] = 16
 
-fig = plt.figure(figsize=(10, 8))
-plt.plot([0, x_max], [0, y], 'k--', label='Single-bounce')
-plt.plot([0, x_max], [0, 2*y], 'k-.', label='Double-bounce')
-sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=10*np.log10(triggers.snr), cmap='rainbow')
-cbar = plt.colorbar(sc)
-cbar.set_label(r'log$_{10}$ SNR', rotation=90)
-plt.xlabel('Velocity [m/s]')
-plt.ylabel('Trigger Frequency [Hz]')
-plt.xlim(0, x_max)
-plt.ylim(0, 80)
-plt.legend()
-save_name = f'{channel}_peakFreq_{glitch_type}.png'
-fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+# fig = plt.figure(figsize=(10, 8))
+# plt.plot([0, x_max], [0, y], 'k--', label='Single-bounce')
+# plt.plot([0, x_max], [0, 2*y], 'k-.', label='Double-bounce')
+# sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=10*np.log10(triggers.snr), cmap='rainbow')
+# cbar = plt.colorbar(sc)
+# cbar.set_label(r'log$_{10}$ SNR', rotation=90)
+# plt.xlabel('Velocity [m/s]')
+# plt.ylabel('Trigger Frequency [Hz]')
+# plt.xlim(0, x_max)
+# plt.ylim(0, 80)
+# plt.legend()
+# save_name = f'{channel}_peakFreq.png'
+# fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 # fig = plt.figure(figsize=(10, 8))
 # plt.plot([0, x_max], [0, y], 'k--', label='Single-bounce')
@@ -81,8 +81,8 @@ t_other = triggers.loc[i_other]
 fig = plt.figure(figsize=(10, 8))
 plt.plot([0, x_max], [0, y], 'k--', label='Single-bounce')
 plt.plot([0, x_max], [0, 2*y], 'k-.', label='Double-bounce')
-plt.scatter(p_other, t_other.peakFreq, s=10*np.log10(t_other.snr))
-plt.scatter(p_glitch, t_glitch.peakFreq, s=10 * np.log10(t_glitch.snr))
+plt.scatter(p_other, t_other.peakFreq, s=10*np.log10(t_other.snr), label='Other')
+plt.scatter(p_glitch, t_glitch.peakFreq, s=10 * np.log10(t_glitch.snr), label='Scattered Light')
 plt.xlabel('Velocity [m/s]')
 plt.ylabel('Trigger Frequency [Hz]')
 plt.xlim(0, x_max)
