@@ -81,7 +81,7 @@ p_other = points[i_other - 336497]
 t_other = triggers.loc[i_other]
 
 fig = plt.figure(figsize=(10, 8))
-plt.scatter(p_other, t_other.peakFreq, s=5*np.log10(t_other.snr), a=0.7)
+plt.scatter(p_other, t_other.peakFreq, s=5*np.log10(t_other.snr))
 plt.scatter(p_scattered_light, t_scattered_light.peakFreq, s=5*np.log10(t_scattered_light.snr))
 plt.xlabel('Velocity [m/s]')
 plt.ylabel('Trigger Frequency [Hz]')
@@ -90,7 +90,7 @@ save_name = f'{channel}_seperate_peakFreq.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 fig = plt.figure(figsize=(10, 8))
-plt.scatter(p_other, t_other.centralFreq, s=5*np.log10(t_other.snr), a=0.7)
+plt.scatter(p_other, t_other.centralFreq, s=5*np.log10(t_other.snr))
 plt.scatter(p_scattered_light, t_scattered_light.centralFreq, s=5*np.log10(t_scattered_light.snr))
 plt.xlabel('Velocity [m/s]')
 plt.ylabel('Trigger Frequency [Hz]')
