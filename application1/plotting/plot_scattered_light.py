@@ -75,9 +75,9 @@ plt.rcParams['font.size'] = 16
 # save_name = f'density_{channel}_centralFreq.png'
 # fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
-p_scattered_light = points[i_scattered_light]
+p_scattered_light = points[i_scattered_light - 336497]
 t_scattered_light = triggers.loc[i_scattered_light]
-p_other = points[i_other]
+p_other = points[i_other - 336497]
 t_other = triggers.loc[i_other]
 
 fig = plt.figure(figsize=(10, 8))
