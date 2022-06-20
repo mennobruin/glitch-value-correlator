@@ -1,6 +1,7 @@
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 from scipy import stats
 from tqdm import tqdm
 
@@ -15,6 +16,8 @@ triggers = reader.load_csv('GSpy_ALLIFO_O3b_0921_final', usecols=['GPStime', 'pe
 
 t_start = 1264625000
 t_stop = 1264635000
+
+wavelength = 1064E-9
 
 triggers = triggers[triggers.GPStime > t_start]
 triggers = triggers[triggers.GPStime < t_stop]
@@ -37,15 +40,15 @@ points = np.array(points)
 
 plt.rcParams['font.size'] = 16
 
-# fig = plt.figure(figsize=(10, 8))
-# sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=5*np.log10(triggers.snr))
-# plt.colorbar(sc)
-# plt.xlabel('Velocity [m/s]')
-# plt.ylabel('Trigger Frequency [Hz]')
-# plt.xlim(0, 1.15*max(points))
-# plt.ylim(0, 150)
-# save_name = f'{channel}_peakFreq.png'
-# fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+fig = plt.figure(figsize=(10, 8))
+sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=10*np.log10(triggers.snr), cmap='rainbow')
+plt.colorbar(sc)
+plt.xlabel('Velocity [m/s]')
+plt.ylabel('Trigger Frequency [Hz]')
+plt.xlim(0, 1.15*max(points))
+plt.ylim(0, 150)
+save_name = f'{channel}_peakFreq.png'
+fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 #
 # fig = plt.figure(figsize=(10, 8))
 # sc = plt.scatter(points, triggers.centralFreq, c=np.log10(triggers.snr), s=5*np.log10(triggers.snr))
@@ -57,14 +60,14 @@ plt.rcParams['font.size'] = 16
 # save_name = f'{channel}_centralFreq.png'
 # fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 #
-# fig = plt.figure(figsize=(10, 8))
-# sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=5*np.log10(triggers.snr))
-# plt.colorbar(sc)
-# plt.xlabel('Velocity [m/s]')
-# plt.ylabel('Trigger Frequency [Hz]')
-# plt.xlim(0, 1.15*max(points))
-# save_name = f'density_{channel}_peakFreq.png'
-# fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+fig = plt.figure(figsize=(10, 8))
+sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=10*np.log10(triggers.snr), cmap='rainbow')
+plt.colorbar(sc)
+plt.xlabel('Velocity [m/s]')
+plt.ylabel('Trigger Frequency [Hz]')
+plt.xlim(0, 1.15*max(points))
+save_name = f'density_{channel}_peakFreq.png'
+fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 #
 # fig = plt.figure(figsize=(10, 8))
 # sc = plt.scatter(points, triggers.centralFreq, c=np.log10(triggers.snr), s=5*np.log10(triggers.snr))
@@ -90,6 +93,12 @@ save_name = f'{channel}_seperate_peakFreq.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 fig = plt.figure(figsize=(10, 8))
+
+x = 1.75E-5
+y = 2 * x / wavelength
+print(y)
+plt.plot([0, x], [0, y], 'k-')
+
 plt.scatter(p_other, t_other.peakFreq, s=10*np.log10(t_other.snr))
 plt.scatter(p_scattered_light, t_scattered_light.peakFreq, s=10*np.log10(t_scattered_light.snr))
 plt.xlabel('Velocity [m/s]')
