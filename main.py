@@ -159,23 +159,26 @@ class Excavator:
         # self.report.add_tag(tag_type='table', tag_id=ad_table)
         # self.report.add_row_to_table(content=ad_table_cols, tag='th', table_id=ad_table)
 
+        ks_results = {}
         for label in self.labels:
-            ks_results = sorted(fom_ks[label].scores.items(), key=lambda f: f[1].d_n, reverse=True)
+            ks_results[label] = sorted(fom_ks[label].scores.items(), key=lambda f: f[1].d_n, reverse=True)
         # ad_results = sorted(fom_ad.scores.items(), key=lambda f: f[1].ad, reverse=True)
-            self.writer.write_csv(ks_results, f'ks_results_{label}.csv', file_path=self.writer.default_path + 'results/')
+        #     self.writer.write_csv(ks_results[label], f'ks_results_{label}.csv', file_path=self.writer.default_path + 'results/')
         # self.writer.write_csv(ad_results, 'ad_results.csv', file_path=self.writer.default_path + 'results/')
-        sys.exit(1)
-        if bootstrap:
-            fom_ks_bootstrap = KolgomorovSmirnov()
-            for i, (k, v) in tqdm(enumerate(ks_results[0:10]), desc=f'Bootstrapping KS'):
-                channel, transformation = k
-                h_aux = self.h_aux_cum[channel, transformation]
-                h_trig = h_trig_combined[channel, transformation]
-                fom_ks_bootstrap.calculate(channel, transformation, h_aux, h_trig, bootstrap=True)
 
-            ks_results_bootstrap = sorted(fom_ks_bootstrap.scores.items(), key=lambda f: f[1].d_n, reverse=True)
-            for result in ks_results_bootstrap:
-                print(result)
+        if bootstrap:
+            for label in self.labels:
+                fom_ks_bootstrap = KolgomorovSirnov()
+                for i, (k, v) in tqdm(enumerate(ks_results[label][0:3]), desc=f'Bootstrapping KS'):
+                    channel, transformation = k
+                    h_aux = self.h_aux_cum[channel, transformation]
+                    h_trig = h_trig_combined[channel, transformation]
+                    fom_ks_bootstrap.calculate(channel, transformation, h_aux, h_trig, bootstrap=True)
+
+                ks_results_bootstrap = sorted(fom_ks_bootstrap.scores.items(), key=lambda f: f[1].d_n, reverse=True)
+                for result in ks_results_bootstrap:
+                    print(label, result)
+        sys.exit(1)
 
         ks_images_div = 'ks_images'
         self.report.add_tag(tag_type='div', tag_id=ks_images_div)

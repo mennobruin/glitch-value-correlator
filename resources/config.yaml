@@ -5,7 +5,7 @@ project.source: 'local'
 project.decimate: false
 project.load_existing: true
 project.run: true
-project.bootstrap: false
+project.bootstrap: true
 project.channel: 'V1:ENV_WEB_MAG_N'
 project.pipeline: 'local'
 project.snr_threshold: 0
