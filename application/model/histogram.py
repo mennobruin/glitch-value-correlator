@@ -21,7 +21,7 @@ can be merged efficiently
 
 import numpy as np
 
-from application1.config import config_manager
+from application.config import config_manager
 
 LOG = config_manager.get_logger(__name__)
 

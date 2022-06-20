@@ -3,10 +3,10 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-from application1.handler.data.reader.csv import CSVReader
-# from application1.handler.data.reader.frame_file import FrameFileReader
+from application.handler.data.reader.csv import CSVReader
+# from application.handler.data.reader.frame_file import FrameFileReader
 from resources.constants import RESOURCE_DIR
-from application1.handler.triggers import LocalPipeline, Omicron
+from application.handler.triggers import LocalPipeline, Omicron
 # from virgotools.frame_lib import FrameFile
 from sklearn.manifold import TSNE
 import seaborn as sns
@@ -49,7 +49,7 @@ def plot_trigger_density_omicron():
     ax.set_ylim(0, ceil_to_nearest_n(bins.max(), n=10))
     ax.set_xlabel('GPS Time', labelpad=10)
     ax.set_ylabel('Counts (#)', labelpad=10)
-    plt.savefig('application1/plotting/' + RESULTS_DIR + 'trigger_density_omicron.png', dpi=300, transparent=False, bbox_inches='tight')
+    plt.savefig('application/plotting/' + RESULTS_DIR + 'trigger_density_omicron.png', dpi=300, transparent=False, bbox_inches='tight')
 
 
 def plot_trigger_density_labels(trigger):

@@ -5,7 +5,7 @@ from scipy.stats import anderson_ksamp
 from collections import namedtuple
 
 from .base import BaseFOM
-from application1.config import config_manager
+from application.config import config_manager
 from ..histogram import Hist
 
 LOG = config_manager.get_logger(__name__)

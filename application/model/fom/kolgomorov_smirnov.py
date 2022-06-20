@@ -7,8 +7,8 @@ from collections import namedtuple
 
 from tqdm import tqdm
 
-from application1.model.histogram import Hist
-from application1.config import config_manager
+from application.model.histogram import Hist
+from application.config import config_manager
 
 LOG = config_manager.get_logger(__name__)
 

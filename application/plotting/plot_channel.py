@@ -6,10 +6,10 @@ from tqdm import tqdm
 from virgotools.frame_lib import FrameFile
 from ligo.segments import segment
 
-from application1.handler.data.reader.h5 import H5Reader
-from application1.handler.triggers import Omicron, LocalPipeline
+from application.handler.data.reader.h5 import H5Reader
+from application.handler.triggers import Omicron, LocalPipeline
 
-RESULTS_DIR = 'application1/plotting/results/'
+RESULTS_DIR = 'application/plotting/results/'
 # source = '/virgoData/ffl/trend.ffl'
 source = '/virgoData/ffl/raw_O3b_arch.ffl'
 

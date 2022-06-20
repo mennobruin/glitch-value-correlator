@@ -3,10 +3,10 @@ import pickle
 import matplotlib.pyplot as plt
 import os
 
-from application1.handler.data.reader.csv import CSVReader
-from application1.model.fom import AndersonDarling, KolgomorovSmirnov
-from application1.model.histogram import Hist
-from application1.plotting.plot import plot_histogram_cdf
+from application.handler.data.reader.csv import CSVReader
+from application.model.fom import AndersonDarling, KolgomorovSmirnov
+from application.model.histogram import Hist
+from application.plotting.plot import plot_histogram_cdf
 
 plt.rcParams['font.size'] = 16
 

@@ -10,9 +10,9 @@ import warnings
 from tqdm import tqdm
 
 from resources.constants import RESOURCE_DIR
-from application1.model.ffl_cache import FFLCache
-from application1.config import config_manager
-from application1.utils.tools import almost_int, exit_on_error
+from application.model.ffl_cache import FFLCache
+from application.config import config_manager
+from application.utils.tools import almost_int, exit_on_error
 
 from virgotools.frame_lib import FrameFile, FrVect2array
 

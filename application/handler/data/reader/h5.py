@@ -5,8 +5,8 @@ import h5py
 import numpy as np
 from ligo import segments
 
-from application1.config import config_manager
-from application1.utils import check_extension, exit_on_error, split_file_name
+from application.config import config_manager
+from application.utils import check_extension, exit_on_error, split_file_name
 from resources.constants import RESOURCE_DIR
 from .base import BaseReader
 

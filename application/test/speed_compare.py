@@ -3,7 +3,7 @@ import cProfile
 from tqdm import tqdm
 from fnmatch import fnmatch
 
-from application1.model.channel import Channel
+from application.model.channel import Channel
 
 import PyFd as fd
 from virgotools.frame_lib import FrameFile, FrVect2array

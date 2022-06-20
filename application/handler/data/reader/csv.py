@@ -1,7 +1,7 @@
 import pandas as pd
 
 from .base import BaseReader
-from application1.utils import check_extension
+from application.utils import check_extension
 
 
 class CSVReader(BaseReader):

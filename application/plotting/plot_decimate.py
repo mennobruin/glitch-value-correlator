@@ -11,7 +11,7 @@ plt.rcParams['font.size'] = 16
 source = '/virgoData/ffl/raw_O3b_arch'
 ds_path = RESOURCE_DIR + 'ds_data/'
 data_path = ds_path + 'data/'
-RESULTS_DIR = 'application1/plotting/results/'
+RESULTS_DIR = 'application/plotting/results/'
 
 channels = ['V1:SUSP_SBE_LC_elapsed_time',
             'V1:PAY_WI_Cam_ProcessingTime']

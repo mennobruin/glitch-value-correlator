@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import os
 import pickle
 
-from application1.handler.data.reader.h5 import H5Reader
-from application1.handler.triggers import LocalPipeline
-from application1.model.fom import KolgomorovSmirnov, AndersonDarling
-from application1.model.transformation import Differentiator, GaussianDifferentiator
-from application1.utils import slice_triggers_in_segment, config_manager
+from application.handler.data.reader.h5 import H5Reader
+from application.handler.triggers import LocalPipeline
+from application.model.fom import KolgomorovSmirnov, AndersonDarling
+from application.model.transformation import Differentiator, GaussianDifferentiator
+from application.utils import slice_triggers_in_segment, config_manager
 
 plt.rcParams['font.size'] = 16
 RESULTS_DIR = 'results/'

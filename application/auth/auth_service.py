@@ -3,7 +3,7 @@ import pathlib
 from gwpy.detector import Channel
 from gwpy.io import kerberos, nds2
 
-from application1.config import config_manager
+from application.config import config_manager
 
 LOG = config_manager.get_logger(__name__)
 

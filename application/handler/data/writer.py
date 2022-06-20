@@ -2,8 +2,8 @@ import csv
 import os
 
 from resources.constants import RESOURCE_DIR
-from application1.utils import check_extension, create_dir_if_not_exists
-from application1.config import config_manager
+from application.utils import check_extension, create_dir_if_not_exists
+from application.config import config_manager
 
 LOG = config_manager.get_logger(__name__)
 

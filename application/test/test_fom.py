@@ -1,8 +1,8 @@
 import numpy as np
 
-from application1.model.histogram import Hist, plot_hist
-from application1.model.fom import KolgomorovSmirnov, AndersonDarling
-from application1.plotting.plot import plot_histogram_cdf
+from application.model.histogram import Hist, plot_hist
+from application.model.fom import KolgomorovSmirnov, AndersonDarling
+from application.plotting.plot import plot_histogram_cdf
 
 
 def test_ks(size):

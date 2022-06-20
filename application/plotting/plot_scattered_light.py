@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from tqdm import tqdm
 
-from application1.handler.data.reader.csv import CSVReader
-from application1.model.histogram import Hist
+from application.handler.data.reader.csv import CSVReader
+from application.model.histogram import Hist
 from resources.constants import PLOT_DIR
 
 from virgotools.frame_lib import FrameFile

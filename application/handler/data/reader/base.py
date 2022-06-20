@@ -1,10 +1,10 @@
 import os
 import numpy as np
 
-from application1.utils import split_file_name
+from application.utils import split_file_name
 from resources.constants import RESOURCE_DIR
 
-from application1.config import config_manager
+from application.config import config_manager
 
 LOG = config_manager.get_logger(__name__)
 

@@ -5,9 +5,9 @@ import numpy as np
 from scipy import stats
 import copy as cp
 
-from application1.handler.triggers import LocalPipeline
-from application1.model.histogram import Hist
-from application1.plotting.plot import plot_histogram_cdf, plot_histogram
+from application.handler.triggers import LocalPipeline
+from application.model.histogram import Hist
+from application.plotting.plot import plot_histogram_cdf, plot_histogram
 from resources.constants import PLOT_DIR
 
 np.random.seed(3)

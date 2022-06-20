@@ -4,7 +4,7 @@ import numpy as np
 import scipy.signal as sig
 import matplotlib.pyplot as plt
 
-from application1.config import config_manager
+from application.config import config_manager
 
 LOG = config_manager.get_logger(__name__)
 

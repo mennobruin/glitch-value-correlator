@@ -1,8 +1,8 @@
 import numpy as np
 
 from .trigger_pipeline import TriggerPipeline
-from application1.handler.data.reader.csv import CSVReader
-from application1.config import config_manager
+from application.handler.data.reader.csv import CSVReader
+from application.config import config_manager
 
 LOG = config_manager.get_logger(__name__)
 

@@ -8,9 +8,9 @@ from virgotools.frame_lib import FrameFile, FrVect2array
 from virgotools import getChannel
 from framel import frgetvect1d
 
-from application1.config import config_manager
-from application1.model.channel import Channel, ChannelSegment
-from application1.utils import check_extension
+from application.config import config_manager
+from application.model.channel import Channel, ChannelSegment
+from application.utils import check_extension
 from .base import BaseReader
 
 LOG = config_manager.get_logger(__name__)

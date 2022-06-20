@@ -5,21 +5,21 @@ import sys
 import numpy as np
 from tqdm import tqdm
 
-from application1.config import config_manager
-from application1.handler.data.reader.ffl import FrameFileReader
-from application1.handler.data.reader.h5 import H5Reader
-from application1.handler.data.resampler import Resampler
-from application1.handler.data.writer import DataWriter
-from application1.handler.triggers import LocalPipeline, Omicron
-from application1.model.channel import Channel
-from application1.model.ffl_cache import FFLCache
-from application1.model.fom import KolgomorovSmirnov, AndersonDarling
-from application1.model.histogram import Hist
-from application1.model.transformation import do_transformations, GaussianDifferentiator, \
+from application.config import config_manager
+from application.handler.data.reader.ffl import FrameFileReader
+from application.handler.data.reader.h5 import H5Reader
+from application.handler.data.resampler import Resampler
+from application.handler.data.writer import DataWriter
+from application.handler.triggers import LocalPipeline, Omicron
+from application.model.channel import Channel
+from application.model.ffl_cache import FFLCache
+from application.model.fom import KolgomorovSmirnov, AndersonDarling
+from application.model.histogram import Hist
+from application.model.transformation import do_transformations, GaussianDifferentiator, \
     SavitzkyGolayDifferentiator, Differentiator, Abs, AbsMean
-from application1.plotting.plot import plot_histogram_cdf
-from application1.plotting.report import HTMLReport
-from application1.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments
+from application.plotting.plot import plot_histogram_cdf
+from application.plotting.report import HTMLReport
+from application.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments
 from resources.constants import CONFIG_FILE, RESOURCE_DIR
 
 LOG = config_manager.get_logger(__name__)

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pathlib
 
 
-resource_path = str(pathlib.Path(__file__).parents[1].resolve()) + '/application1/resources/'
+resource_path = str(pathlib.Path(__file__).parents[1].resolve()) + '/application/resources/'
 csv_path = resource_path + 'csv/'
 
 

@@ -4,9 +4,9 @@ import numpy as np
 from subprocess import Popen, PIPE
 
 from .trigger_pipeline import TriggerPipeline
-from application1.model.channel import Channel
-from application1.utils import exit_on_error
-from application1.config import config_manager
+from application.model.channel import Channel
+from application.utils import exit_on_error
+from application.config import config_manager
 
 LOG = config_manager.get_logger(__name__)
 

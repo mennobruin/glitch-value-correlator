@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from resources.constants import PLOT_DIR
-from application1.config import config_manager
+from application.config import config_manager
 
 
 LOG = config_manager.get_logger(__name__)
