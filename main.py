@@ -168,16 +168,17 @@ class Excavator:
 
         if bootstrap:
             for label in self.labels:
-                fom_ks_bootstrap = KolgomorovSmirnov()
-                for i, (k, v) in tqdm(enumerate(ks_results[label][0:3]), desc=f'Bootstrapping KS'):
-                    channel, transformation = k
-                    h_aux = self.h_aux_cum[channel, transformation]
-                    h_trig = self.h_trig_cum[channel, transformation, label]
-                    fom_ks_bootstrap.calculate(channel, transformation, h_aux, h_trig, bootstrap=True)
+                if label in ('Low_Frequency_Burst', 'Low_Frequency_Lines', 'Scattered_Light'):
+                    fom_ks_bootstrap = KolgomorovSmirnov()
+                    for i, (k, v) in tqdm(enumerate(ks_results[label]), desc=f'Bootstrapping KS'):
+                        channel, transformation = k
+                        h_aux = self.h_aux_cum[channel, transformation]
+                        h_trig = self.h_trig_cum[channel, transformation, label]
+                        fom_ks_bootstrap.calculate(channel, transformation, h_aux, h_trig, bootstrap=True)
 
-                ks_results_bootstrap = sorted(fom_ks_bootstrap.scores.items(), key=lambda f: f[1].d_n, reverse=True)
-                for result in ks_results_bootstrap:
-                    print(label, result)
+                    ks_results_bootstrap = sorted(fom_ks_bootstrap.scores.items(), key=lambda f: f[1].d_n, reverse=True)
+                    for result in ks_results_bootstrap:
+                        print(label, result)
         sys.exit(1)
 
         ks_images_div = 'ks_images'
