@@ -3,7 +3,7 @@
 .idea/
 /resources/ds_data/
 /resources/report/*temp*
-/application/plotting/results/
+/application1/plotting/results/
 *.pickle
 *.pk
 
