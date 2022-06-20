@@ -172,7 +172,7 @@ class Excavator:
                 for i, (k, v) in tqdm(enumerate(ks_results[label][0:3]), desc=f'Bootstrapping KS'):
                     channel, transformation = k
                     h_aux = self.h_aux_cum[channel, transformation]
-                    h_trig = h_trig_combined[channel, transformation]
+                    h_trig = self.h_trig_cum[channel, transformation, label]
                     fom_ks_bootstrap.calculate(channel, transformation, h_aux, h_trig, bootstrap=True)
 
                 ks_results_bootstrap = sorted(fom_ks_bootstrap.scores.items(), key=lambda f: f[1].d_n, reverse=True)
