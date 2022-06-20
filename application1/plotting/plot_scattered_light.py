@@ -45,21 +45,6 @@ y = 2 * x_max / wavelength
 plt.rcParams['font.size'] = 16
 
 fig = plt.figure(figsize=(10, 8))
-
-plt.plot([0, x_max], [0, y], 'k--', label='Single-bounce')
-plt.plot([0, x_max], [0, 2*y], 'k-.', label='Double-bounce')
-sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=10*np.log10(triggers.snr), cmap='rainbow')
-plt.colorbar(sc)
-plt.xlabel('Velocity [m/s]')
-plt.ylabel('Trigger Frequency [Hz]')
-plt.xlim(0, x_max)
-plt.ylim(0, 80)
-plt.legend()
-save_name = f'{channel}_peakFreq.png'
-fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
-
-fig = plt.figure(figsize=(10, 8))
-
 plt.plot([0, x_max], [0, y], 'k--', label='Single-bounce')
 plt.plot([0, x_max], [0, 2*y], 'k-.', label='Double-bounce')
 sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=10*np.log10(triggers.snr), cmap='rainbow')
@@ -68,10 +53,24 @@ cbar.set_label(r'log$_{10}$ SNR', rotation=90)
 plt.xlabel('Velocity [m/s]')
 plt.ylabel('Trigger Frequency [Hz]')
 plt.xlim(0, x_max)
-plt.ylim(0, y_max)
+plt.ylim(0, 80)
 plt.legend()
-save_name = f'density_{channel}_peakFreq.png'
+save_name = f'{channel}_peakFreq.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+
+# fig = plt.figure(figsize=(10, 8))
+# plt.plot([0, x_max], [0, y], 'k--', label='Single-bounce')
+# plt.plot([0, x_max], [0, 2*y], 'k-.', label='Double-bounce')
+# sc = plt.scatter(points, triggers.peakFreq, c=np.log10(triggers.snr), s=10*np.log10(triggers.snr), cmap='rainbow')
+# cbar = plt.colorbar(sc)
+# cbar.set_label(r'log$_{10}$ SNR', rotation=90)
+# plt.xlabel('Velocity [m/s]')
+# plt.ylabel('Trigger Frequency [Hz]')
+# plt.xlim(0, x_max)
+# plt.ylim(0, y_max)
+# plt.legend()
+# save_name = f'density_{channel}_peakFreq.png'
+# fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 p_scattered_light = points[i_scattered_light - 336497]
 t_scattered_light = triggers.loc[i_scattered_light]
@@ -79,7 +78,6 @@ p_other = points[i_other - 336497]
 t_other = triggers.loc[i_other]
 
 fig = plt.figure(figsize=(10, 8))
-
 plt.plot([0, x_max], [0, y], 'k--', label='Single-bounce')
 plt.plot([0, x_max], [0, 2*y], 'k-.', label='Double-bounce')
 plt.scatter(p_other, t_other.peakFreq, s=10*np.log10(t_other.snr))
@@ -89,19 +87,18 @@ plt.ylabel('Trigger Frequency [Hz]')
 plt.xlim(0, x_max)
 plt.ylim(0, 80)
 plt.legend()
-save_name = f'{channel}_seperate_peakFreq.png'
+save_name = f'{channel}_separate_peakFreq.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
-fig = plt.figure(figsize=(10, 8))
-
-plt.plot([0, x_max], [0, y], 'k--', label='Single-bounce')
-plt.plot([0, x_max], [0, 2*y], 'k-.', label='Double-bounce')
-plt.scatter(p_other, t_other.peakFreq, s=5*np.log10(t_other.snr))
-plt.scatter(p_scattered_light, t_scattered_light.peakFreq, s=5*np.log10(t_scattered_light.snr))
-plt.xlabel('Velocity [m/s]')
-plt.ylabel('Trigger Frequency [Hz]')
-plt.xlim(0, x_max)
-plt.ylim(0, y_max)
-plt.legend()
-save_name = f'density_{channel}_seperate_peakFreq.png'
-fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
+# fig = plt.figure(figsize=(10, 8))
+# plt.plot([0, x_max], [0, y], 'k--', label='Single-bounce')
+# plt.plot([0, x_max], [0, 2*y], 'k-.', label='Double-bounce')
+# plt.scatter(p_other, t_other.peakFreq, s=5*np.log10(t_other.snr))
+# plt.scatter(p_scattered_light, t_scattered_light.peakFreq, s=5*np.log10(t_scattered_light.snr))
+# plt.xlabel('Velocity [m/s]')
+# plt.ylabel('Trigger Frequency [Hz]')
+# plt.xlim(0, x_max)
+# plt.ylim(0, y_max)
+# plt.legend()
+# save_name = f'density_{channel}_seperate_peakFreq.png'
+# fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
