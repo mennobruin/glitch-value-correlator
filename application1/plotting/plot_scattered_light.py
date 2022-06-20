@@ -22,8 +22,9 @@ wavelength = 1064E-9
 triggers = triggers[triggers.GPStime > t_start]
 triggers = triggers[triggers.GPStime < t_stop]
 
-i_scattered_light = triggers.index[triggers.label == 'Scattered_Light']
-i_other = triggers.index[triggers.label != 'Scattered_Light']
+glitch_type = 'Low_Frequency_Lines'
+i_glitch = triggers.index[triggers.label == glitch_type]
+i_other = triggers.index[triggers.label != glitch_type]
 
 mean = 0.0000110343
 
@@ -55,7 +56,7 @@ plt.ylabel('Trigger Frequency [Hz]')
 plt.xlim(0, x_max)
 plt.ylim(0, 80)
 plt.legend()
-save_name = f'{channel}_peakFreq.png'
+save_name = f'{channel}_peakFreq_{glitch_type}.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 # fig = plt.figure(figsize=(10, 8))
@@ -72,8 +73,8 @@ fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 # save_name = f'density_{channel}_peakFreq.png'
 # fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
-p_scattered_light = points[i_scattered_light - 336497]
-t_scattered_light = triggers.loc[i_scattered_light]
+p_scattered_light = points[i_glitch - 336497]
+t_scattered_light = triggers.loc[i_glitch]
 p_other = points[i_other - 336497]
 t_other = triggers.loc[i_other]
 
@@ -87,7 +88,7 @@ plt.ylabel('Trigger Frequency [Hz]')
 plt.xlim(0, x_max)
 plt.ylim(0, 80)
 plt.legend()
-save_name = f'{channel}_separate_peakFreq.png'
+save_name = f'{channel}_separate_peakFreq_{glitch_type}.png'
 fig.savefig(PLOT_DIR + save_name, dpi=fig.dpi)
 
 # fig = plt.figure(figsize=(10, 8))
