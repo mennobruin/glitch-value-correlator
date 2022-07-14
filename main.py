@@ -1,3 +1,15 @@
+"""
+    Main program.
+        1. Read .../resources/config.yaml
+        2. (if applicable) downsample data
+        3. Load triggers
+        4. Either (a) load existing data (.pickle) or (b) run model on new data
+            4b.1 apply transformations
+            4b.2 load (transformed) data into histograms
+        5. Calculate KS distance for each channel and (if applicable) bootstrap
+        6. Generate report with results
+"""
+
 import os
 import pickle
 import sys
@@ -5,31 +17,23 @@ import sys
 import numpy as np
 from tqdm import tqdm
 
-from application1.config import config_manager
-from application1.handler.data.reader.ffl import FrameFileReader
-from application1.handler.data.reader.h5 import H5Reader
-from application1.handler.data.resampler import Resampler
-from application1.handler.data.writer import DataWriter
-from application1.handler.triggers import LocalPipeline, Omicron
-from application1.model.channel import Channel
-from application1.model.ffl_cache import FFLCache
-from application1.model.fom import KolgomorovSmirnov, AndersonDarling
-from application1.model.histogram import Hist
-from application1.model.transformation import do_transformations, GaussianDifferentiator, \
+from application.config import config_manager
+from application.handler.data.reader.ffl import FrameFileReader
+from application.handler.data.reader.h5 import H5Reader
+from application.handler.data.resampler import Resampler
+from application.handler.data.writer import DataWriter
+from application.handler.triggers import LocalPipeline, Omicron
+from application.model.ffl_cache import FFLCache
+from application.model.fom import KolmogorovSmirnov, AndersonDarling
+from application.model.histogram import Hist
+from application.model.transformation import do_transformations, GaussianDifferentiator, \
     SavitzkyGolayDifferentiator, Differentiator, Abs, AbsMean
-from application1.plotting.plot import plot_histogram_cdf
-from application1.plotting.report import HTMLReport
-from application1.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments
+from application.plotting.plot import plot_histogram_cdf
+from application.plotting.report import HTMLReport
+from application.utils import count_triggers_in_segment, slice_triggers_in_segment, iter_segments
 from resources.constants import CONFIG_FILE, RESOURCE_DIR
 
 LOG = config_manager.get_logger(__name__)
-
-"""
- - done: implement transformations
- - blocked: implement parallel processing for histograms
- - done: think about potential new transformations
- - done: create argument parser + default values file which remembers previous inputs
-"""
 
 
 class Excavator:
@@ -37,21 +41,21 @@ class Excavator:
     def __init__(self):
         LOG.info(f"Loading configuration from {CONFIG_FILE}.")
         self.config = config_manager.load_config()
-        self.source = self.config['project.source']
-        self.t_start = self.config['project.start_time']
-        self.t_stop = self.config['project.end_time']
-        self.f_target = self.config['project.target_frequency']
-        with open(self.config['project.blacklist_patterns'], 'r') as f:
+        self.source = self.config['application.source']
+        self.t_start = self.config['application.start_time']
+        self.t_stop = self.config['application.end_time']
+        self.f_target = self.config['application.target_frequency']
+        with open(self.config['application.blacklist_patterns'], 'r') as f:
             bl_patterns: list = f.read().splitlines()
 
-        if self.config['project.decimate']:
+        if self.config['application.decimate']:
             LOG.info(f"Downsampling data to {self.f_target}Hz.")
             self.decimate_data()
 
-        if self.config['project.pipeline'] == 'omicron':
-            self.trigger_pipeline = Omicron(channel=self.config['project.channel'], snr_threshold=self.config['project.snr_threshold'])
+        if self.config['application.pipeline'] == 'omicron':
+            self.trigger_pipeline = Omicron(channel=self.config['application.channel'], snr_threshold=self.config['application.snr_threshold'])
         else:
-            self.trigger_pipeline = LocalPipeline(trigger_file=self.config['project.trigger_file'])
+            self.trigger_pipeline = LocalPipeline(trigger_file=self.config['application.trigger_file'])
         self.labels = self.trigger_pipeline.labels
 
         if self.source == 'local':
@@ -78,13 +82,12 @@ class Excavator:
         self.h_trig_cum = None
         self.i_trigger = None
 
-        if self.config['project.run']:
-            self.run(load_existing=self.config['project.load_existing'], bootstrap=self.config['project.bootstrap'])
+        if self.config['application.run']:
+            self.run(load_existing=self.config['application.load_existing'], bootstrap=self.config['application.bootstrap'])
 
     def run(self, n_iter=1, load_existing=True, bootstrap=False):
 
         self.available_channels = self.reader.get_available_channels()
-        # self.available_channels = [Channel(name='V1:ENV_WEB_SEIS_W', f_sample=50)]
         LOG.info(f'Found {len(self.available_channels)} available channels.')
 
         triggers = self.trigger_pipeline.get_segment(gps_start=self.t_start, gps_end=self.t_stop)
@@ -110,30 +113,29 @@ class Excavator:
             with open(test_file, 'wb') as pkf:
                 pickle.dump({'trig': self.h_trig_cum, 'aux': self.h_aux_cum, 'channels': self.available_channels}, pkf)
 
-        # fom_ks = KolgomorovSmirnov()
-        # fom_ad = AndersonDarling()
+        fom_ks = KolmogorovSmirnov()
+        fom_ad = AndersonDarling()
         h_trig_combined = {}
-        # for channel in tqdm(self.available_channels, desc="Computing Results"):
-        #     for transformation_name in self.transformation_names:
-        #         try:
-        #             h_aux = self.h_aux_cum[channel, transformation_name]
-        #             h_trig = Hist(np.array([]))
-        #             for label in self.labels:
-        #                 h_trig += self.h_trig_cum[channel, transformation_name, label]
-        #             h_trig_combined[channel, transformation_name] = h_trig
-        #             try:
-        #                 h_aux.align(h_trig)
-        #
-        #                 fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
-        #                 fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
-        #             except (AssertionError, AttributeError) as e:
-        #                 LOG.debug(f'Exception caught trying to compute FOM for ({channel, transformation_name}): {e}')
-        #                 continue
-        #         except KeyError:
-        #             continue
+        for channel in tqdm(self.available_channels, desc="Computing Results"):
+            for transformation_name in self.transformation_names:
+                try:
+                    h_aux = self.h_aux_cum[channel, transformation_name]
+                    h_trig = Hist(np.array([]))
+                    for label in self.labels:
+                        h_trig += self.h_trig_cum[channel, transformation_name, label]
+                    h_trig_combined[channel, transformation_name] = h_trig
+                    try:
+                        h_aux.align(h_trig)
 
-        fom_ks = {label: KolgomorovSmirnov() for label in self.labels}
-        # fom_ad = AndersonDarling()
+                        fom_ks.calculate(channel, transformation_name, h_aux, h_trig)
+                        fom_ad.calculate(channel, transformation_name, h_aux, h_trig)
+                    except (AssertionError, AttributeError) as e:
+                        LOG.debug(f'Exception caught trying to compute FOM for ({channel, transformation_name}): {e}')
+                        continue
+                except KeyError:
+                    continue
+
+        fom_ks_labels = {label: KolmogorovSmirnov() for label in self.labels}
         for channel in tqdm(self.available_channels, desc="Computing Results"):
             for transformation_name in self.transformation_names:
                 for label in self.labels:
@@ -142,7 +144,7 @@ class Excavator:
                     try:
                         h_aux.align(h_trig)
 
-                        fom_ks[label].calculate(channel, transformation_name, h_aux, h_trig)
+                        fom_ks_labels[label].calculate(channel, transformation_name, h_aux, h_trig)
                     except (AssertionError, AttributeError) as e:
                         LOG.debug(
                             f'Exception caught trying to compute FOM for ({channel, transformation_name}): {e}')
@@ -154,22 +156,22 @@ class Excavator:
         self.report.add_tag(tag_type='table', tag_id=ks_table)
         self.report.add_row_to_table(content=ks_table_cols, tag='th', table_id=ks_table)
 
-        # ad_table_cols = ['Channel', 'Transformation', 'AD', f'below alpha={fom_ad.critical_value}']
-        # ad_table = 'AD_table'
-        # self.report.add_tag(tag_type='table', tag_id=ad_table)
-        # self.report.add_row_to_table(content=ad_table_cols, tag='th', table_id=ad_table)
+        ad_table_cols = ['Channel', 'Transformation', 'AD', f'below alpha={fom_ad.critical_value}']
+        ad_table = 'AD_table'
+        self.report.add_tag(tag_type='table', tag_id=ad_table)
+        self.report.add_row_to_table(content=ad_table_cols, tag='th', table_id=ad_table)
 
         ks_results = {}
         for label in self.labels:
-            ks_results[label] = sorted(fom_ks[label].scores.items(), key=lambda f: f[1].d_n, reverse=True)
-        # ad_results = sorted(fom_ad.scores.items(), key=lambda f: f[1].ad, reverse=True)
-        #     self.writer.write_csv(ks_results[label], f'ks_results_{label}.csv', file_path=self.writer.default_path + 'results/')
-        # self.writer.write_csv(ad_results, 'ad_results.csv', file_path=self.writer.default_path + 'results/')
+            ks_results[label] = sorted(fom_ks_labels[label].scores.items(), key=lambda f: f[1].d_n, reverse=True)
+            self.writer.write_csv(ks_results[label], f'ks_results_{label}.csv', file_path=self.writer.default_path + 'results/')
+        ad_results = sorted(fom_ad.scores.items(), key=lambda f: f[1].ad, reverse=True)
+        self.writer.write_csv(ad_results, 'ad_results.csv', file_path=self.writer.default_path + 'results/')
 
         if bootstrap:
             for label in self.labels:
                 if label in ('Low_Frequency_Burst', 'Low_Frequency_Lines', 'Scattered_Light'):
-                    fom_ks_bootstrap = KolgomorovSmirnov()
+                    fom_ks_bootstrap = KolmogorovSmirnov()
                     for i, (k, v) in tqdm(enumerate(ks_results[label][0:3]), desc=f'Bootstrapping KS'):
                         channel, transformation = k
                         h_aux = self.h_aux_cum[channel, transformation]
@@ -178,8 +180,7 @@ class Excavator:
 
                     ks_results_bootstrap = sorted(fom_ks_bootstrap.scores.items(), key=lambda f: f[1].d_n, reverse=True)
                     for result in ks_results_bootstrap:
-                        print(label, result)
-        sys.exit(1)
+                        LOG.info(f'Bootstrap KS Result | {label}: {result}')
 
         ks_images_div = 'ks_images'
         self.report.add_tag(tag_type='div', tag_id=ks_images_div)
@@ -209,35 +210,6 @@ class Excavator:
                 LOG.debug(e)
             self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), f'{p_value:.2E}'],
                                          table_id=ks_table)
-
-        # ad_images_div = 'ad_images'
-        # self.report.add_tag(tag_type='div', tag_id=ad_images_div)
-        # for i, (k, v) in enumerate(ad_results[0:10]):
-        #     channel, transformation = k
-        #     statistic, threshold = v
-        #     try:
-        #         div_id = f'ad_rank_{i}'
-        #         self.report.add_tag(tag_type='div', tag_id=div_id, parent_div=ad_images_div)
-        #         cdf_fig = plot_histogram_cdf(histogram=self.h_aux_cum[channel, transformation],
-        #                                      channel=channel,
-        #                                      transformation=transformation,
-        #                                      data_type='ad_aux',
-        #                                      label='aux',
-        #                                      return_fig=True,
-        #                                      rank=i)
-        #         cdf_fname = plot_histogram_cdf(histogram=h_trig_combined[channel, transformation],
-        #                                        channel=channel,
-        #                                        transformation=transformation,
-        #                                        data_type='ad_trig',
-        #                                        label='trig',
-        #                                        fig=cdf_fig,
-        #                                        save=True,
-        #                                        rank=i)
-        #         self.report.add_image(img=cdf_fname, div_id=div_id)
-        #     except AttributeError as e:
-        #         LOG.debug(e)
-        #     self.report.add_row_to_table(content=[channel, transformation, round(statistic, 3), str(threshold)],
-        #                                  table_id=ad_table)
 
     def generate_report(self):
         LOG.info("Generating HTML Report...")

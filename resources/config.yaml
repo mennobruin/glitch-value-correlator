@@ -1,20 +1,18 @@
 # Inputs
-#project.source: '/virgoData/ffl/raw_O3b_arch.ffl'
-#project.source: '/virgoData/ffl/trend.ffl'
-project.source: 'local'
-project.decimate: false
-project.load_existing: true
-project.run: true
-project.bootstrap: true
-project.channel: 'V1:ENV_WEB_MAG_N'
-project.pipeline: 'local'
-project.snr_threshold: 0
-project.trigger_file: 'GSpy_ALLIFO_O3b_0921_final.csv'
-project.start_time: 1264625000
-project.end_time: 1264635000
-project.target_frequency: 50
-project.blacklist_patterns: './resources/blacklist_patterns.txt'
+application.source: '/virgoData/ffl/trend.ffl'
+application.decimate: false
+application.load_existing: true
+application.run: true
+application.bootstrap: true
+application.channel: 'V1:ENV_WEB_MAG_N'
+application.pipeline: 'local'
+application.snr_threshold: 0
+application.trigger_file: 'GSpy_ALLIFO_O3b_0921_final.csv'
+application.start_time: 1264625000
+application.end_time: 1264635000
+application.target_frequency: 50
+application.blacklist_patterns: './resources/blacklist_patterns.txt'
 
 # Kerberos config
-kerberos.username: menno.bruin
+kerberos.username: first.last
 kerberos.keytab: .keytab
